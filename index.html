@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Meu Drive</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f2f2f2; padding:20px; }
+    .box { background:#fff; padding:12px; border-radius:10px; margin:10px 0; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    input { padding:8px; }
+    button { padding:8px 12px; cursor:pointer; }
+    .file {
+      background:#fff;
+      border-radius:10px;
+      padding:12px;
+      margin:10px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    a { color:#0b57d0; text-decoration:none; }
+    .small { font-size:12px; opacity:.75; }
+    .danger { background:#d11; color:#fff; border:0; border-radius:8px; }
+  </style>
+</head>
+<body>
+
+<h2>Meu Drive ☁️ (sincronizado)</h2>
+
+<!-- LOGIN -->
+<div class="box" id="authBox">
+  <div class="row">
+    <input id="email" type="email" placeholder="Email" />
+    <input id="pass" type="password" placeholder="Senha" />
+    <button id="btnLogin">Entrar</button>
+    <button id="btnSignup">Criar conta</button>
+  </div>
+  <p class="small" id="authStatus"></p>
+</div>
+
+<!-- APP -->
+<div class="box" id="appBox" style="display:none;">
+  <div class="row">
+    <strong id="userLabel"></strong>
+    <button id="btnLogout">Sair</button>
+  </div>
+
+  <hr />
+
+  <div class="row">
+    <input type="file" id="fileInput" />
+    <button id="btnUpload">Enviar arquivo</button>
+    <span class="small" id="status"></span>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<!-- FIREBASE + APP -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    where,
+    orderBy,
+    onSnapshot,
+    deleteDoc,
+    doc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  /* ================================
+     FIREBASE CONFIG (JÁ PREENCHIDO)
+     ================================ */
+  const firebaseConfig = {
+    apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
+    authDomain: "meu-drive-beb33.firebaseapp.com",
+    projectId: "meu-drive-beb33",
+    storageBucket: "meu-drive-beb33.firebasestorage.app",
+    messagingSenderId: "661176300748",
+    appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
+  };
+
+  /* ================================
+     CLOUDINARY CONFIG
+     ================================ */
+  const cloudName = "dilyddwkg";
+  const uploadPreset = "kv9sjt0g";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const authBox = document.getElementById("authBox");
+  const appBox = document.getElementById("appBox");
+  const authStatus = document.getElementById("authStatus");
+  const userLabel = document.getElementById("userLabel");
+  const statusEl = document.getElementById("status");
+  const listEl = document.getElementById("list");
+
+  document.getElementById("btnSignup").onclick = async () => {
+    authStatus.textContent = "";
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("pass").value.trim();
+    if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
+    try {
+      await createUserWithEmailAndPassword(auth, email, pass);
+    } catch (e) {
+      authStatus.textContent = e.message;
+    }
+  };
+
+  document.getElementById("btnLogin").onclick = async () => {
+    authStatus.textContent = "";
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("pass").value.trim();
+    if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e) {
+      authStatus.textContent = e.message;
+    }
+  };
+
+  document.getElementById("btnLogout").onclick = () => signOut(auth);
+
+  async function uploadToCloudinary(file) {
+    const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", uploadPreset);
+
+    const res = await fetch(url, { method:"POST", body: fd });
+    const data = await res.json();
+    if (!data.secure_url) throw new Error("Falha no upload.");
+    return data;
+  }
+
+  document.getElementById("btnUpload").onclick = async () => {
+    const user = auth.currentUser;
+    if (!user) return alert("Faça login primeiro.");
+
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return alert("Escolha um arquivo.");
+
+    statusEl.textContent = "Enviando...";
+
+    try {
+      const up = await uploadToCloudinary(file);
+
+      await addDoc(collection(db, "files"), {
+        uid: user.uid,
+        name: up.original_filename || file.name,
+        url: up.secure_url,
+        bytes: up.bytes ?? file.size,
+        createdAt: serverTimestamp()
+      });
+
+      statusEl.textContent = "Upload concluído!";
+      document.getElementById("fileInput").value = "";
+    } catch (e) {
+      statusEl.textContent = "Erro no upload.";
+      alert(e.message);
+    }
+  };
+
+  let unsubscribe = null;
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      authBox.style.display = "block";
+      appBox.style.display = "none";
+      if (unsubscribe) unsubscribe();
+      return;
+    }
+
+    authBox.style.display = "none";
+    appBox.style.display = "block";
+    userLabel.textContent = `Logado como: ${user.email}`;
+
+    const q = query(
+      collection(db, "files"),
+      where("uid", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    if (unsubscribe) unsubscribe();
+    unsubscribe = onSnapshot(q, (snap) => {
+      listEl.innerHTML = "";
+      if (snap.empty) {
+        listEl.innerHTML = "<p class='small'>Nenhum arquivo ainda.</p>";
+        return;
+      }
+
+      snap.forEach((d) => {
+        const f = d.data();
+        const div = document.createElement("div");
+        div.className = "file";
+
+        const left = document.createElement("div");
+        left.innerHTML = `<a href="${f.url}" target="_blank">${f.name}</a>`;
+
+        const del = document.createElement("button");
+        del.className = "danger";
+        del.textContent = "Remover da lista";
+        del.onclick = async () => {
+          await deleteDoc(doc(db, "files", d.id));
+        };
+
+        div.appendChild(left);
+        div.appendChild(del);
+        listEl.appendChild(div);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
