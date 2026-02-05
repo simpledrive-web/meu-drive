@@ -1,14 +1,23 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Meu Drive</title>
+
+  <!-- (Opcional) evita erro favicon 404 -->
+  <link rel="icon" href="data:,">
+
   <style>
     body { font-family: Arial, sans-serif; background:#f2f2f2; padding:20px; }
     .box { background:#fff; padding:12px; border-radius:10px; margin:10px 0; }
     .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
     input { padding:8px; }
     button { padding:8px 12px; cursor:pointer; }
+    a { color:#0b57d0; text-decoration:none; }
+    .small { font-size:12px; opacity:.75; }
+
+    /* item da lista */
     .file {
       background:#fff;
       border-radius:10px;
@@ -18,213 +27,313 @@
       justify-content:space-between;
       align-items:center;
       gap:10px;
+      border: 1px solid #eee;
     }
-    a { color:#0b57d0; text-decoration:none; }
-    .small { font-size:12px; opacity:.75; }
+
+    .file-left {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 0;
+    }
+
+    .thumb {
+      width:56px;
+      height:56px;
+      border-radius:10px;
+      border:1px solid #ddd;
+      overflow:hidden;
+      flex: 0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#fafafa;
+      font-size:24px;
+    }
+
+    .thumb img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .file-meta {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 0;
+    }
+
+    .file-meta a {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 52vw; /* ajuda no celular */
+      display:inline-block;
+    }
+
     .danger { background:#d11; color:#fff; border:0; border-radius:8px; }
   </style>
 </head>
+
 <body>
+  <h2>Meu Drive ☁️ (sincronizado)</h2>
 
-<h2>Meu Drive ☁️ (sincronizado)</h2>
-
-<!-- LOGIN -->
-<div class="box" id="authBox">
-  <div class="row">
-    <input id="email" type="email" placeholder="Email" />
-    <input id="pass" type="password" placeholder="Senha" />
-    <button id="btnLogin">Entrar</button>
-    <button id="btnSignup">Criar conta</button>
-  </div>
-  <p class="small" id="authStatus"></p>
-</div>
-
-<!-- APP -->
-<div class="box" id="appBox" style="display:none;">
-  <div class="row">
-    <strong id="userLabel"></strong>
-    <button id="btnLogout">Sair</button>
+  <!-- LOGIN -->
+  <div class="box" id="authBox">
+    <div class="row">
+      <input id="email" type="email" placeholder="Email" />
+      <input id="pass" type="password" placeholder="Senha" />
+      <button id="btnLogin">Entrar</button>
+      <button id="btnSignup">Criar conta</button>
+    </div>
+    <p class="small" id="authStatus"></p>
   </div>
 
-  <hr />
+  <!-- APP -->
+  <div class="box" id="appBox" style="display:none;">
+    <div class="row">
+      <strong id="userLabel"></strong>
+      <button id="btnLogout">Sair</button>
+    </div>
 
-  <div class="row">
-    <input type="file" id="fileInput" />
-    <button id="btnUpload">Enviar arquivo</button>
-    <span class="small" id="status"></span>
+    <hr />
+
+    <div class="row">
+      <input type="file" id="fileInput" />
+      <button id="btnUpload">Enviar arquivo</button>
+      <span class="small" id="status"></span>
+    </div>
+
+    <div id="list"></div>
   </div>
 
-  <div id="list"></div>
-</div>
+  <!-- FIREBASE + APP -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      deleteDoc,
+      doc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-<!-- FIREBASE + APP -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    query,
-    where,
-    orderBy,
-    onSnapshot,
-    deleteDoc,
-    doc,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    /* ================================
+       FIREBASE CONFIG (SEU)
+       ================================ */
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
+      authDomain: "meu-drive-beb33.firebaseapp.com",
+      projectId: "meu-drive-beb33",
+      storageBucket: "meu-drive-beb33.firebasestorage.app",
+      messagingSenderId: "661176300748",
+      appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
+    };
 
-  /* ================================
-     FIREBASE CONFIG (JÁ PREENCHIDO)
-     ================================ */
-  const firebaseConfig = {
-    apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
-    authDomain: "meu-drive-beb33.firebaseapp.com",
-    projectId: "meu-drive-beb33",
-    storageBucket: "meu-drive-beb33.firebasestorage.app",
-    messagingSenderId: "661176300748",
-    appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
-  };
+    /* ================================
+       CLOUDINARY CONFIG (SEU)
+       ================================ */
+    const cloudName = "dilyddwkg";
+    const uploadPreset = "kv9sjt0g";
 
-  /* ================================
-     CLOUDINARY CONFIG
-     ================================ */
-  const cloudName = "dilyddwkg";
-  const uploadPreset = "kv9sjt0g";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const authBox = document.getElementById("authBox");
+    const appBox = document.getElementById("appBox");
+    const authStatus = document.getElementById("authStatus");
+    const userLabel = document.getElementById("userLabel");
+    const statusEl = document.getElementById("status");
+    const listEl = document.getElementById("list");
 
-  const authBox = document.getElementById("authBox");
-  const appBox = document.getElementById("appBox");
-  const authStatus = document.getElementById("authStatus");
-  const userLabel = document.getElementById("userLabel");
-  const statusEl = document.getElementById("status");
-  const listEl = document.getElementById("list");
+    // ===== Auth =====
+    document.getElementById("btnSignup").onclick = async () => {
+      authStatus.textContent = "";
+      const email = document.getElementById("email").value.trim();
+      const pass = document.getElementById("pass").value.trim();
+      if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
+      try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+      } catch (e) {
+        authStatus.textContent = e.message;
+      }
+    };
 
-  document.getElementById("btnSignup").onclick = async () => {
-    authStatus.textContent = "";
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("pass").value.trim();
-    if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-    try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-      authStatus.textContent = e.message;
-    }
-  };
+    document.getElementById("btnLogin").onclick = async () => {
+      authStatus.textContent = "";
+      const email = document.getElementById("email").value.trim();
+      const pass = document.getElementById("pass").value.trim();
+      if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (e) {
+        authStatus.textContent = e.message;
+      }
+    };
 
-  document.getElementById("btnLogin").onclick = async () => {
-    authStatus.textContent = "";
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("pass").value.trim();
-    if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-      authStatus.textContent = e.message;
-    }
-  };
+    document.getElementById("btnLogout").onclick = () => signOut(auth);
 
-  document.getElementById("btnLogout").onclick = () => signOut(auth);
+    // ===== Cloudinary upload =====
+    async function uploadToCloudinary(file) {
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", uploadPreset);
 
-  async function uploadToCloudinary(file) {
-    const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", uploadPreset);
+      const res = await fetch(url, { method: "POST", body: fd });
+      const data = await res.json();
 
-    const res = await fetch(url, { method:"POST", body: fd });
-    const data = await res.json();
-    if (!data.secure_url) throw new Error("Falha no upload.");
-    return data;
-  }
+      if (!data.secure_url) throw new Error(data?.error?.message || "Falha no upload.");
 
-  document.getElementById("btnUpload").onclick = async () => {
-    const user = auth.currentUser;
-    if (!user) return alert("Faça login primeiro.");
-
-    const file = document.getElementById("fileInput").files[0];
-    if (!file) return alert("Escolha um arquivo.");
-
-    statusEl.textContent = "Enviando...";
-
-    try {
-      const up = await uploadToCloudinary(file);
-
-      await addDoc(collection(db, "files"), {
-        uid: user.uid,
-        name: up.original_filename || file.name,
-        url: up.secure_url,
-        bytes: up.bytes ?? file.size,
-        createdAt: serverTimestamp()
-      });
-
-      statusEl.textContent = "Upload concluído!";
-      document.getElementById("fileInput").value = "";
-    } catch (e) {
-      statusEl.textContent = "Erro no upload.";
-      alert(e.message);
-    }
-  };
-
-  let unsubscribe = null;
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      authBox.style.display = "block";
-      appBox.style.display = "none";
-      if (unsubscribe) unsubscribe();
-      return;
+      return {
+        secureUrl: data.secure_url,
+        publicId: data.public_id,
+        resourceType: data.resource_type, // image, video, raw...
+        format: data.format,              // jpg, png, pdf...
+        originalFilename: data.original_filename
+      };
     }
 
-    authBox.style.display = "none";
-    appBox.style.display = "block";
-    userLabel.textContent = `Logado como: ${user.email}`;
+    // ===== Upload button =====
+    document.getElementById("btnUpload").onclick = async () => {
+      const user = auth.currentUser;
+      if (!user) return alert("Faça login primeiro.");
 
-    const q = query(
-      collection(db, "files"),
-      where("uid", "==", user.uid),
-      orderBy("createdAt", "desc")
-    );
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return alert("Escolha um arquivo.");
 
-    if (unsubscribe) unsubscribe();
-    unsubscribe = onSnapshot(q, (snap) => {
-      listEl.innerHTML = "";
-      if (snap.empty) {
-        listEl.innerHTML = "<p class='small'>Nenhum arquivo ainda.</p>";
+      statusEl.textContent = "Enviando...";
+
+      try {
+        const up = await uploadToCloudinary(file);
+
+        await addDoc(collection(db, "files"), {
+          uid: user.uid,
+          name: up.originalFilename || file.name || "arquivo",
+          url: up.secureUrl,
+
+          // para miniatura/capa
+          publicId: up.publicId,
+          resourceType: up.resourceType,
+          format: up.format,
+
+          bytes: file.size,
+          createdAt: serverTimestamp()
+        });
+
+        statusEl.textContent = "Upload concluído!";
+        document.getElementById("fileInput").value = "";
+      } catch (e) {
+        statusEl.textContent = "Erro no upload.";
+        alert(e.message);
+      }
+    };
+
+    // ===== Helpers =====
+    function formatBytes(bytes) {
+      if (!bytes && bytes !== 0) return "";
+      const units = ["B", "KB", "MB", "GB", "TB"];
+      let b = bytes;
+      let i = 0;
+      while (b >= 1024 && i < units.length - 1) {
+        b /= 1024;
+        i++;
+      }
+      return `${b.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+    }
+
+    function cloudinaryThumbUrl(publicId, format) {
+      // miniatura: 140x140, crop fill, auto quality + auto format
+      // Obs: funciona bem para imagens
+      return `https://res.cloudinary.com/${cloudName}/image/upload/w_140,h_140,c_fill,q_auto,f_auto/${publicId}.${format || "jpg"}`;
+    }
+
+    // ===== Realtime list =====
+    let unsubscribe = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        authBox.style.display = "block";
+        appBox.style.display = "none";
+        if (unsubscribe) unsubscribe();
         return;
       }
 
-      snap.forEach((d) => {
-        const f = d.data();
-        const div = document.createElement("div");
-        div.className = "file";
+      authBox.style.display = "none";
+      appBox.style.display = "block";
+      userLabel.textContent = `Logado como: ${user.email}`;
 
-        const left = document.createElement("div");
-        left.innerHTML = `<a href="${f.url}" target="_blank">${f.name}</a>`;
+      const q = query(
+        collection(db, "files"),
+        where("uid", "==", user.uid),
+        orderBy("createdAt", "desc")
+      );
 
-        const del = document.createElement("button");
-        del.className = "danger";
-        del.textContent = "Remover da lista";
-        del.onclick = async () => {
-          await deleteDoc(doc(db, "files", d.id));
-        };
+      if (unsubscribe) unsubscribe();
+      unsubscribe = onSnapshot(q, (snap) => {
+        listEl.innerHTML = "";
+        if (snap.empty) {
+          listEl.innerHTML = "<p class='small'>Nenhum arquivo ainda.</p>";
+          return;
+        }
 
-        div.appendChild(left);
-        div.appendChild(del);
-        listEl.appendChild(div);
+        snap.forEach((d) => {
+          const f = d.data();
+
+          const div = document.createElement("div");
+          div.className = "file";
+
+          // thumb só para imagens (arquivos antigos podem não ter esses campos)
+          const hasThumb = f.resourceType === "image" && f.publicId;
+          const thumbUrl = hasThumb ? cloudinaryThumbUrl(f.publicId, f.format) : null;
+
+          const left = document.createElement("div");
+          left.className = "file-left";
+          left.innerHTML = `
+            <div class="thumb">
+              ${
+                thumbUrl
+                  ? `<img src="${thumbUrl}" alt="${(f.name || "imagem").replace(/"/g, "")}">`
+                  : `📄`
+              }
+            </div>
+            <div class="file-meta">
+              <a href="${f.url}" target="_blank" rel="noopener">${f.name || "arquivo"}</a>
+              <span class="small">
+                ${f.format ? f.format.toUpperCase() : ""}${f.bytes ? " • " + formatBytes(f.bytes) : ""}
+              </span>
+            </div>
+          `;
+
+          const del = document.createElement("button");
+          del.className = "danger";
+          del.textContent = "Remover da lista";
+          del.onclick = async () => {
+            await deleteDoc(doc(db, "files", d.id));
+          };
+
+          div.appendChild(left);
+          div.appendChild(del);
+          listEl.appendChild(div);
+        });
       });
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>
+
