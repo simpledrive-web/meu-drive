@@ -2,8 +2,8 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1220" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b57d0" />
   <title>Meu Drive</title>
 
   <link rel="manifest" href="./manifest.json" />
@@ -11,302 +11,326 @@
 
   <style>
     :root{
-      --bg1:#0b1220;
+      --bg1:#071022;
       --bg2:#0b57d0;
       --card: rgba(255,255,255,.08);
       --card2: rgba(255,255,255,.12);
-      --stroke: rgba(255,255,255,.14);
+      --stroke: rgba(255,255,255,.12);
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.68);
-      --accent: #4f86ff;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --danger:#ef4444;
+      --muted: rgba(255,255,255,.65);
+      --good:#27d07d;
+      --danger:#ff4d4d;
+      --accent:#5aa7ff;
+      --accent2:#4a7cff;
       --shadow: 0 18px 60px rgba(0,0,0,.35);
-      --r: 18px;
+      --r: 22px;
+      --r2: 16px;
     }
 
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      min-height:100vh;
+      color:var(--text);
       background:
-        radial-gradient(1100px 900px at 15% 20%, rgba(79,134,255,.45), transparent 55%),
-        radial-gradient(900px 800px at 85% 70%, rgba(34,197,94,.30), transparent 55%),
-        linear-gradient(180deg, #071024 0%, #071632 40%, #04102a 100%);
-      padding: 22px 14px;
+        radial-gradient(1200px 700px at 20% 15%, rgba(92,240,199,.18), transparent 55%),
+        radial-gradient(1000px 600px at 85% 30%, rgba(86,168,255,.22), transparent 55%),
+        linear-gradient(155deg, var(--bg1), #0a1540 38%, #0a2c7a 72%, #0b57d0);
+      overflow-x:hidden;
     }
 
-    .wrap{max-width: 980px; margin: 0 auto;}
+    .wrap{
+      width:min(980px, 92vw);
+      margin: 26px auto 36px;
+      display:flex;
+      flex-direction:column;
+      gap: 18px;
+    }
 
+    /* header */
     .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      margin-bottom:16px;
+      gap:16px;
     }
     .brand{
-      display:flex; align-items:center; gap:12px;
-    }
-    .brand img{
-      width:44px; height:44px; border-radius:12px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.35);
-      background: rgba(255,255,255,.06);
-    }
-    .brand h1{
-      margin:0; font-size: 22px; letter-spacing:.2px;
-      display:flex; align-items:center; gap:10px;
-    }
-    .pill{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      color: var(--muted);
-      display:inline-flex; align-items:center; gap:8px;
-      white-space:nowrap;
-    }
-    .pill .dot{
-      width:8px; height:8px; border-radius:999px;
-      background: var(--ok);
-      box-shadow: 0 0 18px rgba(34,197,94,.65);
-    }
-
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      border: 1px solid var(--stroke);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
+      display:flex;
+      align-items:center;
       gap:14px;
+      user-select:none;
     }
-    @media (min-width: 860px){
-      .grid{grid-template-columns: 360px 1fr;}
-    }
-
-    .pad{padding:16px}
-
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    .row.between{justify-content:space-between}
-
-    input, select, button{
-      font: inherit;
-    }
-
-    .input{
-      width:100%;
-      padding: 14px 14px;
-      border-radius: 14px;
+    .logo{
+      width:56px; height:56px;
+      border-radius: 18px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.25);
+      background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
-      outline:none;
-      transition: .18s;
-    }
-    .input:focus{
-      border-color: rgba(79,134,255,.55);
-      box-shadow: 0 0 0 4px rgba(79,134,255,.18);
-    }
-
-    .btn{
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.10);
-      color: var(--text);
-      cursor:pointer;
-      transition: .18s;
-    }
-    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.14);}
-    .btn:active{transform: translateY(0px);}
-    .btn.primary{
-      background: linear-gradient(180deg, rgba(79,134,255,.95), rgba(79,134,255,.65));
-      border-color: rgba(79,134,255,.60);
-    }
-    .btn.primary:hover{background: linear-gradient(180deg, rgba(79,134,255,1), rgba(79,134,255,.72));}
-    .btn.danger{
-      background: rgba(239,68,68,.16);
-      border-color: rgba(239,68,68,.35);
-      color: rgba(255,255,255,.92);
-    }
-
-    .seg{
-      display:inline-flex;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 999px;
+      display:grid;
+      place-items:center;
       overflow:hidden;
     }
-    .seg button{
-      border:none;
-      background: transparent;
+    .logo img{ width:100%; height:100%; object-fit:cover; }
+    .brand h1{
+      margin:0;
+      font-size: 26px;
+      letter-spacing:.2px;
+    }
+    .brand p{
+      margin: 2px 0 0;
       color: var(--muted);
-      padding: 10px 14px;
-      cursor:pointer;
-    }
-    .seg button.active{
-      background: rgba(255,255,255,.12);
-      color: var(--text);
+      font-size: 13px;
     }
 
-    .hint{color: var(--muted); font-size: 13px; margin-top:10px; line-height:1.35}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: rgba(255,255,255,.25);
+    }
+    .dot.ok{ background: var(--good); }
 
-    /* Views + animação */
+    /* cards */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      padding: 18px;
+    }
+
+    /* views + transitions */
     .view{
-      opacity: 0;
+      opacity:0;
       transform: translateY(8px);
       pointer-events:none;
-      transition: .22s ease;
+      transition: .28s ease;
+      display:none;
     }
     .view.show{
-      opacity: 1;
-      transform: translateY(0px);
+      display:block;
+      opacity:1;
+      transform: translateY(0);
       pointer-events:auto;
     }
 
-    /* Loader overlay */
+    /* loader overlay */
     .overlay{
-      position: fixed;
-      inset: 0;
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.35);
       display:none;
       align-items:center;
       justify-content:center;
-      background: rgba(0,0,0,.42);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 999;
+      z-index:999;
+      backdrop-filter: blur(6px);
     }
-    .overlay.show{display:flex;}
-    .loaderBox{
-      width: min(360px, calc(100vw - 28px));
-      padding: 18px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(20,30,55,.65);
-      box-shadow: var(--shadow);
-      text-align:center;
-    }
+    .overlay.show{ display:flex; }
     .spinner{
-      width: 44px; height: 44px;
+      width: 54px;
+      height: 54px;
       border-radius: 999px;
-      border: 4px solid rgba(255,255,255,.18);
-      border-top-color: rgba(79,134,255,.95);
-      margin: 2px auto 10px;
-      animation: spin .85s linear infinite;
+      border: 5px solid rgba(255,255,255,.18);
+      border-top-color: rgba(255,255,255,.85);
+      animation: spin .8s linear infinite;
     }
-    @keyframes spin{to{transform: rotate(360deg)}}
-    .overlayTitle{font-weight:700; margin:0 0 4px}
-    .overlayText{margin:0; color: var(--muted); font-size: 13px}
+    .overlay .label{
+      margin-top: 12px;
+      text-align:center;
+      color: rgba(255,255,255,.85);
+      font-size: 14px;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
 
-    /* Lista/Galeria */
-    .list{
+    /* form */
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .grid1{ display:grid; gap: 14px; }
+
+    input, select{
+      width:100%;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      outline:none;
+      font-size: 15px;
+    }
+    input::placeholder{ color: rgba(255,255,255,.55); }
+    select{ appearance:none; }
+
+    .btnrow{
       display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top:12px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn{
+      padding: 13px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      font-weight: 650;
+      cursor:pointer;
+      transition: .18s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.14); }
+    .btn.primary{
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      border-color: rgba(255,255,255,.16);
+      box-shadow: 0 14px 30px rgba(74,124,255,.25);
+    }
+    .btn.danger{
+      background: rgba(255,77,77,.12);
+      border-color: rgba(255,77,77,.30);
+    }
+    .btn.ghost{
+      background: transparent;
+      border-color: rgba(255,255,255,.16);
+    }
+
+    .muted{ color: var(--muted); font-size: 13px; }
+    .hr{ height:1px; background: rgba(255,255,255,.10); margin: 14px 0; }
+
+    /* tabs */
+    .tabs{
+      display:inline-flex;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 6px;
+      gap: 6px;
+    }
+    .tab{
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor:pointer;
+      background: transparent;
+      color: rgba(255,255,255,.75);
+      font-weight: 700;
+    }
+    .tab.active{
+      background: rgba(255,255,255,.12);
+      color: rgba(255,255,255,.95);
+    }
+
+    /* list */
+    .list{
+      display:grid;
+      gap: 10px;
+      margin-top: 12px;
     }
     .item{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      padding: 12px;
+      gap: 12px;
+      padding: 12px 12px;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.14);
+      background: rgba(255,255,255,.06);
     }
-    .meta{
+    .item .meta{
+      min-width:0;
       display:flex;
       align-items:center;
-      gap:12px;
-      min-width: 0;
+      gap: 12px;
     }
     .thumb{
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.10);
+      width:46px;height:46px;border-radius: 14px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.12);
       overflow:hidden;
       flex: 0 0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color: rgba(255,255,255,.65);
-      font-size: 12px;
-    }
-    .thumb img{width:100%; height:100%; object-fit: cover;}
-    .title{
-      display:flex;
-      flex-direction:column;
-      gap:3px;
-      min-width: 0;
-    }
-    .title b{
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 48vw;
-    }
-    @media (min-width: 860px){
-      .title b{max-width: 420px;}
-    }
-    .title small{color: var(--muted)}
-    .actions{display:flex; gap:8px; align-items:center; flex:0 0 auto;}
-    .link{
-      color: rgba(255,255,255,.92);
-      text-decoration:none;
-    }
-
-    .gallery{
       display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap:10px;
+      place-items:center;
+      color: rgba(255,255,255,.75);
+      font-weight:800;
+    }
+    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .meta .name{
+      font-weight: 750;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 46vw;
+    }
+    .meta .sub{
+      font-size: 12px;
+      color: rgba(255,255,255,.65);
+      margin-top: 2px;
+    }
+    .item .actions{ display:flex; gap: 10px; }
+    .linkbtn{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.88);
+      cursor:pointer;
+      font-weight: 700;
+    }
+    .linkbtn:hover{ background: rgba(255,255,255,.12); }
+
+    /* gallery */
+    .gallery{
       margin-top: 12px;
-    }
-    @media (min-width: 520px){
-      .gallery{grid-template-columns: repeat(3, 1fr);}
-    }
-    @media (min-width: 860px){
-      .gallery{grid-template-columns: repeat(4, 1fr);}
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
     .gcard{
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.14);
+      border-radius: 18px;
       overflow:hidden;
-      position:relative;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
       aspect-ratio: 1 / 1;
+      position:relative;
       cursor:pointer;
-      transition:.18s;
     }
-    .gcard:hover{transform: translateY(-1px);}
-    .gcard img{width:100%; height:100%; object-fit: cover; display:block;}
-    .glabel{
+    .gcard img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+      filter: saturate(1.05);
+      transform: scale(1.02);
+    }
+    .gcard .badge{
       position:absolute;
-      left:10px; bottom:10px; right:10px;
-      padding: 8px 10px;
-      border-radius: 12px;
+      left: 10px;
+      bottom: 10px;
       background: rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 6px 8px;
+      border-radius: 999px;
       font-size: 12px;
-      white-space: nowrap;
+      backdrop-filter: blur(10px);
+      max-width: 85%;
+      white-space:nowrap;
       overflow:hidden;
-      text-overflow: ellipsis;
+      text-overflow:ellipsis;
     }
 
-    /* modal preview */
+    /* modal */
     .modal{
       position:fixed;
       inset:0;
@@ -314,166 +338,194 @@
       align-items:center;
       justify-content:center;
       background: rgba(0,0,0,.55);
-      z-index: 1000;
-      padding: 14px;
+      z-index: 9999;
+      padding: 18px;
+      backdrop-filter: blur(8px);
     }
-    .modal.show{display:flex;}
-    .modalBox{
-      width:min(820px, 100%);
-      border-radius: 18px;
+    .modal.show{ display:flex; }
+    .modalCard{
+      width:min(760px, 92vw);
+      border-radius: 22px;
       border: 1px solid rgba(255,255,255,.14);
-      background: rgba(15,22,38,.78);
+      background: rgba(15,22,40,.72);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
     .modalTop{
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap:10px;
+      align-items:center;
       padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.12);
+      border-bottom: 1px solid rgba(255,255,255,.10);
     }
-    .modalTop b{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-    .modalBody{padding: 14px;}
-    .modalBody img, .modalBody video{
-      width: 100%;
-      border-radius: 14px;
+    .modalTitle{
+      display:grid;
+      gap:2px;
+      min-width:0;
+    }
+    .modalTitle b{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .modalTitle span{ color: var(--muted); font-size: 12px; }
+    .modalBody{
+      padding: 16px;
+      display:flex;
+      justify-content:center;
+    }
+    .modalBody img{
+      width:min(560px, 86vw);
+      max-height: 62vh;
+      object-fit: contain;
+      border-radius: 18px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.25);
+      background: rgba(255,255,255,.04);
+    }
+    .xbtn{
+      width: 40px; height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.9);
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    /* responsive */
+    @media (max-width: 780px){
+      .grid2{ grid-template-columns: 1fr; }
+      .gallery{ grid-template-columns: repeat(2, 1fr); }
+      .meta .name{ max-width: 52vw; }
+      .brand h1{ font-size: 22px; }
+      .logo{ width:52px; height:52px; }
     }
   </style>
 </head>
 
 <body>
   <div class="overlay" id="overlay">
-    <div class="loaderBox">
+    <div style="display:flex;flex-direction:column;align-items:center;">
       <div class="spinner"></div>
-      <p class="overlayTitle" id="overlayTitle">Carregando…</p>
-      <p class="overlayText" id="overlayText">Aguarde um instante</p>
+      <div class="label" id="overlayLabel">Carregando…</div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modalCard">
+      <div class="modalTop">
+        <div class="modalTitle">
+          <b id="modalName">Arquivo</b>
+          <span id="modalSub">—</span>
+        </div>
+        <button class="xbtn" id="modalClose">✕</button>
+      </div>
+      <div class="modalBody">
+        <img id="modalImg" alt="preview" />
+      </div>
+      <div style="padding: 0 16px 16px;">
+        <div class="btnrow" style="justify-content:flex-end;">
+          <button class="btn primary" id="modalOpen">Abrir / Download</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <img src="./icon-192.png" alt="Meu Drive" />
+        <div class="logo">
+          <img src="./icon-192.png" alt="logo" />
+        </div>
         <div>
           <h1>Meu Drive ☁️</h1>
-          <span class="pill"><span class="dot"></span><span id="pwaStatus">PWA: verificando…</span></span>
+          <p id="subtitle" class="muted">Seus arquivos, do seu jeito.</p>
         </div>
       </div>
 
-      <div class="pill" id="userPill" style="display:none;">
-        <span id="userAvatar" style="width:22px;height:22px;border-radius:999px;background:rgba(255,255,255,.16);display:inline-flex;align-items:center;justify-content:center;font-weight:800;">U</span>
-        <span id="userEmail" style="max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+      <div class="pill" id="pwaPill">
+        <span class="dot" id="pwaDot"></span>
+        <span id="pwaText">PWA: verificando…</span>
       </div>
     </div>
 
-    <div class="grid">
-      <!-- LEFT -->
-      <div class="card pad">
-        <!-- LOGIN VIEW -->
-        <div class="view show" id="loginView">
-          <h2 style="margin:0 0 10px;">Entrar</h2>
+    <!-- LOGIN VIEW -->
+    <div class="card view show" id="loginView">
+      <div class="grid1" style="max-width:540px;">
+        <input id="email" type="email" placeholder="Email" autocomplete="email" />
+        <input id="password" type="password" placeholder="Senha" autocomplete="current-password" />
 
-          <div class="row" style="gap:10px;">
-            <input class="input" id="email" type="email" placeholder="Email" autocomplete="email" />
-            <input class="input" id="password" type="password" placeholder="Senha" autocomplete="current-password" />
-          </div>
-
-          <div class="row" style="margin-top:10px;">
-            <button class="btn primary" id="btnLogin">Entrar</button>
-            <button class="btn" id="btnRegister">Criar conta</button>
-          </div>
-
-          <p class="hint" id="loginHint">Seus arquivos em um só lugar.😄</p>
+        <div class="btnrow">
+          <button class="btn primary" id="btnLogin">Entrar</button>
+          <button class="btn ghost" id="btnRegister">Criar conta</button>
         </div>
 
-        <!-- APP VIEW -->
-        <div class="view" id="appView">
-          <div class="row between">
-            <div>
-              <h2 style="margin:0 0 2px;">Seus arquivos</h2>
-              <div style="color:var(--muted);font-size:13px;">Organize por pastas e acesse em qualquer lugar.</div>
-            </div>
-            <button class="btn" id="btnLogout">Sair</button>
+        <div class="muted" id="loginHint"></div>
+      </div>
+    </div>
+
+    <!-- APP VIEW -->
+    <div class="card view" id="appView">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="pill" style="gap:10px;">
+          <span class="dot ok"></span>
+          <span id="userLabel">Logado</span>
+        </div>
+        <button class="btn danger" id="btnLogout">Sair</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="grid2">
+        <div class="grid1">
+          <input id="fileInput" type="file" />
+          <div class="btnrow">
+            <button class="btn primary" id="btnUpload">Enviar arquivo</button>
           </div>
+          <div class="muted" id="uploadHint">Dica: arquivos vão pro Cloudinary e a lista fica salva no Firestore.</div>
+        </div>
 
-          <hr style="border:none;border-top:1px solid rgba(255,255,255,.12); margin:14px 0;">
-
-          <div class="row" style="align-items:stretch;">
-            <input class="input" id="fileInput" type="file" />
-            <button class="btn primary" id="btnUpload">Enviar</button>
-          </div>
-
-          <div class="row" style="margin-top:10px;">
-            <select class="input" id="folderSelect" style="max-width: 240px;">
-              <option value="Imagens">Imagens</option>
-              <option value="Vídeos">Vídeos</option>
-              <option value="PDFs">PDFs</option>
-              <option value="Outros">Outros</option>
-            </select>
-            <button class="btn" id="btnNewFolder">+ Pasta</button>
-          </div>
-
-          <div class="row" style="margin-top:12px;">
-            <div class="seg">
-              <button id="tabList" class="active" type="button">Lista</button>
-              <button id="tabGallery" type="button">Galeria</button>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:12px;">
-            <input class="input" id="searchInput" placeholder="Buscar por nome…" />
-            <select class="input" id="filterFolder" style="max-width: 220px;">
-              <option value="__all__">Todas as pastas</option>
-            </select>
-          </div>
-
-          <div style="margin-top:10px; color: var(--muted); font-size: 13px;" id="statusText">Pronto.</div>
+        <div class="grid1">
+          <select id="folderSelect"></select>
+          <input id="search" placeholder="Buscar por nome…" />
+          <select id="typeFilter">
+            <option value="all">Todos</option>
+            <option value="image">Imagens</option>
+            <option value="video">Vídeos</option>
+            <option value="pdf">PDFs</option>
+            <option value="other">Outros</option>
+          </select>
         </div>
       </div>
 
-      <!-- RIGHT -->
-      <div class="card pad">
-        <div class="view show" id="filesView">
-          <div class="row between">
-            <b style="font-size:16px;">Arquivos</b>
-            <span class="pill" id="countPill">0 arquivo(s)</span>
-          </div>
+      <div class="hr"></div>
 
-          <div id="emptyState" class="hint" style="margin-top:14px;">
-            Nenhum arquivo ainda.
-          </div>
-
-          <div id="listContainer" class="list" style="display:none;"></div>
-          <div id="galleryContainer" class="gallery" style="display:none;"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="tabs">
+          <button class="tab active" id="tabList">Lista</button>
+          <button class="tab" id="tabGallery">Galeria</button>
         </div>
+        <div class="muted" id="countLabel">0 arquivo(s)</div>
       </div>
+
+      <div id="emptyState" class="card" style="margin-top:12px; background: rgba(255,255,255,.05); border-radius: 18px; box-shadow:none;">
+        <div class="muted">Nenhum arquivo ainda. (ou filtros escondendo tudo)</div>
+      </div>
+
+      <div id="listView" class="list"></div>
+      <div id="galleryView" class="gallery" style="display:none;"></div>
     </div>
   </div>
 
-  <!-- Preview modal -->
-  <div class="modal" id="modal">
-    <div class="modalBox">
-      <div class="modalTop">
-        <b id="modalTitle">Arquivo</b>
-        <button class="btn" id="modalClose">Fechar</button>
-      </div>
-      <div class="modalBody" id="modalBody"></div>
-    </div>
-  </div>
-
-  <!-- Firebase compat (do jeito que você já estava usando) -->
+  <!-- Firebase (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    /**********************************************************
-     * 1) CONFIGURAÇÕES
-     **********************************************************/
+    // ========= CONFIGS =========
+
+    // Firebase config (o seu do Firebase)
     const firebaseConfig = {
       apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
       authDomain: "meu-drive-beb33.firebaseapp.com",
@@ -483,511 +535,442 @@
       appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
     };
 
-    // ✅ Cloudinary (UPLOAD REAL)
-    // Preencha com os seus dados do Cloudinary:
+    // Cloudinary (os seus dados)
     const CLOUDINARY_CLOUD_NAME = "dilyddwkg";
     const CLOUDINARY_UPLOAD_PRESET = "kv9sjt0g";
 
-    /**********************************************************
-     * 2) INIT
-     **********************************************************/
+    // ========= UI HELPERS =========
+    const $ = (id) => document.getElementById(id);
+
+    const overlay = $("overlay");
+    const overlayLabel = $("overlayLabel");
+    const loginView = $("loginView");
+    const appView = $("appView");
+
+    function setLoading(on, text="Carregando…"){
+      overlayLabel.textContent = text;
+      overlay.classList.toggle("show", !!on);
+    }
+
+    function showView(view){
+      // animação suave
+      if(view === "login"){
+        appView.classList.remove("show");
+        setTimeout(()=> loginView.classList.add("show"), 60);
+      }else{
+        loginView.classList.remove("show");
+        setTimeout(()=> appView.classList.add("show"), 60);
+      }
+    }
+
+    function bytesToSize(bytes){
+      if(!bytes && bytes !== 0) return "";
+      const sizes = ["B","KB","MB","GB","TB"];
+      const i = Math.min(Math.floor(Math.log(bytes)/Math.log(1024)), sizes.length-1);
+      return (bytes/Math.pow(1024,i)).toFixed(i===0?0:1) + " " + sizes[i];
+    }
+
+    function fileKind(mime){
+      if(!mime) return "other";
+      if(mime.startsWith("image/")) return "image";
+      if(mime.startsWith("video/")) return "video";
+      if(mime === "application/pdf") return "pdf";
+      return "other";
+    }
+
+    function iconText(kind){
+      if(kind==="image") return "IMG";
+      if(kind==="video") return "VID";
+      if(kind==="pdf") return "PDF";
+      return "ARQ";
+    }
+
+    // ========= FIREBASE INIT =========
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    /**********************************************************
-     * 3) ELEMENTOS
-     **********************************************************/
-    const overlay = document.getElementById("overlay");
-    const overlayTitle = document.getElementById("overlayTitle");
-    const overlayText = document.getElementById("overlayText");
-
-    const loginView = document.getElementById("loginView");
-    const appView = document.getElementById("appView");
-
-    const userPill = document.getElementById("userPill");
-    const userEmail = document.getElementById("userEmail");
-    const userAvatar = document.getElementById("userAvatar");
-
-    const emailEl = document.getElementById("email");
-    const passEl = document.getElementById("password");
-
-    const btnLogin = document.getElementById("btnLogin");
-    const btnRegister = document.getElementById("btnRegister");
-    const btnLogout = document.getElementById("btnLogout");
-
-    const fileInput = document.getElementById("fileInput");
-    const btnUpload = document.getElementById("btnUpload");
-
-    const folderSelect = document.getElementById("folderSelect");
-    const btnNewFolder = document.getElementById("btnNewFolder");
-    const filterFolder = document.getElementById("filterFolder");
-    const searchInput = document.getElementById("searchInput");
-
-    const tabList = document.getElementById("tabList");
-    const tabGallery = document.getElementById("tabGallery");
-
-    const listContainer = document.getElementById("listContainer");
-    const galleryContainer = document.getElementById("galleryContainer");
-    const emptyState = document.getElementById("emptyState");
-    const countPill = document.getElementById("countPill");
-    const statusText = document.getElementById("statusText");
-
-    const modal = document.getElementById("modal");
-    const modalClose = document.getElementById("modalClose");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalBody = document.getElementById("modalBody");
-
-    /**********************************************************
-     * 4) ESTADO
-     **********************************************************/
+    // ========= STATE =========
     let currentUser = null;
-    let allFiles = []; // lista completa do Firestore
-    let currentTab = "list"; // list | gallery
+    let allFiles = [];
+    let currentTab = "list";
 
-    function showOverlay(title="Carregando…", text="Aguarde um instante"){
-      overlayTitle.textContent = title;
-      overlayText.textContent = text;
-      overlay.classList.add("show");
-    }
-    function hideOverlay(){
-      overlay.classList.remove("show");
-    }
-
-    function showView(el){
-      el.classList.add("show");
-    }
-    function hideView(el){
-      el.classList.remove("show");
-    }
-
-    function setStatus(msg){
-      statusText.textContent = msg;
-    }
-
-    function setPWAStatus(){
-      // No Android/Chrome, quando instalável ele costuma sugerir "Instalar"
-      document.getElementById("pwaStatus").textContent = "Pronto ✅";
-    }
-
-    /**********************************************************
-     * 5) AUTH
-     **********************************************************/
-    btnLogin.addEventListener("click", async () => {
-      const email = emailEl.value.trim();
-      const password = passEl.value.trim();
-      if(!email || !password) return alert("Preencha email e senha.");
-
+    // folders (simples: salva em localStorage + opção padrão)
+    const FOLDERS_KEY = "simpledrive_folders_v1";
+    function getFolders(){
+      const base = ["Imagens", "Vídeos", "PDFs", "Outros"];
       try{
-        showOverlay("Entrando…", "Validando credenciais");
-        await auth.signInWithEmailAndPassword(email, password);
-      }catch(err){
-        alert(err.message);
-      }finally{
-        hideOverlay();
-      }
-    });
-
-    btnRegister.addEventListener("click", async () => {
-      const email = emailEl.value.trim();
-      const password = passEl.value.trim();
-      if(!email || !password) return alert("Preencha email e senha.");
-
-      try{
-        showOverlay("Criando conta…", "Aguarde um instante");
-        await auth.createUserWithEmailAndPassword(email, password);
-      }catch(err){
-        alert(err.message);
-      }finally{
-        hideOverlay();
-      }
-    });
-
-    btnLogout.addEventListener("click", async () => {
-      try{
-        showOverlay("Saindo…", "Até já 👋");
-        await auth.signOut();
-      }catch(err){
-        alert(err.message);
-      }finally{
-        hideOverlay();
-      }
-    });
-
-    // 🔥 Aqui é onde normalmente o loader trava quando algo dá erro.
-    // Eu deixei MUITO robusto: sempre cai em hideOverlay.
-    auth.onAuthStateChanged(async (user) => {
-      showOverlay("Carregando…", "Verificando sessão");
-
-      try{
-        currentUser = user || null;
-
-        if(!currentUser){
-          // Mostrar login
-          userPill.style.display = "none";
-          showView(loginView);
-          hideView(appView);
-
-          // limpar UI
-          allFiles = [];
-          renderEverything();
-          setStatus("Pronto.");
-          return;
-        }
-
-        // Mostrar app
-        userPill.style.display = "inline-flex";
-        userEmail.textContent = currentUser.email || "Usuário";
-        userAvatar.textContent = (currentUser.email || "U").slice(0,1).toUpperCase();
-
-        hideView(loginView);
-        showView(appView);
-
-        // Carrega arquivos do usuário
-        await loadFiles();
-
-        setStatus("Sessão ativa ✅");
-      }catch(err){
-        console.error(err);
-        alert("Erro ao carregar sessão/arquivos: " + (err.message || err));
-      }finally{
-        hideOverlay(); // ✅ garante que NÃO fica travado
-      }
-    });
-
-    /**********************************************************
-     * 6) FIRESTORE (por usuário)
-     **********************************************************/
-    function filesCol(){
-      return db.collection("users").doc(currentUser.uid).collection("files");
-    }
-
-    async function loadFiles(){
-      if(!currentUser) return;
-
-      // pega tudo ordenado
-      const snap = await filesCol().orderBy("createdAt","desc").get();
-      allFiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      refreshFolderFilterOptions();
-      renderEverything();
-    }
-
-    function refreshFolderFilterOptions(){
-      // garante pastas no filtro (sem duplicar)
-      const folders = new Set(["Imagens","Vídeos","PDFs","Outros"]);
-      allFiles.forEach(f => folders.add(f.folder || "Outros"));
-
-      const current = filterFolder.value || "__all__";
-      filterFolder.innerHTML = `<option value="__all__">Todas as pastas</option>`;
-      Array.from(folders).sort().forEach(name => {
-        const opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = name;
-        filterFolder.appendChild(opt);
-      });
-
-      // tenta manter seleção
-      if([...filterFolder.options].some(o => o.value === current)){
-        filterFolder.value = current;
+        const saved = JSON.parse(localStorage.getItem(FOLDERS_KEY) || "[]");
+        const merged = [...new Set([...base, ...saved])];
+        return merged;
+      }catch{
+        return base;
       }
     }
-
-    /**********************************************************
-     * 7) UPLOAD REAL (Cloudinary unsigned) + salvar no Firestore
-     **********************************************************/
-    btnUpload.addEventListener("click", uploadFile);
-
-    async function uploadFile(){
-      if(!currentUser) return alert("Faça login primeiro.");
-      const file = fileInput.files && fileInput.files[0];
-      if(!file) return alert("Escolha um arquivo.");
-
-      if(!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME.includes("SEU_")){
-        return alert("Configure o CLOUDINARY_CLOUD_NAME no index.html");
-      }
-      if(!CLOUDINARY_UPLOAD_PRESET || CLOUDINARY_UPLOAD_PRESET.includes("SEU_")){
-        return alert("Configure o CLOUDINARY_UPLOAD_PRESET (Unsigned) no index.html");
-      }
-
-      const folder = folderSelect.value || "Outros";
-
-      try{
-        showOverlay("Enviando…", "Subindo arquivo para o Cloudinary");
-        setStatus("Enviando arquivo…");
-
-        const url = `https://api.cloudinary.com/v1_1/${encodeURIComponent(CLOUDINARY_CLOUD_NAME)}/auto/upload`;
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-
-        // dica: manter “organização” no cloudinary (opcional)
-        fd.append("folder", `meu-drive/${currentUser.uid}/${folder}`);
-
-        const res = await fetch(url, { method:"POST", body: fd });
-        const data = await res.json();
-
-        if(!res.ok){
-          console.error(data);
-          throw new Error(data?.error?.message || "Falha no upload do Cloudinary");
-        }
-
-        // salvar no Firestore
-        const doc = {
-          name: file.name,
-          url: data.secure_url,
-          public_id: data.public_id,         // importante p/ delete futuro
-          resourceType: data.resource_type,  // image/video/raw
-          format: data.format || "",
-          bytes: data.bytes || file.size || 0,
-          folder,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        await filesCol().add(doc);
-
-        fileInput.value = "";
-        setStatus("Upload concluído ✅");
-
-        // recarrega
-        await loadFiles();
-      }catch(err){
-        console.error(err);
-        alert("Erro no upload: " + (err.message || err));
-        setStatus("Erro no upload.");
-      }finally{
-        hideOverlay();
-      }
-    }
-
-    /**********************************************************
-     * 8) DELETE (por enquanto só Firestore)
-     * ⚠️ Apagar do Cloudinary direto do front-end NÃO é seguro
-     * (precisa segredo). Depois a gente faz via Cloud Function/Worker.
-     **********************************************************/
-    async function deleteFile(fileId){
-      if(!currentUser) return;
-      const ok = confirm("Remover da lista? (por enquanto remove do app/Firestore)");
-      if(!ok) return;
-
-      try{
-        showOverlay("Removendo…", "Atualizando lista");
-        await filesCol().doc(fileId).delete();
-        await loadFiles();
-        setStatus("Removido ✅");
-      }catch(err){
-        console.error(err);
-        alert("Erro ao remover: " + (err.message || err));
-      }finally{
-        hideOverlay();
-      }
-    }
-
-    /**********************************************************
-     * 9) UI: tabs, filtros, render
-     **********************************************************/
-    tabList.addEventListener("click", () => {
-      currentTab = "list";
-      tabList.classList.add("active");
-      tabGallery.classList.remove("active");
-      renderEverything();
-    });
-    tabGallery.addEventListener("click", () => {
-      currentTab = "gallery";
-      tabGallery.classList.add("active");
-      tabList.classList.remove("active");
-      renderEverything();
-    });
-
-    searchInput.addEventListener("input", renderEverything);
-    filterFolder.addEventListener("change", renderEverything);
-
-    btnNewFolder.addEventListener("click", () => {
-      const name = prompt("Nome da nova pasta:");
-      if(!name) return;
-      const clean = name.trim();
+    function addFolder(name){
+      const clean = (name||"").trim();
       if(!clean) return;
-
-      // adiciona no select principal e também no filtro
-      const opt = document.createElement("option");
-      opt.value = clean;
-      opt.textContent = clean;
-      folderSelect.appendChild(opt);
-      folderSelect.value = clean;
-
-      refreshFolderFilterOptions();
-      setStatus(`Pasta "${clean}" criada ✅`);
-    });
-
-    function formatBytes(bytes){
-      if(!bytes || bytes <= 0) return "—";
-      const units = ["B","KB","MB","GB"];
-      let i = 0;
-      let n = bytes;
-      while(n >= 1024 && i < units.length-1){
-        n /= 1024; i++;
-      }
-      return `${n.toFixed(i===0?0:1)} ${units[i]}`;
+      const cur = getFolders();
+      if(cur.includes(clean)) return;
+      const saved = JSON.parse(localStorage.getItem(FOLDERS_KEY) || "[]");
+      saved.push(clean);
+      localStorage.setItem(FOLDERS_KEY, JSON.stringify(saved));
+      renderFolderSelect();
     }
 
-    function applyFilters(){
-      const q = (searchInput.value || "").trim().toLowerCase();
-      const folder = filterFolder.value || "__all__";
+    function renderFolderSelect(){
+      const sel = $("folderSelect");
+      const folders = getFolders();
+      sel.innerHTML = "";
+      folders.forEach(f=>{
+        const opt = document.createElement("option");
+        opt.value = f;
+        opt.textContent = "Pasta: " + f;
+        sel.appendChild(opt);
+      });
+      const optNew = document.createElement("option");
+      optNew.value = "__new__";
+      optNew.textContent = "➕ Nova pasta…";
+      sel.appendChild(optNew);
+    }
 
-      return allFiles.filter(f => {
-        const okName = !q || (f.name || "").toLowerCase().includes(q);
-        const okFolder = (folder === "__all__") || ((f.folder || "Outros") === folder);
-        return okName && okFolder;
+    // ========= AUTH =========
+    $("btnLogin").addEventListener("click", async ()=>{
+      const email = $("email").value.trim();
+      const pass = $("password").value;
+      if(!email || !pass) return alert("Preencha email e senha.");
+      setLoading(true, "Entrando…");
+      try{
+        await auth.signInWithEmailAndPassword(email, pass);
+      }catch(e){
+        alert(e.message);
+      }finally{
+        setLoading(false);
+      }
+    });
+
+    $("btnRegister").addEventListener("click", async ()=>{
+      const email = $("email").value.trim();
+      const pass = $("password").value;
+      if(!email || !pass) return alert("Preencha email e senha.");
+      setLoading(true, "Criando conta…");
+      try{
+        await auth.createUserWithEmailAndPassword(email, pass);
+      }catch(e){
+        alert(e.message);
+      }finally{
+        setLoading(false);
+      }
+    });
+
+    $("btnLogout").addEventListener("click", async ()=>{
+      setLoading(true, "Saindo…");
+      try{
+        await auth.signOut();
+      }finally{
+        setLoading(false);
+      }
+    });
+
+    // ========= FILES: FIRESTORE =========
+    function filesRef(uid){
+      return db.collection("users").doc(uid).collection("files");
+    }
+
+    function listenFiles(uid){
+      return filesRef(uid).orderBy("createdAt","desc").onSnapshot((snap)=>{
+        allFiles = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+        render();
       });
     }
 
-    function isImage(f){
-      return (f.resourceType === "image") || (f.url && /\.(png|jpg|jpeg|webp|gif)$/i.test(f.url));
-    }
-    function isVideo(f){
-      return (f.resourceType === "video") || (f.url && /\.(mp4|webm|mov)$/i.test(f.url));
+    let unsubscribeFiles = null;
+
+    // ========= UPLOAD: CLOUDINARY =========
+    async function uploadToCloudinary(file, folderName){
+      const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+      const form = new FormData();
+      form.append("file", file);
+      form.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+      // cria “pastinha” no Cloudinary (organização)
+      // obs: no Cloudinary isso é só um prefixo
+      if(folderName) form.append("folder", `meu-drive/${folderName}`);
+
+      const res = await fetch(url, { method:"POST", body: form });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data?.error?.message || "Falha no upload");
+      return data; // secure_url, public_id, bytes, format...
     }
 
-    function openPreview(f){
-      modalTitle.textContent = f.name || "Arquivo";
-      modalBody.innerHTML = "";
+    $("btnUpload").addEventListener("click", async ()=>{
+      if(!currentUser) return alert("Você precisa estar logado.");
+      const file = $("fileInput").files?.[0];
+      if(!file) return alert("Escolha um arquivo primeiro.");
 
-      if(isImage(f)){
-        const img = document.createElement("img");
-        img.src = f.url;
-        img.alt = f.name || "imagem";
-        modalBody.appendChild(img);
-      }else if(isVideo(f)){
-        const v = document.createElement("video");
-        v.src = f.url;
-        v.controls = true;
-        v.playsInline = true;
-        modalBody.appendChild(v);
-      }else{
-        modalBody.innerHTML = `
-          <div style="color:var(--muted);font-size:14px;line-height:1.4">
-            Esse tipo de arquivo não tem prévia aqui.<br><br>
-            <a class="btn primary link" style="display:inline-block;" href="${f.url}" target="_blank" rel="noopener">Abrir / Download</a>
-          </div>
-        `;
+      // folder
+      let folder = $("folderSelect").value;
+      if(folder === "__new__"){
+        const name = prompt("Nome da nova pasta:");
+        if(name) addFolder(name);
+        folder = getFolders().includes(name) ? name : getFolders()[0];
+        $("folderSelect").value = folder;
       }
 
-      modal.classList.add("show");
-    }
+      setLoading(true, "Enviando arquivo…");
+      try{
+        const kind = fileKind(file.type);
+        const cloud = await uploadToCloudinary(file, folder);
 
-    modalClose.addEventListener("click", () => modal.classList.remove("show"));
-    modal.addEventListener("click", (e) => {
-      if(e.target === modal) modal.classList.remove("show");
+        await filesRef(currentUser.uid).add({
+          name: file.name,
+          bytes: cloud.bytes || file.size || 0,
+          type: kind,
+          mime: file.type || "",
+          folder: folder || "Outros",
+          url: cloud.secure_url,
+          publicId: cloud.public_id, // importante pro delete depois
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        $("fileInput").value = "";
+      }catch(e){
+        alert("Erro no upload: " + e.message);
+      }finally{
+        setLoading(false);
+      }
     });
 
-    function renderEverything(){
-      const items = applyFilters();
-      countPill.textContent = `${items.length} arquivo(s)`;
+    // ========= RENDER =========
+    function getFiltered(){
+      const q = $("search").value.trim().toLowerCase();
+      const type = $("typeFilter").value;
+      const folderLabel = ($("folderSelect").value || "").replace("Pasta: ","");
+      const folder = $("folderSelect").value === "__new__" ? "" : $("folderSelect").value;
 
-      const showEmpty = items.length === 0;
-      emptyState.style.display = showEmpty ? "block" : "none";
+      return allFiles.filter(f=>{
+        const matchesQ = !q || (f.name || "").toLowerCase().includes(q);
+        const matchesType = (type==="all") || (f.type===type);
+        const matchesFolder = !folder || (f.folder===folder);
+        return matchesQ && matchesType && matchesFolder;
+      });
+    }
 
-      // lista/galeria
-      if(currentTab === "list"){
-        listContainer.style.display = showEmpty ? "none" : "flex";
-        galleryContainer.style.display = "none";
-        renderList(items);
+    function render(){
+      const arr = getFiltered();
+      $("countLabel").textContent = `${arr.length} arquivo(s)`;
+
+      $("emptyState").style.display = arr.length ? "none" : "block";
+
+      if(currentTab==="list"){
+        $("listView").style.display = "grid";
+        $("galleryView").style.display = "none";
+        renderList(arr);
       }else{
-        galleryContainer.style.display = showEmpty ? "none" : "grid";
-        listContainer.style.display = "none";
-        renderGallery(items.filter(isImage)); // galeria só imagens
+        $("listView").style.display = "none";
+        $("galleryView").style.display = "grid";
+        renderGallery(arr);
       }
     }
 
-    function renderList(items){
-      listContainer.innerHTML = "";
-
-      items.forEach(f => {
-        const div = document.createElement("div");
-        div.className = "item";
+    function renderList(arr){
+      const root = $("listView");
+      root.innerHTML = "";
+      arr.forEach(f=>{
+        const row = document.createElement("div");
+        row.className = "item";
 
         const meta = document.createElement("div");
         meta.className = "meta";
 
-        const thumb = document.createElement("div");
-        thumb.className = "thumb";
-        if(isImage(f)){
+        const th = document.createElement("div");
+        th.className = "thumb";
+
+        if(f.type==="image" && f.url){
           const img = document.createElement("img");
           img.src = f.url;
-          img.alt = f.name || "img";
-          thumb.appendChild(img);
+          img.alt = f.name || "imagem";
+          th.appendChild(img);
         }else{
-          thumb.textContent = (f.folder || "ARQ").slice(0,3).toUpperCase();
+          th.textContent = iconText(f.type);
         }
 
-        const title = document.createElement("div");
-        title.className = "title";
-        title.innerHTML = `
-          <b title="${(f.name||"").replaceAll('"','&quot;')}">${f.name || "arquivo"}</b>
-          <small>${f.folder || "Outros"} • ${formatBytes(f.bytes)}</small>
-        `;
+        const txt = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = f.name || "arquivo";
 
-        meta.appendChild(thumb);
-        meta.appendChild(title);
+        const sub = document.createElement("div");
+        sub.className = "sub";
+        sub.textContent = `${f.folder || "—"} • ${bytesToSize(f.bytes)} • ${f.type || "outro"}`;
+
+        txt.appendChild(name);
+        txt.appendChild(sub);
+
+        meta.appendChild(th);
+        meta.appendChild(txt);
 
         const actions = document.createElement("div");
         actions.className = "actions";
 
-        const openBtn = document.createElement("button");
-        openBtn.className = "btn primary";
-        openBtn.textContent = "Abrir";
-        openBtn.addEventListener("click", () => openPreview(f));
+        const open = document.createElement("button");
+        open.className = "linkbtn";
+        open.textContent = "Abrir";
+        open.onclick = ()=> window.open(f.url, "_blank");
 
-        const delBtn = document.createElement("button");
-        delBtn.className = "btn danger";
-        delBtn.textContent = "Excluir";
-        delBtn.addEventListener("click", () => deleteFile(f.id));
+        const del = document.createElement("button");
+        del.className = "linkbtn";
+        del.textContent = "Remover";
+        del.style.borderColor = "rgba(255,77,77,.30)";
+        del.style.background = "rgba(255,77,77,.10)";
+        del.onclick = ()=> removeFile(f);
 
-        actions.appendChild(openBtn);
-        actions.appendChild(delBtn);
+        actions.appendChild(open);
+        actions.appendChild(del);
 
-        div.appendChild(meta);
-        div.appendChild(actions);
-
-        listContainer.appendChild(div);
+        row.appendChild(meta);
+        row.appendChild(actions);
+        root.appendChild(row);
       });
     }
 
-    function renderGallery(items){
-      galleryContainer.innerHTML = "";
-
-      items.forEach(f => {
-        const c = document.createElement("div");
-        c.className = "gcard";
-        c.addEventListener("click", () => openPreview(f));
+    function renderGallery(arr){
+      const root = $("galleryView");
+      root.innerHTML = "";
+      arr.filter(f=>f.type==="image" && f.url).forEach(f=>{
+        const card = document.createElement("div");
+        card.className = "gcard";
 
         const img = document.createElement("img");
         img.src = f.url;
         img.alt = f.name || "imagem";
 
-        const label = document.createElement("div");
-        label.className = "glabel";
-        label.textContent = f.name || "imagem";
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = f.name || "imagem";
 
-        c.appendChild(img);
-        c.appendChild(label);
+        card.appendChild(img);
+        card.appendChild(badge);
 
-        galleryContainer.appendChild(c);
+        card.onclick = ()=> openModal(f);
+        root.appendChild(card);
       });
     }
 
-    /**********************************************************
-     * 10) PWA / SW
-     **********************************************************/
-    window.addEventListener("load", () => {
-      setPWAStatus();
+    // ========= DELETE (por enquanto só remove do Firestore / lista)
+    // Cloudinary delete: precisa endpoint seguro (não dá pra deletar direto do front com segurança)
+    async function removeFile(file){
+      if(!currentUser) return;
+      if(!confirm(`Remover "${file.name}" da lista?`)) return;
 
-      if ("serviceWorker" in navigator){
+      setLoading(true, "Removendo…");
+      try{
+        await filesRef(currentUser.uid).doc(file.id).delete();
+        // (depois a gente faz o delete real do Cloudinary via Cloud Function / server)
+      }catch(e){
+        alert("Erro ao remover: " + e.message);
+      }finally{
+        setLoading(false);
+      }
+    }
+
+    // ========= MODAL =========
+    const modal = $("modal");
+    $("modalClose").onclick = ()=> modal.classList.remove("show");
+    modal.addEventListener("click", (e)=>{ if(e.target===modal) modal.classList.remove("show"); });
+
+    function openModal(f){
+      $("modalName").textContent = f.name || "Arquivo";
+      $("modalSub").textContent = `${f.folder || "—"} • ${bytesToSize(f.bytes)}`;
+      $("modalImg").src = f.url;
+      $("modalOpen").onclick = ()=> window.open(f.url, "_blank");
+      modal.classList.add("show");
+    }
+
+    // ========= TABS / FILTERS =========
+    $("tabList").onclick = ()=>{
+      currentTab = "list";
+      $("tabList").classList.add("active");
+      $("tabGallery").classList.remove("active");
+      render();
+    };
+    $("tabGallery").onclick = ()=>{
+      currentTab = "gallery";
+      $("tabGallery").classList.add("active");
+      $("tabList").classList.remove("active");
+      render();
+    };
+
+    ["search","typeFilter","folderSelect"].forEach(id=>{
+      $(id).addEventListener("input", ()=>{
+        if(id==="folderSelect" && $("folderSelect").value==="__new__"){
+          const name = prompt("Nome da nova pasta:");
+          if(name) addFolder(name);
+          $("folderSelect").value = name ? name : getFolders()[0];
+        }
+        render();
+      });
+      $(id).addEventListener("change", ()=>{
+        if(id==="folderSelect" && $("folderSelect").value==="__new__"){
+          const name = prompt("Nome da nova pasta:");
+          if(name) addFolder(name);
+          $("folderSelect").value = name ? name : getFolders()[0];
+        }
+        render();
+      });
+    });
+
+    // ========= PWA STATUS =========
+    function setPwaStatus(text, ok=false){
+      $("pwaText").textContent = text;
+      $("pwaDot").classList.toggle("ok", !!ok);
+    }
+
+    window.addEventListener("load", ()=>{
+      // registra SW
+      if("serviceWorker" in navigator){
         navigator.serviceWorker.register("./service-worker.js")
-          .catch(err => console.warn("SW erro:", err));
+          .then(()=> setPwaStatus("PWA: pronto ✅", true))
+          .catch(()=> setPwaStatus("PWA: falhou", false));
+      } else {
+        setPwaStatus("PWA: não suportado", false);
       }
     });
 
+    // ========= AUTH STATE (o que estava te prendendo no loader) =========
+    setLoading(true, "Validando sessão…");
+    renderFolderSelect();
+
+    auth.onAuthStateChanged((user)=>{
+      currentUser = user || null;
+
+      if(unsubscribeFiles){
+        unsubscribeFiles();
+        unsubscribeFiles = null;
+      }
+
+      if(!user){
+        $("userLabel").textContent = "Deslogado";
+        showView("login");
+        setLoading(false);
+        return;
+      }
+
+      $("userLabel").textContent = "Logado: " + (user.email || "usuário");
+      showView("app");
+
+      // começa a ouvir arquivos
+      unsubscribeFiles = listenFiles(user.uid);
+
+      // tira o loader (IMPORTANTÍSSIMO)
+      setLoading(false);
+    });
+
+  </script>
+
+  <script>
+    // Evita cache velho do PWA no primeiro acesso
+    // (não é obrigatório, mas ajuda quando troca muita coisa)
   </script>
 </body>
 </html>
-
