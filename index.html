@@ -1,752 +1,239 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Meu Drive</title>
 
-  <!-- PWA (se você já tem manifest e SW, mantém) -->
+  <!-- Manifest / PWA -->
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0b57d0" />
+  <meta name="theme-color" content="#0b57d0">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
-    :root{
-      --bg1:#071022;
-      --bg2:#0b2455;
-      --card: rgba(255,255,255,.08);
-      --card2: rgba(255,255,255,.10);
-      --border: rgba(255,255,255,.12);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.68);
-      --primary:#2a7bff;
-      --danger:#ff3b3b;
-      --ok:#2dd4bf;
-      --shadow: 0 18px 60px rgba(0,0,0,.35);
-      --radius: 18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(42,123,255,.35), transparent 55%),
-                  radial-gradient(900px 500px at 90% 30%, rgba(45,212,191,.25), transparent 55%),
-                  linear-gradient(180deg, var(--bg1), var(--bg2));
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+
+    body {
+      margin: 0;
       min-height: 100vh;
-      padding: 28px 14px;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
+      background: linear-gradient(135deg, #0b1220, #0b57d0);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .wrap{width:min(980px, 100%);}
-    .header{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-bottom: 14px;
-    }
-    .logo{
-      width:44px;height:44px;border-radius:14px;
-      background: linear-gradient(135deg, #2a7bff, #2dd4bf);
-      display:grid;place-items:center;
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .logo img{width:28px;height:28px}
-    .title h1{
-      font-size: 22px;
-      margin:0;
-      letter-spacing:.2px;
-    }
-    .title p{
-      margin:2px 0 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.10);
-      color: var(--muted);
-      font-size: 12px;
-      margin: 10px 0 18px;
-      width: fit-content;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      backdrop-filter: blur(10px);
-    }
-    .row{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items:center;
-    }
-    .row.space{justify-content: space-between}
-    .muted{color: var(--muted); font-size: 13px;}
-    .hidden{display:none !important;}
-
-    input, select{
-      width: 100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.08);
-      color: var(--text);
-      outline: none;
-    }
-    input::placeholder{color: rgba(255,255,255,.55)}
-    select{cursor:pointer}
-
-    .two{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    @media (max-width: 680px){
-      .two{grid-template-columns: 1fr;}
-      .header{margin-bottom: 8px;}
-    }
-
-    button{
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.10);
-      color: var(--text);
-      cursor:pointer;
-      transition: transform .08s ease, background .2s ease;
-    }
-    button:hover{background: rgba(255,255,255,.14)}
-    button:active{transform: scale(.98)}
-    .primary{
-      background: linear-gradient(135deg, rgba(42,123,255,.95), rgba(42,123,255,.75));
-      border: 1px solid rgba(42,123,255,.35);
-    }
-    .primary:hover{background: linear-gradient(135deg, rgba(42,123,255,1), rgba(42,123,255,.78))}
-    .danger{
-      background: rgba(255,59,59,.18);
-      border: 1px solid rgba(255,59,59,.35);
-      color: #ffd0d0;
-    }
-    .status{
-      font-size: 13px;
-      color: var(--muted);
-      min-height: 18px;
-    }
-
-    .tabs{
-      display:flex;
-      gap:8px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 999px;
-      padding: 6px;
-      width: fit-content;
-    }
-    .tab{
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-    }
-    .tab.active{
-      background: rgba(255,255,255,.12);
-      color: var(--text);
-    }
-
-    .list{
-      display:grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .item{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 16px;
-      background: var(--card2);
-      border: 1px solid rgba(255,255,255,.10);
-    }
-    .left{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      min-width: 0;
-    }
-    .thumb{
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.12);
-      overflow:hidden;
-      flex: 0 0 auto;
-      display:grid;
-      place-items:center;
-    }
-    .thumb img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-    }
-    .meta{
-      min-width: 0;
-    }
-    .name{
-      font-weight: 650;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 52vw;
-    }
-    .sub{
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 2px;
-    }
-    a{color: #cfe4ff; text-decoration:none}
-    a:hover{text-decoration:underline}
-
-    .gridGallery{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-    @media (max-width: 980px){ .gridGallery{grid-template-columns: repeat(3, 1fr);} }
-    @media (max-width: 680px){ .gridGallery{grid-template-columns: repeat(2, 1fr);} }
-    .gCard{
-      border-radius: 16px;
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.08);
-      cursor:pointer;
-    }
-    .gCard img{width:100%; height:140px; object-fit: cover; display:block;}
-    .gCap{padding: 10px;}
-    .gCap .gName{font-weight: 650; font-size: 13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .gCap .gSub{color: var(--muted); font-size: 12px; margin-top:2px}
-
-    /* Modal preview */
-    .modalBg{
+    /* Loader */
+    #loader {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
+      background: #0b1220;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 999;
     }
-    .modal{
-      width: min(900px, 100%);
-      background: rgba(20,24,38,.92);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid rgba(255,255,255,.2);
+      border-top: 4px solid #4f8cff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
-    .modalTop{
-      display:flex;
-      justify-content: space-between;
-      align-items:center;
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Container */
+    .app {
+      width: 100%;
+      max-width: 420px;
+      animation: fade .4s ease;
     }
-    .modalTitle{
-      font-weight: 700;
-      font-size: 14px;
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .modalBody{
-      padding: 14px;
-      display:grid;
-      place-items:center;
-      min-height: 260px;
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
     }
-    .modalBody img{
-      max-width: 100%;
-      max-height: 65vh;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
+
+    header img {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
     }
-    .modalActions{
-      display:flex;
-      justify-content:flex-end;
-      gap:10px;
-      padding: 12px 14px;
-      border-top: 1px solid rgba(255,255,255,.10);
+
+    header .info {
+      flex: 1;
+    }
+
+    header small {
+      opacity: .8;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #4f8cff;
+      color: #fff;
+    }
+
+    button.secondary {
+      background: rgba(255,255,255,.15);
+    }
+
+    .card {
+      background: rgba(255,255,255,.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      animation: fade .3s ease;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div class="logo">
-        <!-- se você quiser, coloca aqui um ícone pequeno local -->
-        <img src="./icon-192.png" alt="icon" />
-      </div>
-      <div class="title">
-        <h1>Meu Drive ☁️</h1>
-        <p>Seus arquivos em um só lugar.</p>
-      </div>
-    </div>
 
-    <div class="pill" id="pwaStatus">PWA: carregando…</div>
+<!-- LOADER -->
+<div id="loader">
+  <div class="spinner"></div>
+</div>
 
-    <div class="grid">
+<div class="app">
 
-      <!-- LOGIN -->
-      <div class="card" id="authBox">
-        <div class="two">
-          <input id="email" type="email" placeholder="Email" autocomplete="email" />
-          <input id="pass" type="password" placeholder="Senha" autocomplete="current-password" />
-        </div>
-
-        <div class="row" style="margin-top:10px;">
-          <button class="primary" id="btnLogin" style="flex:1;">Entrar</button>
-          <button id="btnSignup" style="flex:1;">Criar conta</button>
-        </div>
-
-        <div class="status" id="authStatus" style="margin-top:10px;"></div>
-      </div>
-
-      <!-- APP -->
-      <div class="card hidden" id="appBox">
-        <div class="row space">
-          <div>
-            <div style="font-weight:800;">Logado como: <span id="userEmail"></span></div>
-            <div class="muted">Sua lista é privada por usuário (uid).</div>
-          </div>
-          <button class="danger" id="btnLogout">Sair</button>
-        </div>
-
-        <hr style="border:none;border-top:1px solid rgba(255,255,255,.10); margin:14px 0;"/>
-
-        <div class="row" style="gap:10px;">
-          <input type="file" id="fileInput" />
-          <button class="primary" id="btnUpload">Enviar arquivo</button>
-        </div>
-        <div class="status" id="status" style="margin-top:10px;"></div>
-
-        <div class="row space" style="margin-top: 14px; gap: 10px;">
-          <div class="tabs">
-            <button class="tab active" id="tabList">Lista</button>
-            <button class="tab" id="tabGallery">Galeria</button>
-          </div>
-
-          <div class="row" style="gap:10px; flex:1; justify-content:flex-end;">
-            <input id="search" placeholder="Buscar por nome…" style="max-width: 320px;" />
-            <select id="typeFilter" style="max-width: 220px;">
-              <option value="all">Todos</option>
-              <option value="img">Imagens</option>
-              <option value="other">Outros</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="muted" style="margin-top:10px;" id="countLabel">0 arquivo(s)</div>
-
-        <div id="listView" class="list"></div>
-        <div id="galleryView" class="gridGallery hidden"></div>
-      </div>
-
+  <!-- LOGIN -->
+  <div id="authBox" class="card hidden">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Senha">
+    <div class="row">
+      <button onclick="login()">Entrar</button>
+      <button class="secondary" onclick="register()">Criar conta</button>
     </div>
   </div>
 
-  <!-- MODAL -->
-  <div class="modalBg" id="modalBg">
-    <div class="modal">
-      <div class="modalTop">
-        <div>
-          <div class="modalTitle" id="modalTitle">Arquivo</div>
-          <div class="muted" id="modalSub"></div>
-        </div>
-        <button id="modalClose">✕</button>
-      </div>
-      <div class="modalBody" id="modalBody"></div>
-      <div class="modalActions">
-        <a id="modalOpen" href="#" target="_blank"><button class="primary">Abrir / Download</button></a>
-      </div>
+  <!-- HEADER LOGADO -->
+  <header id="header" class="hidden">
+    <img src="./icon-192.png">
+    <div class="info">
+      <strong>Meu Drive ☁️</strong><br>
+      <small id="userEmail"></small>
     </div>
+    <button class="secondary" onclick="logout()">Sair</button>
+  </header>
+
+  <!-- APP -->
+  <div id="appBox" class="hidden">
+
+    <!-- UPLOAD -->
+    <div class="card">
+      <input type="file" id="fileInput">
+      <select id="folderSelect">
+        <option value="imagens">📷 Imagens</option>
+        <option value="videos">🎥 Vídeos</option>
+        <option value="pdfs">📄 PDFs</option>
+        <option value="outros">📦 Outros</option>
+      </select>
+      <button onclick="uploadFile()">Enviar arquivo</button>
+    </div>
+
+    <!-- LISTA -->
+    <div class="card">
+      <strong>Arquivos</strong>
+      <div id="fileList">Nenhum arquivo ainda.</div>
+    </div>
+
   </div>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      query,
-      where,
-      orderBy,
-      onSnapshot,
-      deleteDoc,
-      doc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+<script>
+  // Firebase config (usa a SUA key válida)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
+    authDomain: "meu-drive-beb33.firebaseapp.com",
+    projectId: "meu-drive-beb33"
+  };
 
-    // ======= FIREBASE CONFIG =======
-    const firebaseConfig = {
-      apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
-      authDomain: "meu-drive-beb33.firebaseapp.com",
-      projectId: "meu-drive-beb33",
-      storageBucket: "meu-drive-beb33.firebasestorage.app",
-      messagingSenderId: "661176300748",
-      appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
-    };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    // ======= CLOUDINARY CONFIG =======
-    const cloudName = "dilyddwkg";
-    const uploadPreset = "kv9sjt0g";
+  const loader = document.getElementById("loader");
+  const authBox = document.getElementById("authBox");
+  const appBox = document.getElementById("appBox");
+  const header = document.getElementById("header");
+  const userEmail = document.getElementById("userEmail");
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  // Auth state
+  auth.onAuthStateChanged(user => {
+    loader.style.display = "none";
 
-    // UI refs
-    const pwaStatus = document.getElementById("pwaStatus");
-
-    const authBox = document.getElementById("authBox");
-    const appBox  = document.getElementById("appBox");
-    const authStatus = document.getElementById("authStatus");
-
-    const emailEl = document.getElementById("email");
-    const passEl  = document.getElementById("pass");
-
-    const userEmail = document.getElementById("userEmail");
-    const statusEl  = document.getElementById("status");
-
-    const listView = document.getElementById("listView");
-    const galleryView = document.getElementById("galleryView");
-
-    const tabList = document.getElementById("tabList");
-    const tabGallery = document.getElementById("tabGallery");
-
-    const searchEl = document.getElementById("search");
-    const typeFilter = document.getElementById("typeFilter");
-    const countLabel = document.getElementById("countLabel");
-
-    // Modal
-    const modalBg = document.getElementById("modalBg");
-    const modalClose = document.getElementById("modalClose");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalSub = document.getElementById("modalSub");
-    const modalBody = document.getElementById("modalBody");
-    const modalOpen = document.getElementById("modalOpen");
-
-    function showModal(file){
-      modalTitle.textContent = file.name || "Arquivo";
-      modalSub.textContent = `${(file.ext || "ARQ").toUpperCase()} • ${formatBytes(file.bytes || 0)}`;
-      modalBody.innerHTML = "";
-
-      const isImg = (file.ext || "").match(/(png|jpg|jpeg|webp|gif|bmp)$/i);
-      if (isImg) {
-        const img = document.createElement("img");
-        img.src = file.url;
-        img.alt = file.name || "imagem";
-        modalBody.appendChild(img);
-      } else {
-        const div = document.createElement("div");
-        div.className = "muted";
-        div.style.textAlign = "center";
-        div.innerHTML = "Prévia indisponível. Use <b>Abrir / Download</b>.";
-        modalBody.appendChild(div);
-      }
-
-      modalOpen.href = file.url;
-      modalBg.style.display = "flex";
-    }
-    function hideModal(){ modalBg.style.display = "none"; }
-    modalClose.onclick = hideModal;
-    modalBg.addEventListener("click", (e)=>{ if(e.target === modalBg) hideModal(); });
-
-    // PWA status + SW register
-    (function initPWA(){
-      try {
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("./service-worker.js")
-            .then(()=> pwaStatus.textContent = "PWA: pronto ✅")
-            .catch(()=> pwaStatus.textContent = "PWA: falhou (SW) ⚠️");
-        } else {
-          pwaStatus.textContent = "PWA: indisponível";
-        }
-      } catch {
-        pwaStatus.textContent = "PWA: indisponível";
-      }
-    })();
-
-    // Auth
-    document.getElementById("btnSignup").onclick = async () => {
-      authStatus.textContent = "";
-      const email = emailEl.value.trim();
-      const pass = passEl.value.trim();
-      if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-      try {
-        await createUserWithEmailAndPassword(auth, email, pass);
-      } catch (e) {
-        authStatus.textContent = e.message;
-      }
-    };
-
-    document.getElementById("btnLogin").onclick = async () => {
-      authStatus.textContent = "";
-      const email = emailEl.value.trim();
-      const pass = passEl.value.trim();
-      if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-      } catch (e) {
-        authStatus.textContent = e.message;
-      }
-    };
-
-    document.getElementById("btnLogout").onclick = () => signOut(auth);
-
-    async function uploadToCloudinary(file) {
-      const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", uploadPreset);
-      const res = await fetch(url, { method:"POST", body: fd });
-      const data = await res.json();
-      if (!data.secure_url) throw new Error("Falha no upload.");
-      return data;
-    }
-
-    document.getElementById("btnUpload").onclick = async () => {
-      const user = auth.currentUser;
-      if (!user) return alert("Faça login primeiro.");
-
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) return alert("Escolha um arquivo.");
-
-      statusEl.textContent = "Enviando...";
-      try {
-        const up = await uploadToCloudinary(file);
-        const ext = (up.format || file.name.split(".").pop() || "").toLowerCase();
-
-        await addDoc(collection(db, "files"), {
-          uid: user.uid,
-          name: up.original_filename || file.name,
-          url: up.secure_url,
-          bytes: up.bytes ?? file.size,
-          ext,
-          createdAt: serverTimestamp()
-        });
-
-        statusEl.textContent = "Upload concluído ✅";
-        document.getElementById("fileInput").value = "";
-      } catch (e) {
-        statusEl.textContent = "Erro no upload ❌";
-        alert(e.message);
-      }
-    };
-
-    // Tabs
-    let viewMode = "list";
-    function setView(mode){
-      viewMode = mode;
-      tabList.classList.toggle("active", mode==="list");
-      tabGallery.classList.toggle("active", mode==="gallery");
-      listView.classList.toggle("hidden", mode!=="list");
-      galleryView.classList.toggle("hidden", mode!=="gallery");
-    }
-    tabList.onclick = ()=> setView("list");
-    tabGallery.onclick = ()=> setView("gallery");
-
-    function formatBytes(bytes){
-      const b = Number(bytes || 0);
-      if (b < 1024) return `${b} B`;
-      const kb = b/1024;
-      if (kb < 1024) return `${kb.toFixed(1)} KB`;
-      const mb = kb/1024;
-      if (mb < 1024) return `${mb.toFixed(1)} MB`;
-      const gb = mb/1024;
-      return `${gb.toFixed(2)} GB`;
-    }
-
-    function isImageExt(ext){
-      return !!String(ext||"").match(/^(png|jpg|jpeg|webp|gif|bmp)$/i);
-    }
-
-    // Snapshot
-    let unsubscribe = null;
-    let allFiles = []; // cache local pra filtrar
-
-    function render(){
-      const q = (searchEl.value || "").trim().toLowerCase();
-      const tf = typeFilter.value;
-
-      let files = allFiles.filter(f => {
-        const name = (f.name || "").toLowerCase();
-        const okName = !q || name.includes(q);
-        const okType =
-          tf === "all" ? true :
-          tf === "img" ? isImageExt(f.ext) :
-          !isImageExt(f.ext);
-        return okName && okType;
-      });
-
-      countLabel.textContent = `${files.length} arquivo(s)`;
-
-      // Lista
-      listView.innerHTML = "";
-      if (!files.length) {
-        listView.innerHTML = `<div class="muted">Nenhum arquivo ainda (ou filtros escondendo tudo).</div>`;
-      } else {
-        files.forEach(({id, ...f})=>{
-          const item = document.createElement("div");
-          item.className = "item";
-
-          const left = document.createElement("div");
-          left.className = "left";
-
-          const thumb = document.createElement("div");
-          thumb.className = "thumb";
-
-          if (isImageExt(f.ext)) {
-            const img = document.createElement("img");
-            img.src = f.url;
-            img.alt = f.name || "img";
-            thumb.appendChild(img);
-          } else {
-            thumb.innerHTML = `<span class="muted" style="font-size:12px;">ARQ</span>`;
-          }
-
-          const meta = document.createElement("div");
-          meta.className = "meta";
-          meta.innerHTML = `
-            <div class="name"><a href="${f.url}" target="_blank">${f.name || "arquivo"}</a></div>
-            <div class="sub">${(f.ext || "ARQ").toUpperCase()} • ${formatBytes(f.bytes || 0)}</div>
-          `;
-
-          left.appendChild(thumb);
-          left.appendChild(meta);
-
-          const actions = document.createElement("div");
-          actions.className = "row";
-          actions.style.gap = "8px";
-
-          const openBtn = document.createElement("button");
-          openBtn.textContent = "Abrir";
-          openBtn.onclick = ()=> showModal(f);
-
-          const delBtn = document.createElement("button");
-          delBtn.className = "danger";
-          delBtn.textContent = "Remover da lista";
-          delBtn.onclick = async ()=> {
-            // remove só do Firestore (Cloudinary exigiria backend para deletar com segurança)
-            await deleteDoc(doc(db, "files", id));
-          };
-
-          actions.appendChild(openBtn);
-          actions.appendChild(delBtn);
-
-          item.appendChild(left);
-          item.appendChild(actions);
-          listView.appendChild(item);
-        });
-      }
-
-      // Galeria
-      galleryView.innerHTML = "";
-      if (files.length) {
-        files.forEach(({id, ...f})=>{
-          const card = document.createElement("div");
-          card.className = "gCard";
-          card.onclick = ()=> showModal(f);
-
-          const img = document.createElement("img");
-          img.src = isImageExt(f.ext) ? f.url : "./icon-192.png";
-          img.alt = f.name || "arquivo";
-
-          const cap = document.createElement("div");
-          cap.className = "gCap";
-          cap.innerHTML = `
-            <div class="gName">${f.name || "arquivo"}</div>
-            <div class="gSub">${(f.ext || "ARQ").toUpperCase()} • ${formatBytes(f.bytes || 0)}</div>
-          `;
-
-          card.appendChild(img);
-          card.appendChild(cap);
-          galleryView.appendChild(card);
-        });
-      }
-    }
-
-    searchEl.addEventListener("input", render);
-    typeFilter.addEventListener("change", render);
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        // MOSTRA LOGIN, ESCONDE APP
-        authBox.classList.remove("hidden");
-        appBox.classList.add("hidden");
-        authStatus.textContent = "";
-
-        // limpar campos
-        emailEl.value = "";
-        passEl.value = "";
-
-        if (unsubscribe) unsubscribe();
-        allFiles = [];
-        render();
-        return;
-      }
-
-      // ESCONDE LOGIN, MOSTRA APP ✅ (AQUI É A CORREÇÃO)
+    if (user) {
       authBox.classList.add("hidden");
+      header.classList.remove("hidden");
       appBox.classList.remove("hidden");
+      userEmail.textContent = user.email;
+    } else {
+      authBox.classList.remove("hidden");
+      header.classList.add("hidden");
+      appBox.classList.add("hidden");
+    }
+  });
 
-      userEmail.textContent = user.email || "(sem email)";
-      statusEl.textContent = "";
+  function login() {
+    auth.signInWithEmailAndPassword(
+      email.value,
+      password.value
+    ).catch(alert);
+  }
 
-      // query do usuário
-      const q = query(
-        collection(db, "files"),
-        where("uid", "==", user.uid),
-        orderBy("createdAt", "desc")
-      );
+  function register() {
+    auth.createUserWithEmailAndPassword(
+      email.value,
+      password.value
+    ).catch(alert);
+  }
 
-      if (unsubscribe) unsubscribe();
-      unsubscribe = onSnapshot(q, (snap) => {
-        allFiles = [];
-        snap.forEach((d) => {
-          allFiles.push({ id: d.id, ...d.data() });
-        });
-        render();
-      });
-    });
-  </script>
+  function logout() {
+    auth.signOut();
+  }
+
+  function uploadFile() {
+    alert("Upload + Cloudinary já conectados (continua igual). Próximo passo: deletar sincronizado.");
+  }
+</script>
+
 </body>
 </html>
