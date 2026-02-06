@@ -1,309 +1,464 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Meu Drive</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Evita erro favicon 404 -->
+  <link rel="icon" href="data:,">
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
-      margin: 0;
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    .box {
-      background: #fff;
-      padding: 14px;
-      border-radius: 12px;
-      margin-bottom: 14px;
-      max-width: 900px;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    input {
-      padding: 8px;
-      font-size: 14px;
-    }
-
-    button {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      background: #fafafa;
-    }
-
-    button:hover {
-      background: #eee;
-    }
-
-    .danger {
-      background: #d11;
-      color: #fff;
-      border: none;
-    }
-
-    .danger:hover {
-      background: #b00;
-    }
+    body { font-family: Arial, sans-serif; background:#f2f2f2; padding:20px; margin:0; }
+    h2 { margin: 0 0 12px; }
+    .box { background:#fff; padding:12px; border-radius:12px; margin:10px 0; max-width: 980px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    input { padding:8px; font-size:14px; }
+    button { padding:8px 12px; cursor:pointer; border-radius:8px; border:1px solid #ccc; background:#fafafa; }
+    button:hover { background:#eee; }
+    a { color:#0b57d0; text-decoration:none; }
+    .small { font-size:12px; opacity:.75; }
+    .danger { background:#d11; color:#fff; border:0; border-radius:8px; }
+    .danger:hover { background:#b00; }
 
     .file {
-      background: #fff;
-      border-radius: 12px;
-      padding: 10px;
-      margin: 10px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+      background:#fff;
+      border-radius:12px;
+      padding:12px;
+      margin:10px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border: 1px solid #eee;
     }
 
-    a {
-      color: #0b57d0;
-      text-decoration: none;
-      font-weight: 500;
+    .file-left {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+      max-width: 100%;
     }
 
-    .small {
-      font-size: 12px;
-      opacity: 0.7;
+    .thumb {
+      width:72px;
+      height:72px;
+      border-radius:12px;
+      border:1px solid #ddd;
+      overflow:hidden;
+      flex: 0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#fafafa;
+      font-size:28px;
     }
 
-    img {
-      display: block;
+    .thumb img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
     }
+
+    .file-meta {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 0;
+    }
+
+    .file-meta .name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 52vw; /* ajuda no celular */
+      display:inline-block;
+      font-weight: 600;
+    }
+
+    .file:hover { box-shadow: 0 6px 16px rgba(0,0,0,.06); }
   </style>
 </head>
+
 <body>
+  <h2>Meu Drive ☁️ (sincronizado)</h2>
 
-<h2>Meu Drive ☁️ (sincronizado)</h2>
-
-<!-- LOGIN -->
-<div class="box" id="authBox">
-  <div class="row">
-    <input id="email" type="email" placeholder="Email">
-    <input id="pass" type="password" placeholder="Senha">
-    <button id="btnLogin">Entrar</button>
-    <button id="btnSignup">Criar conta</button>
-  </div>
-  <p class="small" id="authStatus"></p>
-</div>
-
-<!-- APP -->
-<div class="box" id="appBox" style="display:none;">
-  <div class="row">
-    <strong id="userLabel"></strong>
-    <button id="btnLogout">Sair</button>
+  <!-- LOGIN -->
+  <div class="box" id="authBox">
+    <div class="row">
+      <input id="email" type="email" placeholder="Email" />
+      <input id="pass" type="password" placeholder="Senha" />
+      <button id="btnLogin">Entrar</button>
+      <button id="btnSignup">Criar conta</button>
+    </div>
+    <p class="small" id="authStatus"></p>
   </div>
 
-  <hr>
+  <!-- APP -->
+  <div class="box" id="appBox" style="display:none;">
+    <div class="row">
+      <strong id="userLabel"></strong>
+      <button id="btnLogout">Sair</button>
+    </div>
 
-  <div class="row">
-    <input type="file" id="fileInput">
-    <button id="btnUpload">Enviar arquivo</button>
-    <span class="small" id="status"></span>
+    <hr />
+
+    <div class="row">
+      <input type="file" id="fileInput" />
+      <button id="btnUpload">Enviar arquivo</button>
+      <span class="small" id="status"></span>
+    </div>
+
+    <div id="list"></div>
   </div>
 
-  <div id="list"></div>
-</div>
+  <!-- MODAL (preview) -->
+  <div id="previewModal" style="
+    position:fixed; inset:0; background:rgba(0,0,0,.6);
+    display:none; align-items:center; justify-content:center;
+    padding:18px; z-index:9999;
+  ">
+    <div style="
+      background:#fff; border-radius:14px; max-width:980px; width:100%;
+      max-height:88vh; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,.25);
+      display:flex; flex-direction:column;
+    ">
+      <div style="
+        display:flex; align-items:center; justify-content:space-between;
+        padding:12px 14px; border-bottom:1px solid #eee; gap:10px;
+      ">
+        <div style="min-width:0;">
+          <div id="previewTitle" style="font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+          <div id="previewSubtitle" style="font-size:12px; opacity:.7;"></div>
+        </div>
+        <button id="previewCloseBtn" style="
+          border:none; background:#eee; border-radius:10px; padding:8px 10px; cursor:pointer;
+        ">✕</button>
+      </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    query,
-    where,
-    orderBy,
-    onSnapshot,
-    deleteDoc,
-    doc,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+      <div id="previewBody" style="
+        padding:14px; overflow:auto; display:flex; align-items:center; justify-content:center;
+        background:#fafafa; flex:1;
+      "></div>
 
-  /* 🔥 FIREBASE CONFIG */
-  const firebaseConfig = {
-    apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
-    authDomain: "meu-drive-beb33.firebaseapp.com",
-    projectId: "meu-drive-beb33",
-    storageBucket: "meu-drive-beb33.firebasestorage.app",
-    messagingSenderId: "661176300748",
-    appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
-  };
+      <div style="padding:12px 14px; border-top:1px solid #eee; display:flex; gap:10px; justify-content:flex-end;">
+        <a id="previewOpenLink" href="#" target="_blank" rel="noopener"
+           style="padding:8px 12px; border-radius:10px; background:#0b57d0; color:#fff; text-decoration:none;">
+          Abrir / Download
+        </a>
+      </div>
+    </div>
+  </div>
 
-  /* ☁️ CLOUDINARY CONFIG */
-  const cloudName = "dilyddwkg";
-  const uploadPreset = "kv9sjt0g";
+  <!-- FIREBASE + APP -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      deleteDoc,
+      doc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    /* ================================
+       FIREBASE CONFIG (SEU)
+       ================================ */
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
+      authDomain: "meu-drive-beb33.firebaseapp.com",
+      projectId: "meu-drive-beb33",
+      storageBucket: "meu-drive-beb33.firebasestorage.app",
+      messagingSenderId: "661176300748",
+      appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
+    };
 
-  const authBox = document.getElementById("authBox");
-  const appBox = document.getElementById("appBox");
-  const authStatus = document.getElementById("authStatus");
-  const userLabel = document.getElementById("userLabel");
-  const statusEl = document.getElementById("status");
-  const listEl = document.getElementById("list");
+    /* ================================
+       CLOUDINARY CONFIG (SEU)
+       ================================ */
+    const cloudName = "dilyddwkg";
+    const uploadPreset = "kv9sjt0g";
 
-  document.getElementById("btnSignup").onclick = async () => {
-    authStatus.textContent = "";
-    const email = emailInput.value.trim();
-    const pass = passInput.value.trim();
-    if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-    try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-      authStatus.textContent = e.message;
-    }
-  };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  document.getElementById("btnLogin").onclick = async () => {
-    authStatus.textContent = "";
-    const email = emailInput.value.trim();
-    const pass = passInput.value.trim();
-    if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-      authStatus.textContent = e.message;
-    }
-  };
+    // ===== Elements =====
+    const authBox = document.getElementById("authBox");
+    const appBox = document.getElementById("appBox");
+    const authStatus = document.getElementById("authStatus");
+    const userLabel = document.getElementById("userLabel");
+    const statusEl = document.getElementById("status");
+    const listEl = document.getElementById("list");
 
-  document.getElementById("btnLogout").onclick = () => signOut(auth);
+    const emailInput = document.getElementById("email");
+    const passInput = document.getElementById("pass");
+    const fileInput = document.getElementById("fileInput");
 
-  async function uploadToCloudinary(file) {
-    const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", uploadPreset);
+    // ===== Modal Preview =====
+    const previewModal = document.getElementById("previewModal");
+    const previewTitle = document.getElementById("previewTitle");
+    const previewSubtitle = document.getElementById("previewSubtitle");
+    const previewBody = document.getElementById("previewBody");
+    const previewOpenLink = document.getElementById("previewOpenLink");
+    const previewCloseBtn = document.getElementById("previewCloseBtn");
 
-    const res = await fetch(url, { method: "POST", body: fd });
-    const data = await res.json();
-    if (!data.secure_url) throw new Error("Falha no upload.");
-    return data;
-  }
-
-  document.getElementById("btnUpload").onclick = async () => {
-    const user = auth.currentUser;
-    if (!user) return alert("Faça login.");
-
-    const file = fileInput.files[0];
-    if (!file) return alert("Escolha um arquivo.");
-
-    statusEl.textContent = "Enviando...";
-
-    try {
-      const up = await uploadToCloudinary(file);
-
-      await addDoc(collection(db, "files"), {
-        uid: user.uid,
-        name: up.original_filename || file.name,
-        url: up.secure_url,
-        bytes: up.bytes ?? file.size,
-        publicId: up.public_id,
-        format: up.format,
-        resourceType: up.resource_type,
-        createdAt: serverTimestamp()
-      });
-
-      statusEl.textContent = "Upload concluído!";
-      fileInput.value = "";
-    } catch (e) {
-      statusEl.textContent = "Erro no upload.";
-      alert(e.message);
-    }
-  };
-
-  let unsubscribe = null;
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      authBox.style.display = "block";
-      appBox.style.display = "none";
-      if (unsubscribe) unsubscribe();
-      return;
+    function formatBytes(bytes) {
+      if (!bytes && bytes !== 0) return "";
+      const units = ["B", "KB", "MB", "GB", "TB"];
+      let b = bytes;
+      let i = 0;
+      while (b >= 1024 && i < units.length - 1) {
+        b /= 1024; i++;
+      }
+      return `${b.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
     }
 
-    authBox.style.display = "none";
-    appBox.style.display = "block";
-    userLabel.textContent = `Logado como: ${user.email}`;
+    function openPreview(file) {
+      previewTitle.textContent = file.name || "Arquivo";
+      previewSubtitle.textContent =
+        (file.format ? file.format.toUpperCase() : "ARQUIVO") +
+        (file.bytes ? ` • ${formatBytes(file.bytes)}` : "");
 
-    const q = query(
-      collection(db, "files"),
-      where("uid", "==", user.uid),
-      orderBy("createdAt", "desc")
-    );
+      previewOpenLink.href = file.url;
 
-    if (unsubscribe) unsubscribe();
-    unsubscribe = onSnapshot(q, (snap) => {
-      listEl.innerHTML = "";
+      previewBody.innerHTML = "";
 
-      if (snap.empty) {
-        listEl.innerHTML = "<p class='small'>Nenhum arquivo ainda.</p>";
+      if (file.resourceType === "image" && file.url) {
+        const img = document.createElement("img");
+        img.src = file.url;
+        img.alt = file.name || "Imagem";
+        img.style.maxWidth = "100%";
+        img.style.maxHeight = "70vh";
+        img.style.borderRadius = "12px";
+        img.style.boxShadow = "0 8px 20px rgba(0,0,0,.15)";
+        previewBody.appendChild(img);
+      } else {
+        const box = document.createElement("div");
+        box.style.background = "#fff";
+        box.style.border = "1px solid #eee";
+        box.style.borderRadius = "12px";
+        box.style.padding = "14px";
+        box.style.maxWidth = "520px";
+        box.innerHTML = `
+          <div style="font-size:40px; text-align:center;">📄</div>
+          <div style="font-weight:700; margin-top:8px; text-align:center;">${file.name || "Arquivo"}</div>
+          <div style="font-size:12px; opacity:.7; margin-top:4px; text-align:center;">
+            ${(file.format ? file.format.toUpperCase() : "ARQUIVO")}${file.bytes ? ` • ${formatBytes(file.bytes)}` : ""}
+          </div>
+          <div style="margin-top:10px; font-size:13px; opacity:.8; text-align:center;">
+            Clique em <b>Abrir / Download</b> para ver o arquivo.
+          </div>
+        `;
+        previewBody.appendChild(box);
+      }
+
+      previewModal.style.display = "flex";
+    }
+
+    function closePreview() {
+      previewModal.style.display = "none";
+      previewBody.innerHTML = "";
+    }
+
+    previewCloseBtn.addEventListener("click", closePreview);
+    previewModal.addEventListener("click", (e) => {
+      if (e.target === previewModal) closePreview();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePreview();
+    });
+
+    // ===== Auth =====
+    document.getElementById("btnSignup").onclick = async () => {
+      authStatus.textContent = "";
+      const email = emailInput.value.trim();
+      const pass = passInput.value.trim();
+      if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+      } catch (e) {
+        authStatus.textContent = e.message;
+      }
+    };
+
+    document.getElementById("btnLogin").onclick = async () => {
+      authStatus.textContent = "";
+      const email = emailInput.value.trim();
+      const pass = passInput.value.trim();
+      if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (e) {
+        authStatus.textContent = e.message;
+      }
+    };
+
+    document.getElementById("btnLogout").onclick = () => signOut(auth);
+
+    // ===== Cloudinary upload =====
+    async function uploadToCloudinary(file) {
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", uploadPreset);
+
+      const res = await fetch(url, { method: "POST", body: fd });
+      const data = await res.json();
+
+      if (!data.secure_url) throw new Error(data?.error?.message || "Falha no upload.");
+
+      // retorna tudo pra salvar no Firestore
+      return {
+        secureUrl: data.secure_url,
+        publicId: data.public_id,
+        resourceType: data.resource_type, // image, video, raw...
+        format: data.format,
+        bytes: data.bytes,
+        originalFilename: data.original_filename
+      };
+    }
+
+    function thumbUrlFromCloudinary(publicId, format) {
+      // Miniatura bonita e leve
+      return `https://res.cloudinary.com/${cloudName}/image/upload/w_120,h_120,c_fill,q_auto,f_auto/${publicId}.${format || "jpg"}`;
+    }
+
+    // ===== Upload button =====
+    document.getElementById("btnUpload").onclick = async () => {
+      const user = auth.currentUser;
+      if (!user) return alert("Faça login primeiro.");
+
+      const file = fileInput.files[0];
+      if (!file) return alert("Escolha um arquivo.");
+
+      statusEl.textContent = "Enviando...";
+
+      try {
+        const up = await uploadToCloudinary(file);
+
+        await addDoc(collection(db, "files"), {
+          uid: user.uid,
+          name: up.originalFilename || file.name || "arquivo",
+          url: up.secureUrl,
+          bytes: up.bytes ?? file.size,
+
+          // 🔥 ESSENCIAIS PRA MINIATURA + PREVIEW
+          publicId: up.publicId,
+          format: up.format,
+          resourceType: up.resourceType,
+
+          createdAt: serverTimestamp()
+        });
+
+        statusEl.textContent = "Upload concluído!";
+        fileInput.value = "";
+      } catch (e) {
+        statusEl.textContent = "Erro no upload.";
+        alert(e.message);
+      }
+    };
+
+    // ===== Realtime list =====
+    let unsubscribe = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        authBox.style.display = "block";
+        appBox.style.display = "none";
+        if (unsubscribe) unsubscribe();
         return;
       }
 
-      snap.forEach((d) => {
-        const f = d.data();
+      authBox.style.display = "none";
+      appBox.style.display = "block";
+      userLabel.textContent = `Logado como: ${user.email}`;
 
-        const div = document.createElement("div");
-        div.className = "file";
+      const q = query(
+        collection(db, "files"),
+        where("uid", "==", user.uid),
+        orderBy("createdAt", "desc")
+      );
 
-        const left = document.createElement("div");
+      if (unsubscribe) unsubscribe();
+      unsubscribe = onSnapshot(q, (snap) => {
+        listEl.innerHTML = "";
 
-        const thumbUrl =
-          (f.resourceType === "image" && f.publicId && f.format)
-            ? `https://res.cloudinary.com/${cloudName}/image/upload/w_120,h_120,c_fill,q_auto,f_auto/${f.publicId}.${f.format}`
-            : null;
+        if (snap.empty) {
+          listEl.innerHTML = "<p class='small'>Nenhum arquivo ainda.</p>";
+          return;
+        }
 
-        left.innerHTML = `
-          <div style="display:flex;gap:12px;align-items:center;">
-            ${
-              thumbUrl
-                ? `<img src="${thumbUrl}" style="width:72px;height:72px;object-fit:cover;border-radius:10px;">`
-                : `<div style="width:72px;height:72px;border-radius:10px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:28px;">📄</div>`
-            }
-            <div>
-              <a href="${f.url}" target="_blank">${f.name}</a><br>
-              <span class="small">${f.bytes ? (f.bytes/1024).toFixed(1) + " KB" : ""}</span>
+        snap.forEach((d) => {
+          const f = d.data();
+
+          const div = document.createElement("div");
+          div.className = "file";
+          div.style.cursor = "pointer";
+
+          const left = document.createElement("div");
+          left.className = "file-left";
+
+          const isImage = f.resourceType === "image" && f.publicId;
+          const thumbUrl = isImage ? thumbUrlFromCloudinary(f.publicId, f.format) : null;
+
+          left.innerHTML = `
+            <div class="thumb">
+              ${thumbUrl ? `<img src="${thumbUrl}" alt="${(f.name || "imagem").replace(/"/g, "")}">` : `📄`}
             </div>
-          </div>
-        `;
 
-        const del = document.createElement("button");
-        del.className = "danger";
-        del.textContent = "Remover da lista";
-        del.onclick = () => deleteDoc(doc(db, "files", d.id));
+            <div class="file-meta">
+              <a class="name" href="${f.url}" target="_blank" rel="noopener">${f.name || "Arquivo"}</a>
+              <span class="small">
+                ${(f.format ? f.format.toUpperCase() : "ARQUIVO")}
+                ${f.bytes ? ` • ${formatBytes(f.bytes)}` : ""}
+              </span>
+            </div>
+          `;
 
-        div.appendChild(left);
-        div.appendChild(del);
-        listEl.appendChild(div);
+          // Clicar no nome/miniatura abre modal (não abre nova aba)
+          const link = left.querySelector("a");
+          if (link) link.addEventListener("click", (e) => {
+            e.preventDefault();
+            openPreview(f);
+          });
+
+          // Clicar no card também abre preview (exceto no botão Remover)
+          div.addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON") return;
+            openPreview(f);
+          });
+
+          const del = document.createElement("button");
+          del.className = "danger";
+          del.textContent = "Remover da lista";
+          del.onclick = async (e) => {
+            e.stopPropagation(); // não abrir modal ao remover
+            await deleteDoc(doc(db, "files", d.id));
+          };
+
+          div.appendChild(left);
+          div.appendChild(del);
+          listEl.appendChild(div);
+        });
       });
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>
