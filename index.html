@@ -688,7 +688,7 @@
 
     // ========= UPLOAD: CLOUDINARY =========
     async function uploadToCloudinary(file, folderName){
-      const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
       const form = new FormData();
       form.append("file", file);
       form.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
@@ -974,3 +974,4 @@
   </script>
 </body>
 </html>
+
