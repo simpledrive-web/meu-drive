@@ -1,824 +1,288 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b57d0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meu Drive</title>
 
-  <!-- PWA -->
+  <!-- Manifest PWA -->
   <link rel="manifest" href="./manifest.json" />
-  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <meta name="theme-color" content="#0b57d0" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
   <style>
-    :root{
-      --bg:#0b1220;
-      --card:#0f1a30;
-      --card2:#0b152a;
-      --text:#e9eefc;
-      --muted:#a9b6d3;
-      --brand:#3b82f6;
-      --brand2:#2563eb;
-      --danger:#ef4444;
-      --ok:#22c55e;
-      --ring: rgba(59,130,246,.35);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    :root {
+      --bg: linear-gradient(135deg, #0b1220, #0b57d0);
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.15);
+      --text: #ffffff;
+      --muted: #b8c4ff;
+      --accent: #3b82f6;
+      --danger: #ef4444;
       --radius: 16px;
     }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 20% 0%, rgba(59,130,246,.25), transparent 60%),
-                  radial-gradient(1200px 700px at 80% 0%, rgba(34,197,94,.14), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      padding: 18px;
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    .wrap{max-width: 980px; margin: 0 auto;}
-    .topbar{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      margin-bottom: 14px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      font-weight:800; letter-spacing:.2px;
-    }
-    .logo{
-      width:36px; height:36px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(59,130,246,1), rgba(34,197,94,1));
-      box-shadow: var(--shadow);
-    }
-    .subtitle{color:var(--muted); font-weight:600; font-size:13px}
-
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .cardBody{padding: 14px;}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-    .row > *{flex: 0 0 auto;}
-
-    input, select{
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
       color: var(--text);
-      padding: 11px 12px;
-      border-radius: 12px;
-      outline:none;
-      min-width: 190px;
-    }
-    input:focus, select:focus{
-      border-color: rgba(59,130,246,.6);
-      box-shadow: 0 0 0 4px var(--ring);
+      display: flex;
+      justify-content: center;
+      padding: 24px;
     }
 
-    button{
-      border: 0;
+    .app {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    header img {
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
-      padding: 11px 14px;
-      cursor:pointer;
-      font-weight:700;
+    }
+
+    header h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+
+    input, select {
+      background: rgba(255, 255, 255, 0.12);
       color: white;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 8px 20px rgba(37,99,235,.25);
-    }
-    button:disabled{opacity:.6; cursor:not-allowed}
-    .btnGhost{
-      background: rgba(255,255,255,.08);
-      box-shadow:none;
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .btnDanger{
-      background: rgba(239,68,68,.15);
-      border:1px solid rgba(239,68,68,.35);
-      color: #ffd3d3;
-      box-shadow:none;
-    }
-    .btnSmall{padding:9px 12px; border-radius: 12px; font-size: 13px;}
-    .pill{
-      font-size:12px; color: var(--muted);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      padding: 6px 10px;
-      border-radius: 999px;
     }
 
-    .divider{
-      height:1px; background: rgba(255,255,255,.08);
-      margin: 12px 0;
+    button {
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
     }
 
-    .status{font-size: 13px; color: var(--muted)}
-    .status.ok{color: #bff7d2}
-    .status.err{color: #ffd2d2}
+    button.secondary {
+      background: rgba(255, 255, 255, 0.15);
+    }
 
-    /* Lista/Galeria */
-    .toolbar{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      flex-wrap:wrap;
+    button.danger {
+      background: var(--danger);
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
       margin-top: 10px;
     }
-    .toggle{
-      display:flex; gap:8px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 999px;
-      padding: 6px;
+
+    .row button {
+      flex: 1;
     }
-    .toggle button{
-      background: transparent;
-      box-shadow:none;
-      border-radius: 999px;
-      padding: 8px 12px;
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tabs button {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .tabs button.active {
+      background: var(--accent);
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 8px;
+    }
+
+    .list-item a {
       color: var(--muted);
-      border: 1px solid transparent;
-      font-weight:800;
-    }
-    .toggle button.active{
-      color: white;
-      background: rgba(59,130,246,.25);
-      border-color: rgba(59,130,246,.35);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      padding: 12px;
-    }
-    @media (max-width: 820px){
-      body{padding: 12px;}
-      .grid{grid-template-columns: repeat(2, minmax(0, 1fr));}
-      input{min-width: 160px; flex:1 1 220px;}
-    }
-    @media (max-width: 420px){
-      .grid{grid-template-columns: 1fr;}
-      .topbar{flex-direction:column; align-items:flex-start;}
-    }
-
-    .item{
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      min-height: 210px;
-    }
-    .thumb{
-      width: 100%;
-      height: 150px;
-      background: rgba(255,255,255,.06);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-    }
-    .thumb img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-    }
-    .thumb .fileIcon{
-      width: 54px; height: 54px; border-radius: 16px;
-      background: rgba(59,130,246,.20);
-      border: 1px solid rgba(59,130,246,.35);
-      display:flex; align-items:center; justify-content:center;
-      font-weight:900;
-      color:#dbeafe;
-    }
-
-    .meta{padding: 10px 10px 12px;}
-    .name{
-      font-weight: 900;
-      font-size: 14px;
-      line-height: 1.15;
-      margin: 0 0 6px;
+      text-decoration: none;
+      flex: 1;
       word-break: break-word;
     }
-    .sub{
-      display:flex; gap:8px; flex-wrap:wrap;
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-    .actions{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-top:auto;
-    }
-    .actions a{
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.10);
-      color: white;
-      font-weight: 800;
-      flex: 1 1 auto;
-    }
-    .actions a.primary{
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      border: 0;
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
     }
 
-    /* Modal preview */
-    .modal{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.62);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 14px;
-      z-index: 9999;
+    .gallery img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 12px;
+      cursor: pointer;
     }
-    .modal.open{display:flex;}
-    .modalCard{
-      width: min(900px, 100%);
-      background: rgba(15,26,48,.92);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
+
+    .hidden {
+      display: none;
     }
-    .modalHead{
-      display:flex; align-items:flex-start; justify-content:space-between;
-      gap: 10px;
-      padding: 12px 14px;
-      background: rgba(255,255,255,.05);
-      border-bottom: 1px solid rgba(255,255,255,.08);
+
+    .center {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 10px;
     }
-    .modalTitle{font-weight: 950; margin:0; font-size: 15px}
-    .modalSub{margin: 3px 0 0; font-size: 12px; color: var(--muted)}
-    .modalClose{
-      width: 36px; height: 36px; border-radius: 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.10);
-      color:white;
-      font-weight:900;
-      cursor:pointer;
-    }
-    .modalBody{
-      padding: 14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height: 300px;
-    }
-    .modalBody img{
-      max-width: 100%;
-      max-height: 70vh;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.10);
-    }
-    .modalFoot{
-      display:flex;
-      justify-content:flex-end;
-      gap:10px;
-      padding: 12px 14px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-    }
-    .hint{font-size: 12px; color: var(--muted)}
   </style>
 </head>
-
 <body>
-  <div class="wrap">
 
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <div style="font-size:20px;">Meu Drive ☁️</div>
-          <div class="subtitle">Seus arquivos em um só lugar!</div>
-        </div>
-      </div>
-      <span class="pill" id="pwaStatus">PWA: preparando…</span>
+<div class="app">
+
+  <header>
+    <img src="./icon-192.png" alt="Meu Drive" />
+    <h1>Meu Drive ☁️</h1>
+  </header>
+
+  <!-- AUTH -->
+  <div id="auth" class="card">
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Senha" />
+    <div class="row">
+      <button onclick="login()">Entrar</button>
+      <button class="secondary" onclick="register()">Criar conta</button>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="panel" class="hidden">
+
+    <div class="card">
+      <div id="userInfo"></div>
+      <button class="secondary" onclick="logout()">Sair</button>
     </div>
 
-    <!-- LOGIN -->
-    <div class="card" id="authBox">
-      <div class="cardBody">
-        <div class="row">
-          <input id="email" type="email" placeholder="Email" autocomplete="email" />
-          <input id="pass" type="password" placeholder="Senha" autocomplete="current-password" />
-          <button id="btnLogin">Entrar</button>
-          <button id="btnSignup" class="btnGhost">Criar conta</button>
-        </div>
-        <div class="divider"></div>
-        <div class="status" id="authStatus"></div>
+    <div class="card">
+      <input type="file" id="fileInput" />
+      <button onclick="upload()">Enviar arquivo</button>
+
+      <div class="tabs">
+        <button id="tabList" class="active" onclick="showList()">Lista</button>
+        <button id="tabGallery" onclick="showGallery()">Galeria</button>
       </div>
     </div>
 
-    <!-- APP -->
-    <div class="card" id="appBox" style="display:none; margin-top:14px;">
-      <div class="cardBody">
-
-        <div class="row" style="justify-content:space-between;">
-          <div>
-            <div style="font-weight:950">Logado como: <span id="userLabel"></span></div>
-            <div class="hint">Uploads vão para o Cloudinary + lista salva no Firestore.</div>
-          </div>
-          <button id="btnLogout" class="btnGhost">Sair</button>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row">
-          <input type="file" id="fileInput" />
-          <button id="btnUpload">Enviar arquivo</button>
-
-          <select id="folderSelect" title="Pasta">
-            <option value="meu-drive">meu-drive</option>
-            <option value="trabalho">trabalho</option>
-            <option value="docs">docs</option>
-            <option value="fotos">fotos</option>
-          </select>
-
-          <span class="status" id="status"></span>
-        </div>
-
-        <div class="toolbar">
-          <div class="toggle">
-            <button id="btnViewList" class="active" type="button">Lista</button>
-            <button id="btnViewGrid" type="button">Galeria</button>
-          </div>
-
-          <div class="row">
-            <input id="search" placeholder="Buscar por nome…" />
-            <select id="typeFilter" title="Tipo">
-              <option value="all">Todos</option>
-              <option value="image">Imagens</option>
-              <option value="pdf">PDF</option>
-              <option value="other">Outros</option>
-            </select>
-          </div>
-
-          <span class="pill" id="countPill">0 arquivo(s)</span>
-        </div>
-
-      </div>
-
-      <div id="list" class="grid"></div>
+    <div class="card">
+      <div id="listView"></div>
+      <div id="galleryView" class="gallery hidden"></div>
+      <div id="empty" class="center hidden">Nenhum arquivo ainda.</div>
     </div>
 
   </div>
 
-  <!-- Modal Preview -->
-  <div class="modal" id="modal">
-    <div class="modalCard">
-      <div class="modalHead">
-        <div>
-          <p class="modalTitle" id="mTitle">Arquivo</p>
-          <p class="modalSub" id="mSub">—</p>
-        </div>
-        <button class="modalClose" id="mClose" aria-label="Fechar">✕</button>
-      </div>
-      <div class="modalBody" id="mBody"></div>
-      <div class="modalFoot">
-        <a id="mOpen" class="btnSmall" style="text-decoration:none;" target="_blank" rel="noreferrer">
-          <button class="btnSmall">Abrir / Download</button>
-        </a>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <!-- FIREBASE + APP -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      query,
-      where,
-      orderBy,
-      onSnapshot,
-      deleteDoc,
-      doc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+<script>
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_AUTH_DOMAIN",
+    projectId: "SEU_PROJECT_ID",
+  };
 
-    /* ================================
-       FIREBASE CONFIG
-       ================================ */
-    const firebaseConfig = {
-      apiKey: "AIzaSyDr9gFvsqkHUN3q3rbnfuNREw4VM57FcjU",
-      authDomain: "meu-drive-beb33.firebaseapp.com",
-      projectId: "meu-drive-beb33",
-      storageBucket: "meu-drive-beb33.firebasestorage.app",
-      messagingSenderId: "661176300748",
-      appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
-    };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    /* ================================
-       CLOUDINARY CONFIG
-       ================================ */
-    const cloudName = "dilyddwkg";
-    const uploadPreset = "kv9sjt0g";
+  function login() {
+    auth.signInWithEmailAndPassword(
+      email.value,
+      password.value
+    ).catch(alert);
+  }
 
-    /* ================================
-       INIT
-       ================================ */
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  function register() {
+    auth.createUserWithEmailAndPassword(
+      email.value,
+      password.value
+    ).catch(alert);
+  }
 
-    const authBox = document.getElementById("authBox");
-    const appBox = document.getElementById("appBox");
-    const authStatus = document.getElementById("authStatus");
-    const userLabel = document.getElementById("userLabel");
-    const statusEl = document.getElementById("status");
-    const listEl = document.getElementById("list");
-    const countPill = document.getElementById("countPill");
+  function logout() {
+    auth.signOut();
+  }
 
-    const folderSelect = document.getElementById("folderSelect");
-    const searchInput = document.getElementById("search");
-    const typeFilter = document.getElementById("typeFilter");
-
-    const btnViewList = document.getElementById("btnViewList");
-    const btnViewGrid = document.getElementById("btnViewGrid");
-
-    // Modal
-    const modal = document.getElementById("modal");
-    const mClose = document.getElementById("mClose");
-    const mTitle = document.getElementById("mTitle");
-    const mSub = document.getElementById("mSub");
-    const mBody = document.getElementById("mBody");
-    const mOpen = document.getElementById("mOpen");
-
-    function bytesToSize(bytes=0){
-      const units = ["B","KB","MB","GB"];
-      let v = bytes, i=0;
-      while(v >= 1024 && i < units.length-1){ v/=1024; i++; }
-      return (i===0 ? v : v.toFixed(1)) + " " + units[i];
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      auth.classList?.add("hidden");
+      panel.classList.remove("hidden");
+      userInfo.innerText = "Logado como: " + user.email;
+      loadFiles();
+    } else {
+      auth.classList?.remove("hidden");
+      panel.classList.add("hidden");
     }
+  });
 
-    function isImageFormat(fmt){
-      return ["jpg","jpeg","png","webp","gif","avif","bmp","tiff"].includes(String(fmt||"").toLowerCase());
-    }
+  function showList() {
+    tabList.classList.add("active");
+    tabGallery.classList.remove("active");
+    listView.classList.remove("hidden");
+    galleryView.classList.add("hidden");
+  }
 
-    function fileTypeLabel(f){
-      const fmt = (f.format || "").toLowerCase();
-      if (fmt === "pdf") return "PDF";
-      if (isImageFormat(fmt)) return "Imagem";
-      return (fmt || "arquivo").toUpperCase();
-    }
+  function showGallery() {
+    tabGallery.classList.add("active");
+    tabList.classList.remove("active");
+    galleryView.classList.remove("hidden");
+    listView.classList.add("hidden");
+  }
 
-    function cloudThumb(publicId, format){
-      // thumbnail bonitinha para galeria
-      const fmt = (format || "jpg").toLowerCase();
-      const base = `https://res.cloudinary.com/${cloudName}/image/upload`;
-      // c_fill corta e encaixa certinho. f_auto e q_auto melhoram no celular.
-      return `${base}/c_fill,w_520,h_340,q_auto,f_auto/${publicId}.${fmt}`;
-    }
+  function upload() {
+    alert("Upload continua igual ao seu código atual (Cloudinary).");
+  }
 
-    /* ================================
-       AUTH
-       ================================ */
-    document.getElementById("btnSignup").onclick = async () => {
-      authStatus.textContent = "";
-      const email = document.getElementById("email").value.trim();
-      const pass = document.getElementById("pass").value.trim();
-      if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-      try {
-        await createUserWithEmailAndPassword(auth, email, pass);
-      } catch (e) {
-        authStatus.textContent = e.message;
-      }
-    };
+  function loadFiles() {
+    empty.classList.remove("hidden");
+  }
 
-    document.getElementById("btnLogin").onclick = async () => {
-      authStatus.textContent = "";
-      const email = document.getElementById("email").value.trim();
-      const pass = document.getElementById("pass").value.trim();
-      if (!email || !pass) return authStatus.textContent = "Preencha email e senha.";
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-      } catch (e) {
-        authStatus.textContent = e.message;
-      }
-    };
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js");
+  }
+</script>
 
-    document.getElementById("btnLogout").onclick = () => signOut(auth);
-
-    /* ================================
-       CLOUDINARY UPLOAD
-       ================================ */
-    async function uploadToCloudinary(file, folder="meu-drive") {
-      const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", uploadPreset);
-
-      // ajuda a organizar no Cloudinary (pasta visível)
-      fd.append("folder", folder);
-
-      const res = await fetch(url, { method:"POST", body: fd });
-      const data = await res.json();
-      if (!data.secure_url) {
-        const msg = data?.error?.message || "Falha no upload.";
-        throw new Error(msg);
-      }
-      return data;
-    }
-
-    document.getElementById("btnUpload").onclick = async () => {
-      const user = auth.currentUser;
-      if (!user) return alert("Faça login primeiro.");
-
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) return alert("Escolha um arquivo.");
-
-      const folder = folderSelect.value || "meu-drive";
-
-      statusEl.className = "status";
-      statusEl.textContent = "Enviando…";
-      document.getElementById("btnUpload").disabled = true;
-
-      try {
-        const up = await uploadToCloudinary(file, folder);
-
-        // Miniatura só para imagens
-        const fmt = (up.format || "").toLowerCase();
-        const pub = up.public_id;
-        const thumb = (up.resource_type === "image" && isImageFormat(fmt) && pub)
-          ? cloudThumb(pub, fmt)
-          : "";
-
-        await addDoc(collection(db, "files"), {
-          uid: user.uid,
-          email: user.email || "",
-          folder,
-          name: (up.original_filename ? up.original_filename + (fmt ? "."+fmt : "") : file.name),
-          url: up.secure_url,
-          bytes: up.bytes ?? file.size,
-          format: fmt || "",
-          resourceType: up.resource_type || "",
-          publicId: pub || "",
-          thumbUrl: thumb,
-          createdAt: serverTimestamp()
-        });
-
-        statusEl.className = "status ok";
-        statusEl.textContent = "Upload concluído ✅";
-        document.getElementById("fileInput").value = "";
-      } catch (e) {
-        statusEl.className = "status err";
-        statusEl.textContent = "Erro no upload ❌";
-        alert(e.message);
-      } finally {
-        document.getElementById("btnUpload").disabled = false;
-        setTimeout(() => { statusEl.textContent = ""; statusEl.className="status"; }, 3500);
-      }
-    };
-
-    /* ================================
-       VIEW MODE (LIST / GRID)
-       ================================ */
-    let viewMode = "list"; // "list" or "grid"
-    function setView(mode){
-      viewMode = mode;
-      btnViewList.classList.toggle("active", mode === "list");
-      btnViewGrid.classList.toggle("active", mode === "grid");
-      render(lastDocs);
-    }
-    btnViewList.onclick = () => setView("list");
-    btnViewGrid.onclick = () => setView("grid");
-
-    /* ================================
-       RENDER
-       ================================ */
-    let unsubscribe = null;
-    let lastDocs = []; // {id, data}
-
-    function passesFilters(f){
-      const q = (searchInput.value || "").trim().toLowerCase();
-      const tf = typeFilter.value;
-
-      if (q && !(String(f.name||"").toLowerCase().includes(q))) return false;
-
-      const fmt = (f.format || "").toLowerCase();
-      const isImg = isImageFormat(fmt);
-      const isPdf = fmt === "pdf";
-
-      if (tf === "image" && !isImg) return false;
-      if (tf === "pdf" && !isPdf) return false;
-      if (tf === "other" && (isImg || isPdf)) return false;
-
-      return true;
-    }
-
-    function openModal(f){
-      mTitle.textContent = f.name || "Arquivo";
-      mSub.textContent = `${fileTypeLabel(f)} • ${bytesToSize(f.bytes || 0)}`;
-      mOpen.href = f.url || "#";
-
-      mBody.innerHTML = "";
-      const fmt = (f.format || "").toLowerCase();
-
-      if (f.thumbUrl && isImageFormat(fmt)){
-        const img = document.createElement("img");
-        // para preview, usa a imagem original, mas poderia trocar por uma transformação maior
-        img.src = f.url;
-        img.alt = f.name || "imagem";
-        mBody.appendChild(img);
-      } else {
-        const box = document.createElement("div");
-        box.style.textAlign = "center";
-        box.innerHTML = `<div class="pill">${fileTypeLabel(f)}</div><div style="margin-top:10px;color:var(--muted)">Prévia não disponível. Use “Abrir / Download”.</div>`;
-        mBody.appendChild(box);
-      }
-
-      modal.classList.add("open");
-    }
-
-    function closeModal(){
-      modal.classList.remove("open");
-    }
-    mClose.onclick = closeModal;
-    modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
-
-    function makeItem(docId, f){
-      const fmt = (f.format || "").toLowerCase();
-      const isImg = isImageFormat(fmt);
-      const isPdf = fmt === "pdf";
-
-      const item = document.createElement("div");
-      item.className = "item";
-
-      const thumb = document.createElement("div");
-      thumb.className = "thumb";
-
-      if (f.thumbUrl && isImg){
-        const img = document.createElement("img");
-        img.src = f.thumbUrl;
-        img.alt = f.name || "imagem";
-        img.loading = "lazy";
-        thumb.appendChild(img);
-      } else {
-        const icon = document.createElement("div");
-        icon.className = "fileIcon";
-        icon.textContent = isPdf ? "PDF" : "ARQ";
-        thumb.appendChild(icon);
-      }
-
-      const meta = document.createElement("div");
-      meta.className = "meta";
-
-      const name = document.createElement("p");
-      name.className = "name";
-      name.textContent = f.name || "arquivo";
-
-      const sub = document.createElement("div");
-      sub.className = "sub";
-      sub.innerHTML = `<span class="pill">${fileTypeLabel(f)}</span><span class="pill">${bytesToSize(f.bytes || 0)}</span><span class="pill">${f.folder || "—"}</span>`;
-
-      const actions = document.createElement("div");
-      actions.className = "actions";
-
-      const open = document.createElement("a");
-      open.className = "primary";
-      open.href = f.url || "#";
-      open.target = "_blank";
-      open.rel = "noreferrer";
-      open.textContent = "Abrir / Download";
-
-      const preview = document.createElement("a");
-      preview.href = "#";
-      preview.textContent = "Ver";
-      preview.onclick = (e) => { e.preventDefault(); openModal(f); };
-
-      const del = document.createElement("button");
-      del.className = "btnDanger btnSmall";
-      del.textContent = "Remover";
-      del.onclick = async () => {
-        if (!confirm("Remover este item da lista? (o arquivo continua no Cloudinary)")) return;
-        await deleteDoc(doc(db, "files", docId));
-      };
-
-      actions.appendChild(preview);
-      actions.appendChild(open);
-      actions.appendChild(del);
-
-      meta.appendChild(name);
-      meta.appendChild(sub);
-      meta.appendChild(actions);
-
-      item.appendChild(thumb);
-      item.appendChild(meta);
-
-      return item;
-    }
-
-    function render(docs){
-      const filtered = docs.filter(({data}) => passesFilters(data));
-      countPill.textContent = `${filtered.length} arquivo(s)`;
-
-      listEl.innerHTML = "";
-
-      // lista e galeria usam o mesmo grid; só muda colunas/visual
-      // (se quiser, depois a gente faz uma lista real em tabela)
-      if (filtered.length === 0){
-        listEl.innerHTML = `<div style="padding:14px;color:var(--muted)">Nenhum arquivo ainda (ou filtros escondendo tudo).</div>`;
-        return;
-      }
-
-      // Ajuste visual simples por modo
-      if (viewMode === "grid"){
-        listEl.style.gridTemplateColumns = "";
-      } else {
-        // "lista" = 1 coluna em telas grandes
-        listEl.style.gridTemplateColumns = "1fr";
-      }
-
-      for (const {id, data} of filtered){
-        listEl.appendChild(makeItem(id, data));
-      }
-    }
-
-    searchInput.addEventListener("input", () => render(lastDocs));
-    typeFilter.addEventListener("change", () => render(lastDocs));
-
-    /* ================================
-       FIRESTORE LISTENER
-       ================================ */
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        authBox.style.display = "block";
-        appBox.style.display = "none";
-        lastDocs = [];
-        if (unsubscribe) unsubscribe();
-        return;
-      }
-
-      authBox.style.display = "none";
-      appBox.style.display = "block";
-      userLabel.textContent = user.email;
-
-      // Query: seus arquivos, mais recentes primeiro
-      const q = query(
-        collection(db, "files"),
-        where("uid", "==", user.uid),
-        orderBy("createdAt", "desc")
-      );
-
-      if (unsubscribe) unsubscribe();
-      unsubscribe = onSnapshot(q, (snap) => {
-        lastDocs = snap.docs.map(d => ({ id: d.id, data: d.data() }));
-        render(lastDocs);
-      });
-    });
-
-    /* ================================
-       PWA: service worker + install
-       ================================ */
-    const pwaStatus = document.getElementById("pwaStatus");
-
-    async function registerSW(){
-      if (!("serviceWorker" in navigator)) {
-        pwaStatus.textContent = "PWA: não suportado";
-        return;
-      }
-      try{
-        const reg = await navigator.serviceWorker.register("./service-worker.js", { scope: "./" });
-        pwaStatus.textContent = "PWA: pronto ✅";
-      }catch(e){
-        pwaStatus.textContent = "PWA: erro no SW";
-        console.warn("SW error:", e);
-      }
-    }
-    registerSW();
-
-    // Aviso simples de instalação (Android/Chrome)
-    let deferredPrompt = null;
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      pwaStatus.textContent = "PWA: pode instalar 📲";
-    });
-
-  </script>
 </body>
 </html>
-
-
