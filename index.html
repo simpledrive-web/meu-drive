@@ -1,512 +1,523 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0b57d0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Meu Drive</title>
 
+  <meta name="theme-color" content="#0b57d0" />
   <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icon-192.png" />
 
   <style>
     :root{
-      --bg1:#061024;
-      --bg2:#0b57d0;
+      --bg1:#071022;
+      --bg2:#0b2a66;
       --card:rgba(255,255,255,.08);
-      --card2:rgba(255,255,255,.10);
-      --stroke:rgba(255,255,255,.14);
-      --text:rgba(255,255,255,.92);
+      --card2:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.12);
+      --txt:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
-      --primary:#4b86ff;
-      --primary2:#2b6bff;
-      --danger:#ff4b4b;
-      --shadow: 0 18px 50px rgba(0,0,0,.35);
-      --radius: 22px;
+      --muted2:rgba(255,255,255,.55);
+      --brand:#4f7cf0;
+      --brand2:#2dd4bf;
+      --danger:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius:22px;
     }
 
     *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--text);
-      min-height:100vh;
+      color:var(--txt);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(1200px 700px at 30% 10%, rgba(46, 130, 255, .35), transparent 60%),
-        radial-gradient(900px 600px at 80% 30%, rgba(51, 255, 166, .18), transparent 55%),
-        linear-gradient(180deg, var(--bg1), #071a3a 60%, #05204a);
-      padding: 22px 14px 30px;
+        radial-gradient(1200px 700px at 30% 20%, rgba(79,124,240,.35), transparent 60%),
+        radial-gradient(900px 600px at 80% 60%, rgba(45,212,191,.22), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
     }
 
-    .container{
-      max-width: 980px;
-      margin: 0 auto;
+    /* Fix geral pro “listão branco” no Chrome/Android */
+    html { color-scheme: dark; }
+    select, option { color-scheme: dark; }
+
+    .wrap{
+      width:min(980px, 92vw);
+      margin: 26px auto 40px;
     }
 
     .topbar{
       display:flex;
-      gap:14px;
       align-items:center;
       justify-content:space-between;
-      margin-bottom: 14px;
+      gap:14px;
+      margin-bottom:16px;
     }
+
     .brand{
       display:flex;
       align-items:center;
       gap:12px;
+      min-width:0;
     }
     .appIcon{
-      width:44px; height:44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #2d6bff, #2ac7ff 55%, #49ff8b);
-      display:grid;
-      place-items:center;
-      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+      width:48px; height:48px; border-radius:14px;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      flex:0 0 auto;
+      display:flex; align-items:center; justify-content:center;
     }
-    .appIcon img{ width:100%; height:100%; object-fit:cover; }
-    .brand h1{
-      font-size: 26px;
+    .appIcon img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .titleWrap{ min-width:0; }
+    h1{
+      font-size:28px;
       margin:0;
       letter-spacing:.2px;
-      display:flex;
-      gap:10px;
-      align-items:baseline;
+      display:flex; gap:8px; align-items:center;
+      white-space:nowrap;
     }
-    .brand small{
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 500;
+    .subtitle{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
-    .pill{
-      display:inline-flex;
+    .userChip{
+      display:none;
       align-items:center;
-      gap:8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--muted);
-      font-size: 13px;
-      user-select:none;
-      backdrop-filter: blur(10px);
+      gap:10px;
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:8px 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+      max-width: 46%;
+    }
+    .avatar{
+      width:34px; height:34px; border-radius:999px;
+      background: linear-gradient(135deg, rgba(79,124,240,.9), rgba(45,212,191,.9));
+      display:grid; place-items:center;
+      font-weight:800;
+      flex:0 0 auto;
+    }
+    .userMeta{ min-width:0; }
+    .userName{
+      font-size:13px; font-weight:800;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .userEmail{
+      font-size:12px; color:var(--muted2);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
 
     .grid{
       display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 14px;
-    }
-    @media (max-width: 900px){
-      .grid{ grid-template-columns: 1fr; }
+      grid-template-columns: 1fr;
+      gap:16px;
     }
 
     .card{
       background: var(--card);
-      border: 1px solid var(--stroke);
+      border:1px solid var(--stroke);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
-      backdrop-filter: blur(10px);
     }
-    .cardHeader{
-      padding: 14px 16px;
+
+    .cardHead{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
       display:flex;
       align-items:center;
       justify-content:space-between;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+      gap:10px;
     }
-    .cardHeader h2{
-      margin:0;
-      font-size: 15px;
-      letter-spacing:.2px;
-      color: rgba(255,255,255,.90);
-      font-weight: 700;
-    }
-    .cardBody{ padding: 14px 16px 16px; }
+    .cardHead b{ font-size:14px; }
+    .cardBody{ padding:14px 16px; }
 
-    .row{ display:flex; gap:10px; align-items:center; }
-    .rowWrap{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-
-    input, select, button{
-      font: inherit;
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
     }
 
-    .input{
+    .field{
+      flex:1 1 220px;
+      min-width: 180px;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    input, select{
       width:100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
-      color: var(--text);
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,18,32,.55);
+      color: var(--txt);
       outline:none;
+      font-size:14px;
     }
-    .input::placeholder{ color: rgba(255,255,255,.55); }
-    .input:focus{ border-color: rgba(75,134,255,.55); }
+    input::placeholder{ color: rgba(255,255,255,.45); }
+
+    /* Deixa o dropdown “dark” (o listão branco some aqui na maioria dos casos) */
+    select{
+      appearance:none;
+      -webkit-appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(255,255,255,.75) 50%),
+        linear-gradient(135deg, rgba(255,255,255,.75) 50%, transparent 50%),
+        linear-gradient(to right, rgba(255,255,255,.10), rgba(255,255,255,.10));
+      background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px),
+        calc(100% - 38px) 50%;
+      background-size: 6px 6px, 6px 6px, 1px 18px;
+      background-repeat:no-repeat;
+      padding-right: 44px;
+    }
+    option{
+      background-color: #0b1220;   /* <<< aqui é o principal */
+      color: #fff;
+    }
 
     .btn{
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.10);
-      color: var(--text);
+      border:0;
+      border-radius:16px;
+      padding:12px 16px;
+      font-weight:800;
       cursor:pointer;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
-      min-width: 140px;
+      background: rgba(255,255,255,.10);
+      color: var(--txt);
+      border:1px solid rgba(255,255,255,.14);
+      transition: transform .06s ease, filter .2s ease;
+      user-select:none;
     }
-    .btn:hover{ background: rgba(255,255,255,.14); }
-    .btn:active{ transform: scale(.98); }
-
+    .btn:active{ transform: translateY(1px); }
     .btnPrimary{
-      background: linear-gradient(180deg, var(--primary), var(--primary2));
-      border-color: rgba(255,255,255,.12);
+      background: linear-gradient(135deg, rgba(79,124,240,.95), rgba(79,124,240,.65));
+      border-color: rgba(79,124,240,.55);
     }
-    .btnPrimary:hover{ filter: brightness(1.05); }
     .btnDanger{
-      background: rgba(255,75,75,.14);
-      border-color: rgba(255,75,75,.28);
-      color: rgba(255,255,255,.92);
+      background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55));
+      border-color: rgba(239,68,68,.55);
     }
-    .btnSmall{ min-width: auto; padding: 10px 12px; border-radius: 12px; }
+    .btnSmall{
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      font-weight:800;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
 
-    .seg{
+    .tabs{
       display:flex;
       gap:10px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
-      padding: 6px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      padding:8px;
+      border-radius:999px;
       width: fit-content;
     }
-    .seg button{
-      padding: 10px 14px;
-      border: none;
-      border-radius: 999px;
+    .tab{
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:900;
       cursor:pointer;
+      border:1px solid transparent;
+      color: rgba(255,255,255,.75);
       background: transparent;
-      color: var(--muted);
-      transition: background .2s ease, color .2s ease;
-      font-weight: 700;
-      letter-spacing:.2px;
     }
-    .seg button.active{
-      background: rgba(255,255,255,.12);
-      color: var(--text);
+    .tab.active{
+      background: rgba(79,124,240,.35);
+      border-color: rgba(79,124,240,.45);
+      color: var(--txt);
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px;
+      border-radius:18px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .left{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .badge{
+      width:38px; height:38px;
+      border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(79,124,240,.22);
+      border:1px solid rgba(79,124,240,.25);
+      flex:0 0 auto;
+      font-weight:900;
+    }
+    .meta{
+      min-width:0;
+    }
+    .name{
+      font-weight:900;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width: 52vw;
+    }
+    .sub{
+      font-size:12px;
+      color: var(--muted2);
+      margin-top:2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width: 52vw;
+    }
+
+    .right{ display:flex; gap:8px; flex:0 0 auto; }
+
+    .empty{
+      margin-top:12px;
+      color: var(--muted2);
+      text-align:center;
+      padding:18px 10px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(255,255,255,.03);
     }
 
     /* Views + animação */
-    .viewWrap{
-      position: relative;
-      min-height: 320px;
-    }
     .view{
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity .22s ease, transform .22s ease;
+      transition: opacity .25s ease, transform .25s ease;
     }
-    .view.hidden{
-      opacity: 0;
+    .hide{
+      opacity:0;
       transform: translateY(10px);
       pointer-events:none;
-      position:absolute;
-      inset:0;
+      height:0;
+      overflow:hidden;
     }
 
     /* Loader overlay */
-    .overlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(2,8,18,.55);
-      backdrop-filter: blur(8px);
+    .loaderOverlay{
+      position:fixed; inset:0;
       display:none;
-      align-items:center;
-      justify-content:center;
-      z-index: 9999;
+      align-items:center; justify-content:center;
+      background: rgba(2,8,18,.60);
+      backdrop-filter: blur(8px);
+      z-index:9999;
     }
-    .overlay.show{ display:flex; }
     .spinner{
-      width: 54px;
-      height: 54px;
-      border-radius: 999px;
-      border: 4px solid rgba(255,255,255,.18);
-      border-top-color: rgba(75,134,255,.95);
-      animation: spin .8s linear infinite;
+      width:56px; height:56px;
+      border-radius:50%;
+      border: 5px solid rgba(255,255,255,.18);
+      border-top-color: rgba(79,124,240,.95);
+      animation: spin .9s linear infinite;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
 
-    /* Header do usuário */
-    .userHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .userInfo{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width: 0;
-    }
-    .avatar{
-      width: 42px; height:42px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #2d6bff, #49ff8b);
-      display:grid;
-      place-items:center;
-      font-weight: 900;
-      color: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.20);
-      flex: 0 0 auto;
-      overflow:hidden;
-    }
-    .avatar img{ width:100%; height:100%; object-fit:cover; }
-    .userText{
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-    }
-    .userText b{
-      font-size: 14px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .userText span{
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    /* Lista de arquivos */
-    .fileList{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top: 12px;
-    }
-    .fileItem{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding: 12px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-    .fileLeft{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-    }
-    .fileBadge{
-      width: 38px; height: 38px;
-      border-radius: 14px;
-      background: rgba(0,0,0,.20);
-      border: 1px solid rgba(255,255,255,.12);
-      display:grid;
-      place-items:center;
-      font-weight: 900;
-      color: rgba(255,255,255,.80);
-      flex:0 0 auto;
-    }
-    .fileMeta{
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-    }
-    .fileMeta b{
-      font-size: 14px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .fileMeta span{
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .fileActions{
-      display:flex;
-      gap:8px;
-      flex:0 0 auto;
-    }
-
-    .empty{
-      padding: 14px;
-      text-align:center;
-      color: var(--muted);
-      border: 1px dashed rgba(255,255,255,.18);
-      border-radius: 16px;
-      margin-top: 12px;
-      background: rgba(0,0,0,.12);
-    }
-
-    /* Galeria */
-    .gallery{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-    @media (max-width: 520px){
-      .gallery{ grid-template-columns: repeat(2, 1fr); }
-    }
-    .thumb{
-      position: relative;
-      border-radius: 16px;
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      aspect-ratio: 1 / 1;
-      cursor:pointer;
-    }
-    .thumb img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display:block;
-    }
-    .thumb .tag{
-      position:absolute;
-      left:10px;
-      bottom:10px;
-      background: rgba(0,0,0,.35);
-      border: 1px solid rgba(255,255,255,.16);
-      color: rgba(255,255,255,.90);
-      font-size: 11px;
-      padding: 6px 9px;
-      border-radius: 999px;
-      backdrop-filter: blur(8px);
+    @media (min-width: 860px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .card.span2{ grid-column: 1 / -1; }
+      .name{ max-width: 360px; }
+      .sub{ max-width: 360px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="overlay" id="overlay">
+  <div class="loaderOverlay" id="loaderOverlay" aria-hidden="true">
     <div class="spinner" aria-label="Carregando"></div>
   </div>
 
-  <div class="container">
+  <div class="wrap">
     <div class="topbar">
       <div class="brand">
         <div class="appIcon">
-          <!-- se quiser, troca pelo seu icon-192.png -->
-          <img src="./icon-192.png" alt="Ícone" />
+          <img src="./icon-192.png" alt="Meu Drive" />
         </div>
-        <div>
-          <h1>Meu Drive <small>Seus arquivos em um só lugar</small></h1>
-          <div class="pill" id="pwaStatus">PWA: verificando…</div>
+        <div class="titleWrap">
+          <h1>Meu Drive <span style="opacity:.8">☁️</span></h1>
+          <div class="subtitle" id="subtitle">Seus arquivos em um só lugar.</div>
         </div>
       </div>
 
-      <div class="pill" id="netStatus">Online</div>
+      <div class="userChip" id="userChip">
+        <div class="avatar" id="avatar">M</div>
+        <div class="userMeta">
+          <div class="userName" id="userName">Usuário</div>
+          <div class="userEmail" id="userEmail">—</div>
+        </div>
+      </div>
     </div>
 
     <div class="grid">
-      <!-- ESQUERDA: Auth + App -->
-      <div class="card">
-        <div class="cardHeader">
-          <h2>Conta</h2>
-          <div class="pill" id="sessionLabel">Sessão: —</div>
-        </div>
-
-        <div class="cardBody viewWrap">
-          <!-- LOGIN VIEW -->
-          <div class="view" id="loginView">
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <input class="input" id="email" type="email" placeholder="Email" autocomplete="email" />
-              <input class="input" id="password" type="password" placeholder="Senha" autocomplete="current-password" />
-              <div class="row">
-                <button class="btn btnPrimary" id="btnLogin">Entrar</button>
-                <button class="btn" id="btnRegister">Criar conta</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- APP VIEW -->
-          <div class="view hidden" id="appView">
-            <div class="userHeader">
-              <div class="userInfo">
-                <div class="avatar" id="avatar">
-                  <span id="avatarText">U</span>
-                </div>
-                <div class="userText">
-                  <b id="userEmail">—</b>
-                  <span id="userUid">—</span>
-                </div>
-              </div>
-              <button class="btn btnDanger btnSmall" id="btnLogout">Sair</button>
-            </div>
-
-            <div style="height:12px"></div>
-
-            <div class="card" style="background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.10); box-shadow:none;">
-              <div class="cardHeader">
-                <h2>Upload</h2>
-                <div class="pill" id="uploadHint">Cloudinary + Firestore</div>
-              </div>
-              <div class="cardBody">
-                <div class="rowWrap">
-                  <input class="input" style="flex:1" id="fileInput" type="file" />
-                  <select class="input" style="min-width:180px" id="folderSelect"></select>
-                </div>
-
-                <div style="height:10px"></div>
-
-                <div class="rowWrap">
-                  <button class="btn btnPrimary" id="btnUpload">Enviar arquivo</button>
-
-                  <input class="input" style="flex:1; min-width: 220px" id="newFolder" placeholder="Criar nova pasta (ex: Docs)" />
-                  <button class="btn" id="btnAddFolder">Adicionar pasta</button>
-                </div>
-
-                <div style="height:10px"></div>
-                <div class="pill" id="uploadStatus">Aguardando…</div>
-              </div>
-            </div>
-
-            <div style="height:12px"></div>
-
-            <div class="seg">
-              <button id="tabList" class="active">Lista</button>
-              <button id="tabGallery">Galeria</button>
-            </div>
-
-            <div id="listWrap" class="fileList"></div>
-            <div id="galleryWrap" class="gallery" style="display:none;"></div>
-
-            <div id="emptyState" class="empty" style="display:none;">Nenhum arquivo ainda.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DIREITA: Painel -->
-      <div class="card">
-        <div class="cardHeader">
-          <h2>Painel</h2>
-          <div class="pill" id="filesCount">0 arquivo(s)</div>
+      <!-- AUTH VIEW -->
+      <div class="card view" id="authView">
+        <div class="cardHead">
+          <b>Acesso</b>
+          <span style="font-size:12px;color:var(--muted)" id="pwaStatus">PWA: checando…</span>
         </div>
         <div class="cardBody">
-          <div class="rowWrap">
-            <input class="input" id="searchInput" placeholder="Buscar por nome…" style="flex:1" />
-            <select class="input" id="typeFilter" style="min-width:180px">
-              <option value="all">Todos</option>
-              <option value="image">Imagens</option>
-              <option value="video">Vídeos</option>
-              <option value="raw">PDFs/Docs</option>
-              <option value="other">Outros</option>
-            </select>
+          <div class="row">
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="seuemail@gmail.com" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="password">Senha</label>
+              <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+            </div>
           </div>
 
-          <div style="height:12px"></div>
+          <div class="row" style="margin-top:12px;">
+            <button class="btn btnPrimary" id="btnLogin" style="flex:1;">Entrar</button>
+            <button class="btn" id="btnRegister" style="flex:1;">Criar conta</button>
+          </div>
 
-          <div style="height:12px"></div>
-          <div class="card" style="background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.10); box-shadow:none;">
+          <div style="margin-top:12px;color:var(--muted2);font-size:12px;">
+            Dica: instale como app (PWA) pra abrir mais rápido e ficar com cara de aplicativo.
+          </div>
         </div>
       </div>
+
+      <!-- ACCOUNT -->
+      <div class="card view hide" id="accountCard">
+        <div class="cardHead">
+          <b>Sessão</b>
+          <span style="font-size:12px;color:var(--muted)">Conectado</span>
+        </div>
+        <div class="cardBody">
+          <div style="font-weight:900; margin-bottom:10px;">
+            Logado como: <span id="loggedEmail" style="color:rgba(255,255,255,.85)"></span>
+          </div>
+          <button class="btn btnDanger" id="btnLogout" style="width:100%;">Sair</button>
+        </div>
+      </div>
+
+      <!-- UPLOAD -->
+      <div class="card view hide" id="uploadCard">
+        <div class="cardHead">
+          <b>Upload</b>
+          <span style="font-size:12px;color:var(--muted)">Cloudinary + Firestore</span>
+        </div>
+        <div class="cardBody">
+          <div class="row">
+            <div class="field" style="flex:2 1 260px;">
+              <label for="fileInput">Arquivo</label>
+              <input id="fileInput" type="file" />
+            </div>
+
+            <div class="field">
+              <label for="folderSelect">Pasta</label>
+              <select id="folderSelect">
+                <option value="Imagens">Imagens</option>
+                <option value="Vídeos">Vídeos</option>
+                <option value="PDFs">PDFs</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="btn btnPrimary" id="btnUpload" style="flex:1;">Enviar arquivo</button>
+
+            <div class="field" style="flex:1;">
+              <label for="typeFilter">Filtrar por</label>
+              <select id="typeFilter">
+                <option value="Todos">Todos</option>
+                <option value="Imagens">Imagens</option>
+                <option value="Vídeos">Vídeos</option>
+                <option value="PDFs">PDFs</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <div class="field" style="flex:2 1 260px;">
+              <label for="searchInput">Buscar por nome</label>
+              <input id="searchInput" placeholder="Ex: contrato, foto, vídeo..." />
+            </div>
+
+            <div class="tabs">
+              <button class="tab active" id="tabList">Lista</button>
+              <button class="tab" id="tabGallery">Galeria</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILES -->
+      <div class="card view hide span2" id="filesCard">
+        <div class="cardHead">
+          <b>Arquivos</b>
+          <span style="font-size:12px;color:var(--muted)" id="countLabel">0 arquivo(s)</span>
+        </div>
+        <div class="cardBody">
+          <div id="filesList" class="list"></div>
+          <div id="emptyState" class="empty" style="display:none;">Nenhum arquivo ainda (ou filtros escondendo tudo).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Modal -->
+  <div id="previewModal" style="
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    background: rgba(2,8,18,.65); backdrop-filter: blur(8px); z-index:9998; padding:16px;
+  ">
+    <div style="
+      width:min(920px, 100%);
+      max-height:min(82vh, 100%);
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:22px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      overflow:hidden;
+    ">
+      <div style="
+        display:flex; align-items:center; justify-content:space-between; gap:12px;
+        padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.10);
+        background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+      ">
+        <div style="min-width:0;">
+          <div id="previewTitle" style="font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+          <div id="previewSub" style="font-size:12px; color:rgba(255,255,255,.70);"></div>
+        </div>
+
+        <div style="display:flex; gap:8px; flex:0 0 auto;">
+          <a id="previewOpen" class="btn btnSmall" target="_blank" rel="noopener">Abrir</a>
+          <button id="previewClose" class="btn btnSmall btnDanger">Fechar</button>
+        </div>
+      </div>
+
+      <div id="previewBody" style="padding:12px; max-height:72vh; overflow:auto;"></div>
     </div>
   </div>
 
@@ -517,34 +528,44 @@
 
   <script>
     /************************************************************
-     * 1) COLE SUAS CONFIGS AQUI (não vou colar keys por segurança)
+     * CONFIGS
      ************************************************************/
-  const firebaseConfig = {
-  apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
-  authDomain: "meu-drive-beb33.firebaseapp.com",
-  projectId: "meu-drive-beb33",
-  storageBucket: "meu-drive-beb33.firebasestorage.app",
-  messagingSenderId: "661176300748",
-  appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
+      authDomain: "meu-drive-beb33.firebaseapp.com",
+      projectId: "meu-drive-beb33",
+      storageBucket: "meu-drive-beb33.firebasestorage.app",
+      messagingSenderId: "661176300748",
+      appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
+    };
 
     // Cloudinary (unsigned upload)
     const CLOUD_NAME = "dilyddwkg";
     const UPLOAD_PRESET = "kv9sjt0g";
 
-    /************************************************************/
-    const app = firebase.initializeApp(firebaseConfig);
+    /************************************************************
+     * INIT
+     ************************************************************/
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // UI refs
-    const overlay = document.getElementById("overlay");
-    const pwaStatus = document.getElementById("pwaStatus");
-    const netStatus = document.getElementById("netStatus");
-    const sessionLabel = document.getElementById("sessionLabel");
+    /************************************************************
+     * ELEMENTS
+     ************************************************************/
+    const loaderOverlay = document.getElementById("loaderOverlay");
+    const authView = document.getElementById("authView");
+    const accountCard = document.getElementById("accountCard");
+    const uploadCard = document.getElementById("uploadCard");
+    const filesCard = document.getElementById("filesCard");
 
-    const loginView = document.getElementById("loginView");
-    const appView = document.getElementById("appView");
+    const userChip = document.getElementById("userChip");
+    const avatar = document.getElementById("avatar");
+    const userName = document.getElementById("userName");
+    const userEmail = document.getElementById("userEmail");
+    const loggedEmail = document.getElementById("loggedEmail");
+
+    const pwaStatus = document.getElementById("pwaStatus");
 
     const emailEl = document.getElementById("email");
     const passEl = document.getElementById("password");
@@ -552,396 +573,498 @@
     const btnRegister = document.getElementById("btnRegister");
     const btnLogout = document.getElementById("btnLogout");
 
-    const userEmail = document.getElementById("userEmail");
-    const userUid = document.getElementById("userUid");
-    const avatar = document.getElementById("avatar");
-    const avatarText = document.getElementById("avatarText");
-
     const fileInput = document.getElementById("fileInput");
-    const btnUpload = document.getElementById("btnUpload");
-    const uploadStatus = document.getElementById("uploadStatus");
-
     const folderSelect = document.getElementById("folderSelect");
-    const newFolder = document.getElementById("newFolder");
-    const btnAddFolder = document.getElementById("btnAddFolder");
+    const btnUpload = document.getElementById("btnUpload");
 
     const tabList = document.getElementById("tabList");
     const tabGallery = document.getElementById("tabGallery");
-    const listWrap = document.getElementById("listWrap");
-    const galleryWrap = document.getElementById("galleryWrap");
-    const emptyState = document.getElementById("emptyState");
 
-    const filesCount = document.getElementById("filesCount");
-    const searchInput = document.getElementById("searchInput");
     const typeFilter = document.getElementById("typeFilter");
+    const searchInput = document.getElementById("searchInput");
 
+    const filesList = document.getElementById("filesList");
+    const emptyState = document.getElementById("emptyState");
+    const countLabel = document.getElementById("countLabel");
+
+    // Preview refs
+    const previewModal = document.getElementById("previewModal");
+    const previewTitle = document.getElementById("previewTitle");
+    const previewSub = document.getElementById("previewSub");
+    const previewBody = document.getElementById("previewBody");
+    const previewOpen = document.getElementById("previewOpen");
+    const previewClose = document.getElementById("previewClose");
+
+    /************************************************************
+     * HELPERS
+     ************************************************************/
+    function showLoader(on){
+      loaderOverlay.style.display = on ? "flex" : "none";
+    }
+
+    function setViewLoggedIn(user){
+      // anima suave
+      authView.classList.add("hide");
+      accountCard.classList.remove("hide");
+      uploadCard.classList.remove("hide");
+      filesCard.classList.remove("hide");
+
+      userChip.style.display = "flex";
+
+      const em = user.email || "—";
+      loggedEmail.textContent = em;
+      userEmail.textContent = em;
+
+      // Nome/Avatar
+      const display = user.displayName || (em.split("@")[0] || "Usuário");
+      userName.textContent = display;
+      avatar.textContent = (display[0] || "M").toUpperCase();
+    }
+
+    function setViewLoggedOut(){
+      authView.classList.remove("hide");
+      accountCard.classList.add("hide");
+      uploadCard.classList.add("hide");
+      filesCard.classList.add("hide");
+
+      userChip.style.display = "none";
+      filesList.innerHTML = "";
+      emptyState.style.display = "none";
+      countLabel.textContent = "0 arquivo(s)";
+    }
+
+    function fmtBytes(bytes){
+      if(!bytes && bytes !== 0) return "";
+      const sizes = ["B","KB","MB","GB"];
+      let i = 0, v = bytes;
+      while(v >= 1024 && i < sizes.length-1){ v/=1024; i++; }
+      return `${v.toFixed(i===0?0:1)} ${sizes[i]}`;
+    }
+
+    function guessFolderByMime(file){
+      const t = (file.type || "").toLowerCase();
+      if(t.startsWith("image/")) return "Imagens";
+      if(t.startsWith("video/")) return "Vídeos";
+      if(t.includes("pdf")) return "PDFs";
+      return "Outros";
+    }
+
+    function badgeFor(folder){
+      if(folder === "Imagens") return "🖼️";
+      if(folder === "Vídeos") return "🎬";
+      if(folder === "PDFs") return "📄";
+      return "📦";
+    }
+
+    function closePreview(){
+      previewModal.style.display = "none";
+      previewBody.innerHTML = "";
+    }
+    previewClose.addEventListener("click", closePreview);
+    previewModal.addEventListener("click", (e) => { if(e.target === previewModal) closePreview(); });
+    document.addEventListener("keydown", (e) => { if(e.key === "Escape") closePreview(); });
+
+    function openPreview(file){
+      // file: { name, url, folder, resourceType, type, bytes }
+      previewTitle.textContent = file.name || "Arquivo";
+      previewSub.textContent = `${file.folder || "—"} • ${fmtBytes(file.bytes) || ""}`.trim();
+      previewOpen.href = file.url || "#";
+
+      const url = file.url || "";
+      const ext = (file.name || "").split(".").pop().toLowerCase();
+      const mime = (file.type || "").toLowerCase();
+      const resource = (file.resourceType || "").toLowerCase();
+
+      previewBody.innerHTML = "";
+
+      const wrap = document.createElement("div");
+      wrap.style.display = "grid";
+      wrap.style.placeItems = "center";
+      wrap.style.padding = "6px";
+
+      // Imagem
+      if(resource === "image" || mime.startsWith("image/") || ["png","jpg","jpeg","webp","gif"].includes(ext)){
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = file.name || "Preview";
+        img.style.maxWidth = "100%";
+        img.style.borderRadius = "16px";
+        img.style.border = "1px solid rgba(255,255,255,.12)";
+        img.style.boxShadow = "0 12px 40px rgba(0,0,0,.35)";
+        wrap.appendChild(img);
+        previewBody.appendChild(wrap);
+      }
+      // Vídeo
+      else if(resource === "video" || mime.startsWith("video/") || ["mp4","webm","mov","mkv"].includes(ext)){
+        const video = document.createElement("video");
+        video.src = url;
+        video.controls = true;
+        video.style.width = "100%";
+        video.style.maxHeight = "62vh";
+        video.style.borderRadius = "16px";
+        video.style.border = "1px solid rgba(255,255,255,.12)";
+        wrap.appendChild(video);
+        previewBody.appendChild(wrap);
+      }
+      // PDF
+      else if(mime.includes("pdf") || ext === "pdf"){
+        const iframe = document.createElement("iframe");
+        iframe.src = url;
+        iframe.style.width = "100%";
+        iframe.style.height = "62vh";
+        iframe.style.border = "1px solid rgba(255,255,255,.12)";
+        iframe.style.borderRadius = "16px";
+        previewBody.appendChild(iframe);
+      }
+      // Outros
+      else{
+        const box = document.createElement("div");
+        box.style.width = "100%";
+        box.style.padding = "14px";
+        box.style.borderRadius = "16px";
+        box.style.border = "1px solid rgba(255,255,255,.12)";
+        box.style.background = "rgba(255,255,255,.05)";
+        box.innerHTML = `
+          <div style="font-weight:900; margin-bottom:6px;">Esse tipo de arquivo não tem preview aqui.</div>
+          <div style="color:rgba(255,255,255,.7); font-size:13px;">
+            Você pode abrir/baixar clicando em <b>Abrir</b>.
+          </div>
+        `;
+        previewBody.appendChild(box);
+      }
+
+      previewModal.style.display = "flex";
+    }
+
+    /************************************************************
+     * RENDER + LOAD FILES
+     ************************************************************/
     let currentUser = null;
     let allFiles = [];
-    let unsubscribe = null;
+    let viewMode = "list"; // list | gallery
 
-    // Helpers
-    function showOverlay(show){
-      overlay.classList.toggle("show", !!show);
-    }
-    function toast(text){
-      alert(text);
-    }
+    function applyFilters(){
+      const q = (searchInput.value || "").trim().toLowerCase();
+      const f = typeFilter.value;
 
-    function showLogin(){
-      appView.classList.add("hidden");
-      loginView.classList.remove("hidden");
-    }
-    function showApp(){
-      loginView.classList.add("hidden");
-      appView.classList.remove("hidden");
-    }
+      let items = allFiles.slice();
 
-    // PWA install detection
-    function updatePwaLabel(){
-      // Chrome mobile geralmente expõe display-mode
-      const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
-      pwaStatus.textContent = isStandalone ? "PWA: instalado ✅" : "PWA: pode instalar 📲";
-    }
-    updatePwaLabel();
-    window.addEventListener("appinstalled", updatePwaLabel);
-
-    // Online status
-    function updateOnline(){
-      const ok = navigator.onLine;
-      netStatus.textContent = ok ? "Online" : "Offline";
-      netStatus.style.opacity = ok ? "1" : ".7";
-    }
-    updateOnline();
-    window.addEventListener("online", updateOnline);
-    window.addEventListener("offline", updateOnline);
-
-    // Pastas (localStorage por usuário)
-    function foldersKey(uid){ return `simpledrive_folders_${uid}`; }
-    function getFolders(uid){
-      const base = ["Imagens", "Vídeos", "PDFs", "Outros"];
-      try{
-        const raw = localStorage.getItem(foldersKey(uid));
-        const arr = raw ? JSON.parse(raw) : [];
-        const merged = [...new Set([...base, ...arr])];
-        return merged;
-      }catch{
-        return base;
+      if(f && f !== "Todos"){
+        items = items.filter(x => (x.folder || "Outros") === f);
       }
-    }
-    function saveFolders(uid, folders){
-      localStorage.setItem(foldersKey(uid), JSON.stringify(folders));
-    }
-    function renderFolders(){
-      if(!currentUser) return;
-      const folders = getFolders(currentUser.uid);
-      folderSelect.innerHTML = "";
-      folders.forEach(f => {
-        const opt = document.createElement("option");
-        opt.value = f;
-        opt.textContent = f;
-        folderSelect.appendChild(opt);
+      if(q){
+        items = items.filter(x => (x.name || "").toLowerCase().includes(q));
+      }
+
+      countLabel.textContent = `${items.length} arquivo(s)`;
+      filesList.innerHTML = "";
+      emptyState.style.display = items.length ? "none" : "block";
+
+      if(viewMode === "gallery"){
+        // Gallery simples (grid)
+        filesList.style.display = "grid";
+        filesList.style.gridTemplateColumns = "repeat(auto-fit, minmax(170px, 1fr))";
+        filesList.style.gap = "12px";
+      }else{
+        filesList.style.display = "flex";
+        filesList.style.flexDirection = "column";
+      }
+
+      items.forEach(file => {
+        if(viewMode === "gallery"){
+          const card = document.createElement("div");
+          card.style.background = "rgba(255,255,255,.06)";
+          card.style.border = "1px solid rgba(255,255,255,.10)";
+          card.style.borderRadius = "18px";
+          card.style.overflow = "hidden";
+          card.style.cursor = "pointer";
+
+          const top = document.createElement("div");
+          top.style.height = "120px";
+          top.style.display = "grid";
+          top.style.placeItems = "center";
+          top.style.background = "rgba(10,18,32,.50)";
+
+          if((file.resourceType === "image") && file.url){
+            const img = document.createElement("img");
+            img.src = file.url;
+            img.alt = file.name || "imagem";
+            img.style.width = "100%";
+            img.style.height = "120px";
+            img.style.objectFit = "cover";
+            top.innerHTML = "";
+            top.appendChild(img);
+          }else{
+            top.innerHTML = `<div style="font-size:34px">${badgeFor(file.folder || "Outros")}</div>`;
+          }
+
+          const bottom = document.createElement("div");
+          bottom.style.padding = "10px";
+          bottom.innerHTML = `
+            <div style="font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${file.name || "Arquivo"}
+            </div>
+            <div style="font-size:12px; color:rgba(255,255,255,.60); margin-top:4px;">
+              ${file.folder || "Outros"} • ${fmtBytes(file.bytes) || ""}
+            </div>
+          `;
+
+          card.appendChild(top);
+          card.appendChild(bottom);
+
+          card.addEventListener("click", () => openPreview(file));
+          filesList.appendChild(card);
+          return;
+        }
+
+        // LIST MODE
+        const row = document.createElement("div");
+        row.className = "item";
+
+        const left = document.createElement("div");
+        left.className = "left";
+
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = badgeFor(file.folder || "Outros");
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.innerHTML = `
+          <div class="name">${file.name || "Arquivo"}</div>
+          <div class="sub">${file.folder || "Outros"} • ${fmtBytes(file.bytes) || ""}</div>
+        `;
+
+        left.appendChild(badge);
+        left.appendChild(meta);
+
+        const right = document.createElement("div");
+        right.className = "right";
+
+        const btnPrev = document.createElement("button");
+        btnPrev.className = "btn btnSmall";
+        btnPrev.textContent = "Preview";
+        btnPrev.addEventListener("click", () => openPreview(file));
+
+        const btnOpen = document.createElement("a");
+        btnOpen.className = "btn btnSmall";
+        btnOpen.textContent = "Abrir";
+        btnOpen.href = file.url || "#";
+        btnOpen.target = "_blank";
+        btnOpen.rel = "noopener";
+
+        const btnDel = document.createElement("button");
+        btnDel.className = "btn btnSmall btnDanger";
+        btnDel.textContent = "Remover";
+        btnDel.addEventListener("click", () => removeFile(file));
+
+        right.appendChild(btnPrev);
+        right.appendChild(btnOpen);
+        right.appendChild(btnDel);
+
+        row.appendChild(left);
+        row.appendChild(right);
+        filesList.appendChild(row);
       });
     }
 
-    btnAddFolder.addEventListener("click", () => {
+    async function loadFiles(){
       if(!currentUser) return;
-      const name = (newFolder.value || "").trim();
-      if(!name) return;
-      const folders = getFolders(currentUser.uid);
-      if(!folders.includes(name)) folders.push(name);
-      saveFolders(currentUser.uid, folders);
-      newFolder.value = "";
-      renderFolders();
-    });
+      showLoader(true);
 
-    // Tabs
-    function setTab(which){
-      const listOn = which === "list";
-      tabList.classList.toggle("active", listOn);
-      tabGallery.classList.toggle("active", !listOn);
+      try{
+        const snap = await db.collection("files")
+          .where("uid", "==", currentUser.uid)
+          .orderBy("createdAt", "desc")
+          .get();
 
-      listWrap.style.display = listOn ? "" : "none";
-      galleryWrap.style.display = listOn ? "none" : "";
+        allFiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        applyFilters();
+      }catch(err){
+        console.error(err);
+        alert("Erro ao carregar arquivos.");
+      }finally{
+        showLoader(false);
+      }
     }
-    tabList.addEventListener("click", () => setTab("list"));
-    tabGallery.addEventListener("click", () => setTab("gallery"));
 
-    // Auth
+    /************************************************************
+     * AUTH
+     ************************************************************/
     btnLogin.addEventListener("click", async () => {
-      const email = emailEl.value.trim();
-      const pass = passEl.value;
-      if(!email || !pass) return toast("Preencha email e senha.");
-      showOverlay(true);
+      const email = (emailEl.value || "").trim();
+      const pass = passEl.value || "";
+      if(!email || !pass) return alert("Preencha email e senha.");
+      showLoader(true);
       try{
         await auth.signInWithEmailAndPassword(email, pass);
       }catch(e){
-        toast("Firebase: " + (e?.message || "Erro ao entrar"));
+        alert("Erro: " + (e.message || e.code));
       }finally{
-        showOverlay(false);
+        showLoader(false);
       }
     });
 
     btnRegister.addEventListener("click", async () => {
-      const email = emailEl.value.trim();
-      const pass = passEl.value;
-      if(!email || !pass) return toast("Preencha email e senha.");
-      showOverlay(true);
+      const email = (emailEl.value || "").trim();
+      const pass = passEl.value || "";
+      if(!email || !pass) return alert("Preencha email e senha.");
+      showLoader(true);
       try{
         await auth.createUserWithEmailAndPassword(email, pass);
       }catch(e){
-        toast("Firebase: " + (e?.message || "Erro ao criar conta"));
+        alert("Erro: " + (e.message || e.code));
       }finally{
-        showOverlay(false);
+        showLoader(false);
       }
     });
 
     btnLogout.addEventListener("click", async () => {
-      showOverlay(true);
+      showLoader(true);
       try{
-        if(unsubscribe) unsubscribe();
-        unsubscribe = null;
         await auth.signOut();
       }catch(e){
-        toast("Firebase: " + (e?.message || "Erro ao sair"));
+        alert("Erro: " + (e.message || e.code));
       }finally{
-        showOverlay(false);
+        showLoader(false);
       }
     });
 
-    // Watch session (loader só aqui, não fica preso)
-    showOverlay(true);
     auth.onAuthStateChanged(async (user) => {
-      currentUser = user || null;
-
-      if(!currentUser){
-        sessionLabel.textContent = "Sessão: deslogado";
-        showLogin();
-        // limpa dados
-        allFiles = [];
-        renderFiles();
-        showOverlay(false);
-        return;
+      showLoader(true);
+      try{
+        if(user){
+          currentUser = user;
+          setViewLoggedIn(user);
+          await loadFiles();
+        }else{
+          currentUser = null;
+          setViewLoggedOut();
+        }
+      }finally{
+        showLoader(false);
       }
-
-      sessionLabel.textContent = "Sessão: ativa ✅";
-      userEmail.textContent = currentUser.email || "—";
-      userUid.textContent = "UID: " + currentUser.uid.slice(0, 10) + "…";
-
-      // avatar simples (iniciais)
-      const letter = (currentUser.email || "U").trim()[0].toUpperCase();
-      avatarText.textContent = letter;
-
-      renderFolders();
-      showApp();
-
-      // começa a ouvir arquivos do usuário
-      if(unsubscribe) unsubscribe();
-      unsubscribe = db.collection("files")
-        .where("uid", "==", currentUser.uid)
-        .orderBy("createdAt", "desc")
-        .onSnapshot((snap) => {
-          allFiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderFiles();
-        }, (err) => {
-          console.error(err);
-          toast("Firestore: " + (err?.message || "Erro de permissão (rules)"));
-        });
-
-      showOverlay(false);
     });
 
-    // Upload Cloudinary (corrigido)
+    /************************************************************
+     * UPLOAD
+     ************************************************************/
+    fileInput.addEventListener("change", () => {
+      const f = fileInput.files && fileInput.files[0];
+      if(!f) return;
+      folderSelect.value = guessFolderByMime(f);
+    });
+
     async function uploadToCloudinary(file, folderName){
       const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
       const form = new FormData();
       form.append("file", file);
       form.append("upload_preset", UPLOAD_PRESET);
-      form.append("folder", `meu-drive/${folderName}`);
+
+      // organiza no Cloudinary (não é obrigatório)
+      const safeFolder = (folderName || "Outros").replace(/[^\wÀ-ÿ -]/g, "").trim();
+      form.append("folder", `meu-drive/${currentUser.uid}/${safeFolder}`);
 
       const res = await fetch(url, { method:"POST", body: form });
       const data = await res.json();
-
       if(!res.ok){
-        const msg = data?.error?.message || "Falha no upload (Cloudinary)";
+        const msg = data?.error?.message || "Erro no upload";
         throw new Error(msg);
       }
       return data;
     }
 
-    function guessType(resourceType, file){
-      // Cloudinary retorna resource_type: image/video/raw
-      if(resourceType === "image") return "image";
-      if(resourceType === "video") return "video";
-      if(resourceType === "raw") return "raw";
-      // fallback
-      const mime = (file?.type || "").toLowerCase();
-      if(mime.startsWith("image/")) return "image";
-      if(mime.startsWith("video/")) return "video";
-      if(mime.includes("pdf")) return "raw";
-      return "other";
-    }
-
     btnUpload.addEventListener("click", async () => {
-      if(!currentUser) return toast("Faça login primeiro.");
-      const file = fileInput.files?.[0];
-      if(!file) return toast("Escolha um arquivo.");
-      const folderName = folderSelect.value || "Outros";
+      if(!currentUser) return alert("Você precisa estar logado.");
+      const file = fileInput.files && fileInput.files[0];
+      if(!file) return alert("Escolha um arquivo primeiro.");
 
-      showOverlay(true);
-      uploadStatus.textContent = "Enviando…";
+      showLoader(true);
 
       try{
-        const up = await uploadToCloudinary(file, folderName);
+        const folder = folderSelect.value || guessFolderByMime(file);
+        const result = await uploadToCloudinary(file, folder);
 
-        // salva no Firestore (coleção root: files)
         const doc = {
           uid: currentUser.uid,
-          email: currentUser.email || "",
-          name: up.original_filename || file.name,
-          url: up.secure_url,
-          publicId: up.public_id,
-          resourceType: up.resource_type, // image/video/raw
-          folder: folderName,
-          bytes: up.bytes || file.size || 0,
-          format: up.format || "",
+          name: file.name,
+          bytes: file.size || null,
+          type: file.type || "",
+          folder,
+          url: result.secure_url,
+          publicId: result.public_id,
+          resourceType: result.resource_type, // image | video | raw
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         await db.collection("files").add(doc);
 
-        uploadStatus.textContent = "Upload concluído ✅";
         fileInput.value = "";
+        await loadFiles();
       }catch(e){
         console.error(e);
-        uploadStatus.textContent = "Erro no upload ❌";
-        toast("Erro no upload: " + (e?.message || "desconhecido"));
+        alert("Erro no upload: " + (e.message || "tente novamente"));
       }finally{
-        showOverlay(false);
+        showLoader(false);
       }
     });
 
-    // Render list + gallery
-    function iconFor(type){
-      if(type==="image") return "🖼️";
-      if(type==="video") return "🎬";
-      if(type==="raw") return "📄";
-      return "📦";
+    async function removeFile(file){
+      if(!currentUser) return;
+      const ok = confirm(`Remover "${file.name}" da lista?`);
+      if(!ok) return;
+
+      showLoader(true);
+      try{
+        await db.collection("files").doc(file.id).delete();
+        // Observação: deletar do Cloudinary exige backend (não dá seguro no client).
+        await loadFiles();
+      }catch(e){
+        console.error(e);
+        alert("Erro ao remover: " + (e.message || e.code));
+      }finally{
+        showLoader(false);
+      }
     }
 
-    function applyFilters(files){
-      const q = (searchInput.value || "").trim().toLowerCase();
-      const tf = typeFilter.value;
+    /************************************************************
+     * UI (tabs + filtros)
+     ************************************************************/
+    tabList.addEventListener("click", () => {
+      viewMode = "list";
+      tabList.classList.add("active");
+      tabGallery.classList.remove("active");
+      applyFilters();
+    });
 
-      return files.filter(f => {
-        const type = (f.resourceType || "").toLowerCase();
-        const guessed = type || "other";
+    tabGallery.addEventListener("click", () => {
+      viewMode = "gallery";
+      tabGallery.classList.add("active");
+      tabList.classList.remove("active");
+      applyFilters();
+    });
 
-        const matchesType =
-          tf === "all" ||
-          (tf === "other" ? !["image","video","raw"].includes(guessed) : guessed === tf);
+    typeFilter.addEventListener("change", applyFilters);
+    searchInput.addEventListener("input", applyFilters);
 
-        const text = `${f.name||""} ${f.folder||""}`.toLowerCase();
-        const matchesQuery = !q || text.includes(q);
+    /************************************************************
+     * PWA status + SW
+     ************************************************************/
+    function updatePwaStatus(){
+      const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+      pwaStatus.textContent = isStandalone ? "PWA: instalado ✅" : "PWA: pode instalar 📲";
+    }
+    updatePwaStatus();
+    window.matchMedia("(display-mode: standalone)").addEventListener("change", updatePwaStatus);
 
-        return matchesType && matchesQuery;
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(console.error);
       });
-    }
-
-    function renderFiles(){
-      const filtered = applyFilters(allFiles);
-      filesCount.textContent = `${filtered.length} arquivo(s)`;
-
-      // empty
-      const isEmpty = filtered.length === 0;
-      emptyState.style.display = isEmpty ? "" : "none";
-
-      // LIST
-      listWrap.innerHTML = "";
-      filtered.forEach(f => {
-        const type = guessType(f.resourceType);
-        const item = document.createElement("div");
-        item.className = "fileItem";
-
-        const left = document.createElement("div");
-        left.className = "fileLeft";
-
-        const badge = document.createElement("div");
-        badge.className = "fileBadge";
-        badge.textContent = iconFor(type);
-
-        const meta = document.createElement("div");
-        meta.className = "fileMeta";
-
-        const title = document.createElement("b");
-        title.textContent = f.name || "Arquivo";
-
-        const sub = document.createElement("span");
-        const folder = f.folder ? `• ${f.folder}` : "";
-        sub.textContent = `${(f.resourceType || "other").toUpperCase()} ${folder}`;
-
-        meta.appendChild(title);
-        meta.appendChild(sub);
-
-        left.appendChild(badge);
-        left.appendChild(meta);
-
-        const actions = document.createElement("div");
-        actions.className = "fileActions";
-
-        const openBtn = document.createElement("button");
-        openBtn.className = "btn btnSmall";
-        openBtn.textContent = "Abrir";
-        openBtn.onclick = () => window.open(f.url, "_blank");
-
-        const delBtn = document.createElement("button");
-        delBtn.className = "btn btnSmall btnDanger";
-        delBtn.textContent = "Remover";
-        delBtn.onclick = async () => {
-          if(!confirm("Remover da lista? (Cloudinary ainda não é apagado por segurança)")) return;
-          try{
-            await db.collection("files").doc(f.id).delete();
-          }catch(e){
-            toast("Erro ao remover: " + (e?.message || "desconhecido"));
-          }
-        };
-
-        actions.appendChild(openBtn);
-        actions.appendChild(delBtn);
-
-        item.appendChild(left);
-        item.appendChild(actions);
-        listWrap.appendChild(item);
-      });
-
-      // GALLERY
-      galleryWrap.innerHTML = "";
-      filtered
-        .filter(f => (f.resourceType || "").toLowerCase() === "image")
-        .forEach(f => {
-          const t = document.createElement("div");
-          t.className = "thumb";
-          const img = document.createElement("img");
-          img.src = f.url;
-          img.alt = f.name || "imagem";
-          const tag = document.createElement("div");
-          tag.className = "tag";
-          tag.textContent = f.folder || "Imagens";
-          t.appendChild(img);
-          t.appendChild(tag);
-          t.onclick = () => window.open(f.url, "_blank");
-          galleryWrap.appendChild(t);
-        });
-    }
-
-    searchInput.addEventListener("input", renderFiles);
-    typeFilter.addEventListener("change", renderFiles);
-
-    // Service worker
-    if("serviceWorker" in navigator){
-      navigator.serviceWorker.register("./service-worker.js").catch(console.error);
     }
   </script>
 </body>
 </html>
-
