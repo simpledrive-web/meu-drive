@@ -8,32 +8,72 @@
   <!-- Evita erro favicon 404 -->
   <link rel="icon" href="data:,">
 
+  <!-- JSZip (para Baixar tudo em ZIP) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+          integrity="sha512-5wW0g3l9o5jI+0xQpC1d3otGx8f9r4aZk3kS6JdJ1m3x5iYl2iQbR9j9Wc2cV8H3H4gS8p4n6sCqQm7XvQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <style>
     :root{
-      --bg:#f2f2f2;
+      --bg:#f5f6f8;
       --card:#fff;
-      --muted:rgba(0,0,0,.6);
-      --line:#e9e9e9;
+      --muted:rgba(0,0,0,.58);
+      --line:#e9e9ee;
       --brand:#0b57d0;
+      --brand2:#1658ff;
       --danger:#d11;
+      --shadow: 0 12px 28px rgba(0,0,0,.08);
+      --shadow2: 0 10px 22px rgba(0,0,0,.06);
+      --radius: 16px;
     }
     *{ box-sizing:border-box; }
     body{
       font-family: Arial, sans-serif;
-      background:var(--bg);
+      background: radial-gradient(1200px 500px at 15% 0%, #e9f1ff 0%, transparent 60%),
+                  radial-gradient(900px 400px at 85% 10%, #f2e9ff 0%, transparent 55%),
+                  var(--bg);
       padding:18px;
       margin:0;
       color:#111;
     }
-    h2{ margin:0 0 12px; }
-    .wrap{ max-width:1020px; margin:0 auto; }
+    .wrap{ max-width:1040px; margin:0 auto; }
 
+    /* Header */
+    .topbar{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    h2{ margin:0; letter-spacing:-.2px; }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(11,87,208,.08);
+      color:#0b57d0;
+      font-weight:800;
+      width:fit-content;
+      border:1px solid rgba(11,87,208,.12);
+      font-size:12px;
+    }
+
+    /* Cards */
     .box{
       background:var(--card);
       padding:14px;
-      border-radius:14px;
+      border-radius:var(--radius);
       margin:10px 0;
       border:1px solid var(--line);
+      box-shadow: var(--shadow2);
     }
     .row{
       display:flex;
@@ -41,10 +81,11 @@
       flex-wrap:wrap;
       align-items:center;
     }
+
     input, select{
       padding:10px 12px;
       font-size:14px;
-      border-radius:12px;
+      border-radius:14px;
       border:1px solid #ddd;
       outline:none;
       background:#fff;
@@ -53,34 +94,40 @@
       border-color: rgba(11,87,208,.5);
       box-shadow: 0 0 0 3px rgba(11,87,208,.12);
     }
+
     button{
       padding:10px 12px;
       cursor:pointer;
-      border-radius:12px;
+      border-radius:14px;
       border:1px solid #ddd;
       background:#fafafa;
-      font-weight:600;
+      font-weight:800;
+      transition:.12s transform, .12s filter, .12s background;
     }
     button:hover{ background:#eee; }
+    button:active{ transform: translateY(1px); }
+
     .primary{
-      background:var(--brand);
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 100%);
       color:#fff;
-      border-color:var(--brand);
+      border-color:transparent;
+      box-shadow: 0 10px 22px rgba(11,87,208,.22);
     }
-    .primary:hover{ filter:brightness(.95); }
+    .primary:hover{ filter:brightness(.97); }
     .danger{
-      background:var(--danger);
+      background: linear-gradient(135deg, #d11 0%, #ff3b3b 100%);
       color:#fff;
       border:0;
-      border-radius:12px;
+      box-shadow: 0 10px 22px rgba(209,17,17,.16);
     }
-    .danger:hover{ filter:brightness(.92); }
-    a{ color:var(--brand); text-decoration:none; }
+    .danger:hover{ filter:brightness(.95); }
+
+    a{ color:var(--brand); text-decoration:none; font-weight:800; }
     .small{ font-size:12px; color:var(--muted); }
     .muted{ color:var(--muted); }
     hr{ border:none; border-top:1px solid var(--line); margin:14px 0; }
 
-    /* ===== Toolbar ===== */
+    /* Toolbar */
     .toolbar{
       display:flex;
       justify-content:space-between;
@@ -89,6 +136,7 @@
       flex-wrap:wrap;
       margin-top:10px;
     }
+
     .segmented{
       display:flex;
       gap:8px;
@@ -99,12 +147,12 @@
       border:1px solid #ddd;
       background:#fff;
       padding:8px 12px;
-      font-weight:700;
+      font-weight:900;
     }
     .segmented button.active{
-      background:var(--brand);
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 100%);
       color:#fff;
-      border-color:var(--brand);
+      border-color:transparent;
     }
 
     .controls{
@@ -117,11 +165,33 @@
     }
     .controls input[type="search"]{ flex:1; min-width:220px; }
 
-    /* ===== LISTA ===== */
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(0,0,0,.05);
+      font-size:12px;
+      font-weight:900;
+      color:#222;
+    }
+
+    /* Lista */
     .list{ margin-top:10px; }
+    .folderTitle{
+      margin:14px 0 6px;
+      font-weight:900;
+      color:#1a1a1a;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
     .file{
       background:#fff;
-      border-radius:14px;
+      border-radius:var(--radius);
       padding:12px;
       margin:10px 0;
       display:flex;
@@ -129,6 +199,7 @@
       align-items:center;
       gap:10px;
       border:1px solid var(--line);
+      box-shadow: var(--shadow2);
     }
     .file-left{
       display:flex;
@@ -139,15 +210,16 @@
     }
     .thumb{
       width:74px; height:74px;
-      border-radius:14px;
+      border-radius:16px;
       border:1px solid #ddd;
       overflow:hidden;
       flex:0 0 auto;
       display:flex;
       align-items:center;
       justify-content:center;
-      background:#f7f7f7;
+      background:#f7f7fb;
       font-size:30px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.06);
     }
     .thumb img{
       width:100%; height:100%;
@@ -161,7 +233,7 @@
       min-width:0;
     }
     .file-meta .name{
-      font-weight:800;
+      font-weight:950;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -176,7 +248,7 @@
       justify-content:flex-end;
     }
 
-    /* ===== GALERIA ===== */
+    /* Galeria */
     .grid{
       display:grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -185,18 +257,23 @@
     }
     .card{
       border:1px solid var(--line);
-      border-radius:16px;
+      border-radius:18px;
       background:#fff;
       overflow:hidden;
       cursor:pointer;
       display:flex;
       flex-direction:column;
-      min-height: 210px;
+      min-height: 220px;
+      box-shadow: var(--shadow2);
+      transition: .14s transform, .14s box-shadow;
     }
-    .card:hover{ box-shadow: 0 10px 22px rgba(0,0,0,.08); }
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
     .card-media{
-      height: 140px;
-      background:#f6f6f6;
+      height: 150px;
+      background:#f6f6fb;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -218,7 +295,7 @@
       min-width:0;
     }
     .card-title{
-      font-weight:900;
+      font-weight:950;
       font-size:14px;
       white-space:nowrap;
       overflow:hidden;
@@ -234,8 +311,8 @@
       flex:1;
       text-align:center;
       padding:10px 12px;
-      border-radius:12px;
-      font-weight:800;
+      border-radius:14px;
+      font-weight:900;
     }
     .linkBtn{
       border:1px solid #ddd;
@@ -246,11 +323,11 @@
       justify-content:center;
     }
 
-    /* ===== Modal Preview ===== */
+    /* Modal Preview */
     #previewModal{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.6);
+      background:rgba(0,0,0,.62);
       display:none;
       align-items:center;
       justify-content:center;
@@ -259,7 +336,7 @@
     }
     #previewModalInner{
       background:#fff;
-      border-radius:16px;
+      border-radius:18px;
       max-width:980px;
       width:100%;
       max-height:92vh;
@@ -275,10 +352,11 @@
       padding:12px 14px;
       border-bottom:1px solid var(--line);
       gap:10px;
+      background: linear-gradient(135deg, #f7f9ff 0%, #ffffff 60%);
     }
     #previewHeaderLeft{ min-width:0; }
     #previewTitle{
-      font-weight:900;
+      font-weight:950;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -288,10 +366,10 @@
     #previewCloseBtn{
       border:none;
       background:#eee;
-      border-radius:12px;
+      border-radius:14px;
       padding:9px 12px;
       cursor:pointer;
-      font-weight:900;
+      font-weight:950;
     }
     #previewBody{
       padding:12px;
@@ -309,31 +387,34 @@
       gap:10px;
       justify-content:flex-end;
       flex-wrap:wrap;
+      background:#fff;
     }
     #previewOpenLink{
       padding:10px 14px;
-      border-radius:12px;
-      background:var(--brand);
+      border-radius:14px;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 100%);
       color:#fff;
       text-decoration:none;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      font-weight:900;
+      font-weight:950;
+      box-shadow: 0 10px 22px rgba(11,87,208,.22);
     }
 
-    /* ===== Responsivo ===== */
+    /* Responsivo */
     @media (max-width: 900px){
       .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
       .file-meta .name{ max-width: 46vw; }
     }
     @media (max-width: 640px){
       body{ padding:12px; }
-      .box{ padding:12px; border-radius:16px; }
+      .topbar{ align-items:flex-start; flex-direction:column; }
+      .box{ padding:12px; border-radius:18px; }
       .row{ gap:8px; }
       input, select, button{
         width:100%;
-        font-size:16px; /* evita zoom automático */
+        font-size:16px; /* evita zoom automático no celular */
         padding:12px;
       }
       .segmented{ width:100%; }
@@ -345,16 +426,12 @@
         align-items:stretch;
         gap:12px;
       }
-      .file-actions{
-        width:100%;
-      }
-      .file-actions button, .file-actions a{
-        width:100%;
-      }
-      .thumb{ width:90px; height:90px; border-radius:16px; }
+      .file-actions{ width:100%; }
+      .file-actions button, .file-actions a{ width:100%; }
+      .thumb{ width:90px; height:90px; border-radius:18px; }
       .file-meta .name{ max-width:100%; }
       .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .card-media{ height: 150px; }
+      .card-media{ height: 160px; }
       #previewTitle{ max-width: 62vw; }
     }
   </style>
@@ -362,7 +439,13 @@
 
 <body>
   <div class="wrap">
-    <h2>Meu Drive ☁️ <span class="small">(sincronizado)</span></h2>
+    <div class="topbar">
+      <div class="title">
+        <h2>Meu Drive ☁️</h2>
+        <div class="badge">sincronizado • Firebase + Cloudinary</div>
+      </div>
+      <div class="pill" id="netPill">🟢 Online</div>
+    </div>
 
     <!-- LOGIN -->
     <div class="box" id="authBox">
@@ -384,9 +467,21 @@
 
       <hr />
 
+      <!-- Upload + Pastas -->
       <div class="row">
+        <select id="folderSelect" title="Pasta">
+          <option value="Raiz">📁 Raiz</option>
+        </select>
+
+        <input id="newFolder" type="text" placeholder="Nova pasta (opcional)" />
+
         <input type="file" id="fileInput" />
+
         <button id="btnUpload" class="primary">Enviar arquivo</button>
+        <button id="btnZip" title="Baixa os arquivos filtrados (respeita busca/tipo/pasta)">
+          Baixar tudo (.zip)
+        </button>
+
         <span class="small" id="status"></span>
       </div>
 
@@ -405,6 +500,10 @@
           <option value="image">Imagens</option>
           <option value="pdf">PDFs</option>
           <option value="other">Outros</option>
+        </select>
+
+        <select id="folderFilter" title="Filtrar por pasta">
+          <option value="__all__">Todas as pastas</option>
         </select>
       </div>
 
@@ -497,6 +596,14 @@
     const searchInput = document.getElementById("searchInput");
     const typeFilter = document.getElementById("typeFilter");
 
+    // Pastas
+    const folderSelect = document.getElementById("folderSelect"); // pasta para upload
+    const newFolder = document.getElementById("newFolder");       // criar pasta
+    const folderFilter = document.getElementById("folderFilter"); // filtrar/visualizar
+
+    // ZIP
+    const btnZip = document.getElementById("btnZip");
+
     // Modal
     const previewModal = document.getElementById("previewModal");
     const previewTitle = document.getElementById("previewTitle");
@@ -504,6 +611,17 @@
     const previewBody = document.getElementById("previewBody");
     const previewOpenLink = document.getElementById("previewOpenLink");
     const previewCloseBtn = document.getElementById("previewCloseBtn");
+
+    // Online indicator
+    const netPill = document.getElementById("netPill");
+    function updateNet(){
+      const on = navigator.onLine;
+      netPill.textContent = on ? "🟢 Online" : "🔴 Offline";
+      netPill.style.opacity = on ? "1" : ".85";
+    }
+    window.addEventListener("online", updateNet);
+    window.addEventListener("offline", updateNet);
+    updateNet();
 
     // Utils
     function formatBytes(bytes) {
@@ -515,19 +633,40 @@
       return `${b.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
     }
 
+    function safePart(s){
+      return (s || "Raiz")
+        .toString()
+        .trim()
+        .replace(/[\\/:*?"<>|]+/g, "-")
+        .replace(/\s+/g, " ")
+        .slice(0, 80) || "Raiz";
+    }
+
+    function getExt(item){
+      const fmt = (item.format || "").toLowerCase();
+      if (fmt) return fmt;
+      const name = (item.name || "").toLowerCase();
+      const dot = name.lastIndexOf(".");
+      if (dot > 0 && dot < name.length - 1) return name.slice(dot+1);
+      // fallback
+      if (item.resourceType === "image") return "jpg";
+      return "bin";
+    }
+
+    function ensureFilename(item){
+      const base = safePart(item.name || "arquivo");
+      const ext = getExt(item);
+      // se já tem extensão, mantém
+      if (base.toLowerCase().endsWith("." + ext)) return base;
+      // se base já tem ponto, não força duplicar
+      if (base.includes(".")) return base;
+      return `${base}.${ext}`;
+    }
+
     function isPdf(item){
       const fmt = (item.format || "").toLowerCase();
       const name = (item.name || "").toLowerCase();
-      return fmt === "pdf" || name.endsWith(".pdf") || item.resourceType === "raw" && fmt === "pdf";
-    }
-
-    function thumbUrl(item){
-      // Para imagens, geramos miniatura via Cloudinary (rápido e leve)
-      if (item.resourceType === "image" && item.publicId) {
-        const fmt = item.format || "jpg";
-        return `https://res.cloudinary.com/${cloudName}/image/upload/w_260,h_260,c_fill,q_auto,f_auto/${item.publicId}.${fmt}`;
-      }
-      return null;
+      return fmt === "pdf" || name.endsWith(".pdf") || (item.resourceType === "raw" && fmt === "pdf");
     }
 
     function iconFor(item){
@@ -536,12 +675,22 @@
       return "📄";
     }
 
+    function thumbUrl(item){
+      if (item.resourceType === "image" && item.publicId) {
+        const fmt = item.format || "jpg";
+        return `https://res.cloudinary.com/${cloudName}/image/upload/w_260,h_260,c_fill,q_auto,f_auto/${item.publicId}.${fmt}`;
+      }
+      return null;
+    }
+
     function openPreview(item) {
       previewTitle.textContent = item.name || "Arquivo";
       const fmt = (item.format ? item.format.toUpperCase() : (isPdf(item) ? "PDF" : "ARQUIVO"));
-      previewSubtitle.textContent = `${fmt}${item.bytes ? ` • ${formatBytes(item.bytes)}` : ""}`;
-      previewOpenLink.href = item.url;
+      previewSubtitle.textContent =
+        `${fmt}${item.bytes ? ` • ${formatBytes(item.bytes)}` : ""}` +
+        ` • ${safePart(item.folder || "Raiz")}`;
 
+      previewOpenLink.href = item.url;
       previewBody.innerHTML = "";
 
       if (item.resourceType === "image" && item.url) {
@@ -550,21 +699,22 @@
         img.alt = item.name || "Imagem";
         img.style.maxWidth = "100%";
         img.style.maxHeight = "70vh";
-        img.style.borderRadius = "16px";
+        img.style.borderRadius = "18px";
         img.style.boxShadow = "0 10px 26px rgba(0,0,0,.16)";
         previewBody.appendChild(img);
       } else {
         const box = document.createElement("div");
         box.style.background = "#fff";
         box.style.border = "1px solid #eee";
-        box.style.borderRadius = "16px";
-        box.style.padding = "14px";
+        box.style.borderRadius = "18px";
+        box.style.padding = "16px";
         box.style.maxWidth = "520px";
+        box.style.boxShadow = "0 12px 28px rgba(0,0,0,.08)";
         box.innerHTML = `
-          <div style="font-size:44px; text-align:center;">${iconFor(item)}</div>
-          <div style="font-weight:900; margin-top:8px; text-align:center;">${item.name || "Arquivo"}</div>
+          <div style="font-size:46px; text-align:center;">${iconFor(item)}</div>
+          <div style="font-weight:950; margin-top:8px; text-align:center;">${item.name || "Arquivo"}</div>
           <div style="font-size:12px; opacity:.72; margin-top:4px; text-align:center;">
-            ${fmt}${item.bytes ? ` • ${formatBytes(item.bytes)}` : ""}
+            ${fmt}${item.bytes ? ` • ${formatBytes(item.bytes)}` : ""} • ${safePart(item.folder || "Raiz")}
           </div>
           <div style="margin-top:10px; font-size:13px; opacity:.82; text-align:center;">
             Clique em <b>Abrir / Download</b>.
@@ -584,7 +734,7 @@
     previewModal.addEventListener("click", (e) => { if (e.target === previewModal) closePreview(); });
     window.addEventListener("keydown", (e) => { if (e.key === "Escape") closePreview(); });
 
-    // View mode (Lista/Galeria)
+    // View mode
     function setView(mode) {
       const isList = mode === "list";
       listEl.style.display = isList ? "block" : "none";
@@ -593,17 +743,12 @@
       btnViewGrid.classList.toggle("active", !isList);
       localStorage.setItem("simpledrive_view", mode);
     }
-
     function initDefaultView() {
       const saved = localStorage.getItem("simpledrive_view");
-      if (saved === "list" || saved === "grid") {
-        setView(saved);
-        return;
-      }
+      if (saved === "list" || saved === "grid") return setView(saved);
       const isMobile = window.matchMedia("(max-width: 640px)").matches;
-      setView(isMobile ? "grid" : "list"); // PC: lista, Celular: galeria
+      setView(isMobile ? "grid" : "list");
     }
-
     btnViewList.onclick = () => setView("list");
     btnViewGrid.onclick = () => setView("grid");
 
@@ -613,25 +758,17 @@
       const email = emailInput.value.trim();
       const pass = passInput.value.trim();
       if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
-      try {
-        await createUserWithEmailAndPassword(auth, email, pass);
-      } catch (e) {
-        authStatus.textContent = e.message;
-      }
+      try { await createUserWithEmailAndPassword(auth, email, pass); }
+      catch (e) { authStatus.textContent = e.message; }
     };
-
     document.getElementById("btnLogin").onclick = async () => {
       authStatus.textContent = "";
       const email = emailInput.value.trim();
       const pass = passInput.value.trim();
       if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-      } catch (e) {
-        authStatus.textContent = e.message;
-      }
+      try { await signInWithEmailAndPassword(auth, email, pass); }
+      catch (e) { authStatus.textContent = e.message; }
     };
-
     document.getElementById("btnLogout").onclick = () => signOut(auth);
 
     // Cloudinary upload
@@ -648,11 +785,17 @@
       return {
         secureUrl: data.secure_url,
         publicId: data.public_id,
-        resourceType: data.resource_type, // image/video/raw
+        resourceType: data.resource_type,
         format: data.format,
         bytes: data.bytes,
         originalFilename: data.original_filename
       };
+    }
+
+    function currentFolderForUpload(){
+      const typed = safePart(newFolder.value);
+      if (newFolder.value.trim()) return typed;
+      return safePart(folderSelect.value || "Raiz");
     }
 
     document.getElementById("btnUpload").onclick = async () => {
@@ -662,12 +805,15 @@
       const file = fileInput.files[0];
       if (!file) return alert("Escolha um arquivo.");
 
+      const folder = currentFolderForUpload();
+
       statusEl.textContent = "Enviando...";
       try {
         const up = await uploadToCloudinary(file);
 
         await addDoc(collection(db, "files"), {
           uid: user.uid,
+          folder,
           name: up.originalFilename || file.name || "arquivo",
           url: up.secureUrl,
           bytes: up.bytes ?? file.size,
@@ -677,20 +823,22 @@
           createdAt: serverTimestamp()
         });
 
-        statusEl.textContent = "Upload concluído!";
+        statusEl.textContent = `Upload concluído! (📁 ${folder})`;
         fileInput.value = "";
+        newFolder.value = "";
       } catch (e) {
         statusEl.textContent = "Erro no upload.";
         alert(e.message);
       }
     };
 
-    // Filtering / search
+    // Filtros
     let allItems = [];
 
     function applyFilters(items){
       const q = (searchInput.value || "").trim().toLowerCase();
       const t = typeFilter.value;
+      const f = folderFilter.value;
 
       return items.filter(it => {
         const name = (it.name || "").toLowerCase();
@@ -701,8 +849,43 @@
         if (t === "pdf") matchType = isPdf(it);
         if (t === "other") matchType = !(it.resourceType === "image") && !isPdf(it);
 
-        return matchSearch && matchType;
+        const folder = safePart(it.folder || "Raiz");
+        const matchFolder = (f === "__all__") ? true : (folder === f);
+
+        return matchSearch && matchType && matchFolder;
       });
+    }
+
+    function refreshFolderSelectors(items){
+      const set = new Set(["Raiz"]);
+      for (const it of items) set.add(safePart(it.folder || "Raiz"));
+
+      // Upload select
+      const curUpload = folderSelect.value || "Raiz";
+      folderSelect.innerHTML = "";
+      for (const name of Array.from(set).sort((a,b)=>a.localeCompare(b))) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = `📁 ${name}`;
+        folderSelect.appendChild(opt);
+      }
+      folderSelect.value = set.has(curUpload) ? curUpload : "Raiz";
+
+      // Filter select
+      const curFilter = folderFilter.value || "__all__";
+      folderFilter.innerHTML = "";
+      const optAll = document.createElement("option");
+      optAll.value = "__all__";
+      optAll.textContent = "Todas as pastas";
+      folderFilter.appendChild(optAll);
+
+      for (const name of Array.from(set).sort((a,b)=>a.localeCompare(b))) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name === "Raiz" ? "Raiz" : name;
+        folderFilter.appendChild(opt);
+      }
+      folderFilter.value = (curFilter === "__all__" || set.has(curFilter)) ? curFilter : "__all__";
     }
 
     function updateUI(){
@@ -714,8 +897,20 @@
 
     searchInput.addEventListener("input", updateUI);
     typeFilter.addEventListener("change", updateUI);
+    folderFilter.addEventListener("change", updateUI);
 
-    // Render
+    // Render LISTA (agrupada por pasta)
+    function groupByFolder(items){
+      const map = new Map();
+      for (const it of items){
+        const folder = safePart(it.folder || "Raiz");
+        if (!map.has(folder)) map.set(folder, []);
+        map.get(folder).push(it);
+      }
+      // ordena pastas
+      return Array.from(map.entries()).sort((a,b)=>a[0].localeCompare(b[0]));
+    }
+
     function renderList(items) {
       listEl.innerHTML = "";
       if (items.length === 0) {
@@ -723,60 +918,68 @@
         return;
       }
 
-      for (const it of items) {
-        const div = document.createElement("div");
-        div.className = "file";
+      const groups = groupByFolder(items);
 
-        const left = document.createElement("div");
-        left.className = "file-left";
+      for (const [folder, arr] of groups){
+        const h = document.createElement("div");
+        h.className = "folderTitle";
+        h.innerHTML = `📁 ${folder} <span class="small">(${arr.length})</span>`;
+        listEl.appendChild(h);
 
-        const tUrl = thumbUrl(it);
+        for (const it of arr) {
+          const div = document.createElement("div");
+          div.className = "file";
 
-        left.innerHTML = `
-          <div class="thumb">${tUrl ? `<img src="${tUrl}" alt="">` : iconFor(it)}</div>
-          <div class="file-meta">
-            <a class="name" href="${it.url}" target="_blank" rel="noopener">${it.name || "Arquivo"}</a>
-            <span class="small">${(it.format ? it.format.toUpperCase() : (isPdf(it) ? "PDF" : "ARQUIVO"))}${it.bytes ? ` • ${formatBytes(it.bytes)}` : ""}</span>
-          </div>
-        `;
+          const left = document.createElement("div");
+          left.className = "file-left";
 
-        // Clicar no nome abre preview (não navega)
-        const link = left.querySelector("a");
-        link.addEventListener("click", (e) => { e.preventDefault(); openPreview(it); });
+          const tUrl = thumbUrl(it);
 
-        // Clicar no item abre preview (exceto botões)
-        div.addEventListener("click", (e) => {
-          if (e.target.tagName === "BUTTON" || e.target.tagName === "A") return;
-          openPreview(it);
-        });
+          left.innerHTML = `
+            <div class="thumb">${tUrl ? `<img src="${tUrl}" alt="">` : iconFor(it)}</div>
+            <div class="file-meta">
+              <a class="name" href="${it.url}" target="_blank" rel="noopener">${it.name || "Arquivo"}</a>
+              <span class="small">${(it.format ? it.format.toUpperCase() : (isPdf(it) ? "PDF" : "ARQUIVO"))}${it.bytes ? ` • ${formatBytes(it.bytes)}` : ""}</span>
+            </div>
+          `;
 
-        const actions = document.createElement("div");
-        actions.className = "file-actions";
+          const link = left.querySelector("a");
+          link.addEventListener("click", (e) => { e.preventDefault(); openPreview(it); });
 
-        const openBtn = document.createElement("a");
-        openBtn.href = it.url;
-        openBtn.target = "_blank";
-        openBtn.rel = "noopener";
-        openBtn.className = "linkBtn";
-        openBtn.textContent = "Abrir";
+          div.addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON" || e.target.tagName === "A") return;
+            openPreview(it);
+          });
 
-        const del = document.createElement("button");
-        del.className = "danger";
-        del.textContent = "Remover da lista";
-        del.onclick = async (e) => {
-          e.stopPropagation();
-          await deleteDoc(doc(db, "files", it.docId));
-        };
+          const actions = document.createElement("div");
+          actions.className = "file-actions";
 
-        actions.appendChild(openBtn);
-        actions.appendChild(del);
+          const openBtn = document.createElement("a");
+          openBtn.href = it.url;
+          openBtn.target = "_blank";
+          openBtn.rel = "noopener";
+          openBtn.className = "linkBtn";
+          openBtn.textContent = "Abrir";
 
-        div.appendChild(left);
-        div.appendChild(actions);
-        listEl.appendChild(div);
+          const del = document.createElement("button");
+          del.className = "danger";
+          del.textContent = "Remover da lista";
+          del.onclick = async (e) => {
+            e.stopPropagation();
+            await deleteDoc(doc(db, "files", it.docId));
+          };
+
+          actions.appendChild(openBtn);
+          actions.appendChild(del);
+
+          div.appendChild(left);
+          div.appendChild(actions);
+          listEl.appendChild(div);
+        }
       }
     }
 
+    // Render GRID (não agrupa visualmente, mas respeita filtro)
     function renderGrid(items) {
       gridEl.innerHTML = "";
       if (items.length === 0) {
@@ -798,7 +1001,7 @@
         body.className = "card-body";
         body.innerHTML = `
           <div class="card-title">${it.name || "Arquivo"}</div>
-          <div class="card-sub">${(it.format ? it.format.toUpperCase() : (isPdf(it) ? "PDF" : "ARQUIVO"))}${it.bytes ? ` • ${formatBytes(it.bytes)}` : ""}</div>
+          <div class="card-sub">${safePart(it.folder || "Raiz")} • ${(it.format ? it.format.toUpperCase() : (isPdf(it) ? "PDF" : "ARQUIVO"))}${it.bytes ? ` • ${formatBytes(it.bytes)}` : ""}</div>
         `;
 
         const actions = document.createElement("div");
@@ -826,7 +1029,6 @@
         card.appendChild(body);
         card.appendChild(actions);
 
-        // Abre preview ao clicar no card (menos nos botões/links)
         card.addEventListener("click", (e) => {
           if (e.target.tagName === "BUTTON" || e.target.tagName === "A") return;
           openPreview(it);
@@ -835,6 +1037,80 @@
         gridEl.appendChild(card);
       }
     }
+
+    // ZIP download (filtrado)
+    async function downloadZipOf(items){
+      if (!items.length) return alert("Não há arquivos para baixar nesse filtro.");
+
+      if (!window.JSZip) return alert("JSZip não carregou. Recarregue a página e tente de novo.");
+
+      // Segurança pra evitar travar celular em arquivos enormes
+      const totalBytes = items.reduce((s, it) => s + (it.bytes || 0), 0);
+      const totalMB = totalBytes / (1024*1024);
+      if (totalMB > 250 && window.matchMedia("(max-width: 640px)").matches) {
+        const ok = confirm(`Atenção: isso pode ser pesado no celular (~${totalMB.toFixed(0)} MB). Quer continuar?`);
+        if (!ok) return;
+      }
+
+      btnZip.disabled = true;
+      btnZip.textContent = "Montando ZIP...";
+      statusEl.textContent = "Baixando arquivos para ZIP...";
+
+      const zip = new window.JSZip();
+
+      let done = 0;
+
+      for (const it of items){
+        const folder = safePart(it.folder || "Raiz");
+        const filename = ensureFilename(it);
+
+        try{
+          const res = await fetch(it.url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const blob = await res.blob();
+
+          zip.folder(folder).file(filename, blob);
+
+          done++;
+          statusEl.textContent = `ZIP: ${done}/${items.length} arquivo(s)`;
+        } catch (e){
+          console.warn("Falha ao baixar para ZIP:", it.url, e);
+          // cria um .txt informando erro
+          zip.folder(folder).file(`${filename}.erro.txt`, `Não foi possível baixar este arquivo.\nURL: ${it.url}\nErro: ${e.message}`);
+          done++;
+        }
+      }
+
+      statusEl.textContent = "Gerando ZIP...";
+      btnZip.textContent = "Gerando ZIP...";
+
+      const zipBlob = await zip.generateAsync({ type: "blob" }, (meta) => {
+        const p = Math.floor(meta.percent || 0);
+        statusEl.textContent = `Gerando ZIP... ${p}%`;
+      });
+
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement("a");
+
+      const now = new Date();
+      const stamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}_${String(now.getHours()).padStart(2,"0")}${String(now.getMinutes()).padStart(2,"0")}`;
+      a.href = url;
+      a.download = `meu-drive_${stamp}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+      statusEl.textContent = "ZIP pronto! ✅";
+      btnZip.disabled = false;
+      btnZip.textContent = "Baixar tudo (.zip)";
+    }
+
+    btnZip.addEventListener("click", async () => {
+      const items = applyFilters(allItems);
+      await downloadZipOf(items);
+    });
 
     // Firestore listener
     let unsubscribe = null;
@@ -863,6 +1139,8 @@
       unsubscribe = onSnapshot(q, (snap) => {
         allItems = [];
         snap.forEach((d) => allItems.push({ docId: d.id, ...d.data() }));
+
+        refreshFolderSelectors(allItems);
         updateUI();
       });
     });
