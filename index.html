@@ -9,345 +9,360 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon-192.png" />
 
-  <style>
-    :root{
-      --bg1:#071022;
-      --bg2:#0b2a66;
-      --card:rgba(255,255,255,.08);
-      --card2:rgba(255,255,255,.06);
-      --stroke:rgba(255,255,255,.12);
-      --txt:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.55);
-      --brand:#4f7cf0;
-      --brand2:#2dd4bf;
-      --danger:#ef4444;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --radius:22px;
-    }
+ <style>
+  :root{
+    --bg1:#071022;
+    --bg2:#0b2a66;
+    --card:rgba(255,255,255,.08);
+    --card2:rgba(255,255,255,.06);
+    --stroke:rgba(255,255,255,.12);
+    --txt:rgba(255,255,255,.92);
+    --muted:rgba(255,255,255,.70);
+    --muted2:rgba(255,255,255,.55);
+    --brand:#4f7cf0;
+    --brand2:#2dd4bf;
+    --danger:#ef4444;
+    --shadow: 0 18px 60px rgba(0,0,0,.45);
+    --radius:22px;
+  }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      color:var(--txt);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(1200px 700px at 30% 20%, rgba(79,124,240,.35), transparent 60%),
-        radial-gradient(900px 600px at 80% 60%, rgba(45,212,191,.22), transparent 55%),
-        linear-gradient(160deg, var(--bg1), var(--bg2));
-      overflow-x:hidden;
-    }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    color:var(--txt);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background:
+      radial-gradient(1200px 700px at 30% 20%, rgba(79,124,240,.35), transparent 60%),
+      radial-gradient(900px 600px at 80% 60%, rgba(45,212,191,.22), transparent 55%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    overflow-x:hidden;
+  }
 
-    /* Fix geral pro “listão branco” no Chrome/Android */
-    html { color-scheme: dark; }
-    select, option { color-scheme: dark; }
+  /* Fix geral pro “listão branco” no Chrome/Android */
+  html { color-scheme: dark; }
+  select, option { color-scheme: dark; }
 
-    .wrap{
-      width:min(980px, 92vw);
-      margin: 26px auto 40px;
-    }
+  .wrap{
+    width:min(1120px, 92vw);
+    margin: 26px auto 40px;
+  }
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:16px;
-    }
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:16px;
+  }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:0;
-    }
-    .appIcon{
-      width:48px; height:48px; border-radius:14px;
-      overflow:hidden;
-      background: rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      flex:0 0 auto;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .appIcon img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+  .appIcon{
+    width:48px; height:48px; border-radius:14px;
+    overflow:hidden;
+    background: rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .appIcon img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-    .titleWrap{ min-width:0; }
-    h1{
-      font-size:28px;
-      margin:0;
-      letter-spacing:.2px;
-      display:flex; gap:8px; align-items:center;
-      white-space:nowrap;
-    }
-    .subtitle{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:14px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
+  .titleWrap{ min-width:0; }
+  h1{
+    font-size:28px;
+    margin:0;
+    letter-spacing:.2px;
+    display:flex; gap:8px; align-items:center;
+    white-space:nowrap;
+  }
+  .subtitle{
+    margin:4px 0 0;
+    color:var(--muted);
+    font-size:14px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
 
-    .userChip{
-      display:none;
-      align-items:center;
-      gap:10px;
-      background: var(--card);
-      border:1px solid var(--stroke);
-      border-radius:999px;
-      padding:8px 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
-      max-width: 46%;
-    }
-    .avatar{
-      width:34px; height:34px; border-radius:999px;
-      background: linear-gradient(135deg, rgba(79,124,240,.9), rgba(45,212,191,.9));
-      display:grid; place-items:center;
-      font-weight:800;
-      flex:0 0 auto;
-    }
-    .userMeta{ min-width:0; }
-    .userName{
-      font-size:13px; font-weight:800;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .userEmail{
-      font-size:12px; color:var(--muted2);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
+  .userChip{
+    display:none;
+    align-items:center;
+    gap:10px;
+    background: var(--card);
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    padding:8px 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    max-width: 46%;
+  }
+  .avatar{
+    width:34px; height:34px; border-radius:999px;
+    background: linear-gradient(135deg, rgba(79,124,240,.9), rgba(45,212,191,.9));
+    display:grid; place-items:center;
+    font-weight:800;
+    flex:0 0 auto;
+  }
+  .userMeta{ min-width:0; }
+  .userName{
+    font-size:13px; font-weight:800;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .userEmail{
+    font-size:12px; color:var(--muted2);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
 
+  /* GRID: mobile 1 coluna, desktop esquerda + direita */
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:16px;
+  }
+
+  .leftCol, .rightCol{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  @media (min-width: 980px){
     .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:16px;
+      grid-template-columns: 420px 1fr;
+      align-items:start;
     }
+    .leftCol{
+      position: sticky;
+      top: 18px;
+      align-self:start;
+    }
+  }
 
-    .card{
-      background: var(--card);
-      border:1px solid var(--stroke);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
+  .card{
+    background: var(--card);
+    border:1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
 
-    .cardHead{
-      padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .cardHead b{ font-size:14px; }
-    .cardBody{ padding:14px 16px; }
+  .cardHead{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.10);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .cardHead b{ font-size:14px; }
+  .cardBody{ padding:14px 16px; }
 
-    .row{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
+  .row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
 
-    .field{
-      flex:1 1 220px;
-      min-width: 180px;
-    }
-    label{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:6px;
-    }
+  .field{
+    flex:1 1 220px;
+    min-width: 180px;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
 
-    input, select{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(10,18,32,.55);
-      color: var(--txt);
-      outline:none;
-      font-size:14px;
-    }
-    input::placeholder{ color: rgba(255,255,255,.45); }
+  input, select{
+    width:100%;
+    padding:12px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(10,18,32,.55);
+    color: var(--txt);
+    outline:none;
+    font-size:14px;
+  }
+  input::placeholder{ color: rgba(255,255,255,.45); }
 
-    /* Deixa o dropdown “dark” (o listão branco some aqui na maioria dos casos) */
-    select{
-      appearance:none;
-      -webkit-appearance:none;
-      background-image:
-        linear-gradient(45deg, transparent 50%, rgba(255,255,255,.75) 50%),
-        linear-gradient(135deg, rgba(255,255,255,.75) 50%, transparent 50%),
-        linear-gradient(to right, rgba(255,255,255,.10), rgba(255,255,255,.10));
-      background-position:
-        calc(100% - 18px) calc(50% - 3px),
-        calc(100% - 12px) calc(50% - 3px),
-        calc(100% - 38px) 50%;
-      background-size: 6px 6px, 6px 6px, 1px 18px;
-      background-repeat:no-repeat;
-      padding-right: 44px;
-    }
-    option{
-      background-color: #0b1220;   /* <<< aqui é o principal */
-      color: #fff;
-    }
+  /* Deixa o dropdown “dark” */
+  select{
+    appearance:none;
+    -webkit-appearance:none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, rgba(255,255,255,.75) 50%),
+      linear-gradient(135deg, rgba(255,255,255,.75) 50%, transparent 50%),
+      linear-gradient(to right, rgba(255,255,255,.10), rgba(255,255,255,.10));
+    background-position:
+      calc(100% - 18px) calc(50% - 3px),
+      calc(100% - 12px) calc(50% - 3px),
+      calc(100% - 38px) 50%;
+    background-size: 6px 6px, 6px 6px, 1px 18px;
+    background-repeat:no-repeat;
+    padding-right: 44px;
+  }
+  option{
+    background-color: #0b1220;
+    color: #fff;
+  }
 
-    .btn{
-      border:0;
-      border-radius:16px;
-      padding:12px 16px;
-      font-weight:800;
-      cursor:pointer;
-      background: rgba(255,255,255,.10);
-      color: var(--txt);
-      border:1px solid rgba(255,255,255,.14);
-      transition: transform .06s ease, filter .2s ease;
-      user-select:none;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btnPrimary{
-      background: linear-gradient(135deg, rgba(79,124,240,.95), rgba(79,124,240,.65));
-      border-color: rgba(79,124,240,.55);
-    }
-    .btnDanger{
-      background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55));
-      border-color: rgba(239,68,68,.55);
-    }
-    .btnSmall{
-      padding:10px 12px;
-      border-radius:14px;
-      font-size:13px;
-      font-weight:800;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
+  .btn{
+    border:0;
+    border-radius:16px;
+    padding:12px 16px;
+    font-weight:800;
+    cursor:pointer;
+    background: rgba(255,255,255,.10);
+    color: var(--txt);
+    border:1px solid rgba(255,255,255,.14);
+    transition: transform .06s ease, filter .2s ease;
+    user-select:none;
+  }
+  .btn:active{ transform: translateY(1px); }
+  .btnPrimary{
+    background: linear-gradient(135deg, rgba(79,124,240,.95), rgba(79,124,240,.65));
+    border-color: rgba(79,124,240,.55);
+  }
+  .btnDanger{
+    background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55));
+    border-color: rgba(239,68,68,.55);
+  }
+  .btnSmall{
+    padding:10px 12px;
+    border-radius:14px;
+    font-size:13px;
+    font-weight:800;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
 
-    .tabs{
-      display:flex;
-      gap:10px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      padding:8px;
-      border-radius:999px;
-      width: fit-content;
-    }
-    .tab{
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:900;
-      cursor:pointer;
-      border:1px solid transparent;
-      color: rgba(255,255,255,.75);
-      background: transparent;
-    }
-    .tab.active{
-      background: rgba(79,124,240,.35);
-      border-color: rgba(79,124,240,.45);
-      color: var(--txt);
-    }
+  .tabs{
+    display:flex;
+    gap:10px;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+    padding:8px;
+    border-radius:999px;
+    width: fit-content;
+  }
+  .tab{
+    padding:10px 14px;
+    border-radius:999px;
+    font-weight:900;
+    cursor:pointer;
+    border:1px solid transparent;
+    color: rgba(255,255,255,.75);
+    background: transparent;
+  }
+  .tab.active{
+    background: rgba(79,124,240,.35);
+    border-color: rgba(79,124,240,.45);
+    color: var(--txt);
+  }
 
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top:12px;
-    }
+  .list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:12px;
+  }
 
-    .item{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px;
-      border-radius:18px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .left{
-      display:flex; align-items:center; gap:10px;
-      min-width:0;
-    }
-    .badge{
-      width:38px; height:38px;
-      border-radius:14px;
-      display:grid; place-items:center;
-      background: rgba(79,124,240,.22);
-      border:1px solid rgba(79,124,240,.25);
-      flex:0 0 auto;
-      font-weight:900;
-    }
-    .meta{
-      min-width:0;
-    }
-    .name{
-      font-weight:900;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 52vw;
-    }
-    .sub{
-      font-size:12px;
-      color: var(--muted2);
-      margin-top:2px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 52vw;
-    }
+  .item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px;
+    border-radius:18px;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+  }
+  .left{
+    display:flex; align-items:center; gap:10px;
+    min-width:0;
+  }
+  .badge{
+    width:38px; height:38px;
+    border-radius:14px;
+    display:grid; place-items:center;
+    background: rgba(79,124,240,.22);
+    border:1px solid rgba(79,124,240,.25);
+    flex:0 0 auto;
+    font-weight:900;
+  }
+  .meta{ min-width:0; }
+  .name{
+    font-weight:900;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    max-width: 52vw;
+  }
+  .sub{
+    font-size:12px;
+    color: var(--muted2);
+    margin-top:2px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    max-width: 52vw;
+  }
 
-    .right{ display:flex; gap:8px; flex:0 0 auto; }
+  .right{ display:flex; gap:8px; flex:0 0 auto; }
 
-    .empty{
-      margin-top:12px;
-      color: var(--muted2);
-      text-align:center;
-      padding:18px 10px;
-      border-radius:18px;
-      border:1px dashed rgba(255,255,255,.16);
-      background: rgba(255,255,255,.03);
-    }
+  .empty{
+    margin-top:12px;
+    color: var(--muted2);
+    text-align:center;
+    padding:18px 10px;
+    border-radius:18px;
+    border:1px dashed rgba(255,255,255,.16);
+    background: rgba(255,255,255,.03);
+  }
 
-    /* Views + animação */
-    .view{
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .hide{
-      opacity:0;
-      transform: translateY(10px);
-      pointer-events:none;
-      height:0;
-      overflow:hidden;
-    }
+  /* Views + animação */
+  .view{
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .hide{
+    opacity:0;
+    transform: translateY(10px);
+    pointer-events:none;
+    height:0;
+    overflow:hidden;
+  }
 
-    /* Loader overlay */
-    .loaderOverlay{
-      position:fixed; inset:0;
-      display:none;
-      align-items:center; justify-content:center;
-      background: rgba(2,8,18,.60);
-      backdrop-filter: blur(8px);
-      z-index:9999;
-    }
-    .spinner{
-      width:56px; height:56px;
-      border-radius:50%;
-      border: 5px solid rgba(255,255,255,.18);
-      border-top-color: rgba(79,124,240,.95);
-      animation: spin .9s linear infinite;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-    @keyframes spin{ to{ transform: rotate(360deg); } }
+  /* Loader overlay */
+  .loaderOverlay{
+    position:fixed; inset:0;
+    display:none;
+    align-items:center; justify-content:center;
+    background: rgba(2,8,18,.60);
+    backdrop-filter: blur(8px);
+    z-index:9999;
+  }
+  .spinner{
+    width:56px; height:56px;
+    border-radius:50%;
+    border: 5px solid rgba(255,255,255,.18);
+    border-top-color: rgba(79,124,240,.95);
+    animation: spin .9s linear infinite;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
 
-    @media (min-width: 860px){
-      .grid{ grid-template-columns: 1fr 1fr; }
-      .card.span2{ grid-column: 1 / -1; }
-      .name{ max-width: 360px; }
-      .sub{ max-width: 360px; }
-    }
-  </style>
+  @media (min-width: 860px){
+    .name{ max-width: 360px; }
+    .sub{ max-width: 360px; }
+  }
+</style>
 </head>
 
 <body>
@@ -400,8 +415,7 @@
             <button class="btn" id="btnRegister" style="flex:1;">Criar conta</button>
           </div>
 
-          <div style="margin-top:12px;color:var(--muted2);font-size:12px;">
-            Dica: instale como app (PWA) pra abrir mais rápido e ficar com cara de aplicativo.
+          <div style="margin-top:12px;color:var(--muted2);font-size:12px;"
           </div>
         </div>
       </div>
@@ -471,6 +485,10 @@
             </div>
           </div>
         </div>
+        <div class="grid">
+           <div class="leftCol"> ...cards da esquerda... </div>
+           <div class="rightCol"> ...card da lista/galeria... </div>
+
       </div>
 
       <!-- FILES -->
@@ -1068,3 +1086,4 @@
   </script>
 </body>
 </html>
+
