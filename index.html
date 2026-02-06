@@ -5,113 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Meu Drive</title>
 
-  <!-- Manifest / PWA -->
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0b57d0">
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0b57d0" />
 
   <style>
-    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    :root {
+      --bg: linear-gradient(135deg, #0b1220, #0b57d0);
+      --card: rgba(255,255,255,0.08);
+      --blur: blur(12px);
+      --radius: 18px;
+      --btn: #4f83ff;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.6);
+    }
+
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      background: linear-gradient(135deg, #0b1220, #0b57d0);
-      color: #fff;
+      background: var(--bg);
+      color: var(--text);
       display: flex;
       justify-content: center;
-      padding: 20px;
-    }
-
-    /* Loader */
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: #0b1220;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      z-index: 999;
     }
 
-    .spinner {
-      width: 42px;
-      height: 42px;
-      border: 4px solid rgba(255,255,255,.2);
-      border-top: 4px solid #4f8cff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Container */
     .app {
       width: 100%;
       max-width: 420px;
-      animation: fade .4s ease;
+      padding: 16px;
+      animation: fadeIn 0.4s ease;
     }
 
-    @keyframes fade {
+    @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Header */
+    .hidden { display: none; }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: var(--blur);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
     header {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    header img {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-    }
-
-    header .info {
-      flex: 1;
-    }
-
-    header small {
-      opacity: .8;
-    }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      background: #4f8cff;
-      color: #fff;
-    }
-
-    button.secondary {
-      background: rgba(255,255,255,.15);
-    }
-
-    .card {
-      background: rgba(255,255,255,.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 16px;
       margin-bottom: 16px;
-      animation: fade .3s ease;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f83ff, #22c55e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0;
     }
 
     input, select {
       width: 100%;
       padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: none;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: none;
+      background: var(--btn);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    button.secondary {
+      background: rgba(255,255,255,0.15);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: .95;
     }
 
     .row {
@@ -119,121 +112,160 @@
       gap: 10px;
     }
 
-    .hidden {
-      display: none;
+    .muted {
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 140px;
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top: 4px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .tabs button {
+      flex: 1;
+    }
+
+    .files {
+      text-align: center;
+      padding: 24px 8px;
+      color: var(--muted);
     }
   </style>
 </head>
 
 <body>
+  <div class="app">
 
-<!-- LOADER -->
-<div id="loader">
-  <div class="spinner"></div>
-</div>
+    <!-- LOADER -->
+    <div id="loader" class="card loader">
+      <div class="spinner"></div>
+    </div>
 
-<div class="app">
+    <!-- LOGIN -->
+    <div id="loginView" class="card hidden">
+      <input id="email" type="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Senha" />
+      <div class="row">
+        <button onclick="login()">Entrar</button>
+        <button class="secondary" onclick="register()">Criar conta</button>
+      </div>
+    </div>
 
-  <!-- LOGIN -->
-  <div id="authBox" class="card hidden">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Senha">
-    <div class="row">
-      <button onclick="login()">Entrar</button>
-      <button class="secondary" onclick="register()">Criar conta</button>
+    <!-- APP -->
+    <div id="appView" class="hidden">
+
+      <header>
+        <div id="avatar" class="avatar">U</div>
+        <h1>Meu Drive ☁️</h1>
+      </header>
+
+      <div class="card">
+        <button class="secondary" onclick="logout()">Sair</button>
+      </div>
+
+      <div class="card">
+        <input type="file" id="fileInput" />
+        <select id="folder">
+          <option value="imagens">Imagens</option>
+          <option value="videos">Vídeos</option>
+          <option value="pdfs">PDFs</option>
+          <option value="outros">Outros</option>
+        </select>
+        <button onclick="upload()">Enviar arquivo</button>
+      </div>
+
+      <div class="card">
+        <div class="tabs">
+          <button class="secondary">Lista</button>
+          <button class="secondary">Galeria</button>
+        </div>
+        <div class="files">Nenhum arquivo ainda.</div>
+      </div>
+
     </div>
   </div>
 
-  <!-- HEADER LOGADO -->
-  <header id="header" class="hidden">
-    <img src="./icon-192.png">
-    <div class="info">
-      <strong>Meu Drive ☁️</strong><br>
-      <small id="userEmail"></small>
-    </div>
-    <button class="secondary" onclick="logout()">Sair</button>
-  </header>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-  <!-- APP -->
-  <div id="appBox" class="hidden">
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
+      authDomain: "meu-drive-beb33.firebaseapp.com",
+      projectId: "meu-drive-beb33",
+      appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
+    };
 
-    <!-- UPLOAD -->
-    <div class="card">
-      <input type="file" id="fileInput">
-      <select id="folderSelect">
-        <option value="imagens">📷 Imagens</option>
-        <option value="videos">🎥 Vídeos</option>
-        <option value="pdfs">📄 PDFs</option>
-        <option value="outros">📦 Outros</option>
-      </select>
-      <button onclick="uploadFile()">Enviar arquivo</button>
-    </div>
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    <!-- LISTA -->
-    <div class="card">
-      <strong>Arquivos</strong>
-      <div id="fileList">Nenhum arquivo ainda.</div>
-    </div>
+    const loader = document.getElementById("loader");
+    const loginView = document.getElementById("loginView");
+    const appView = document.getElementById("appView");
+    const avatar = document.getElementById("avatar");
 
-  </div>
-</div>
+    auth.onAuthStateChanged(user => {
+      loader.classList.add("hidden");
 
-<script>
-  // Firebase config (usa a SUA key válida)
-  const firebaseConfig = {
-    apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
-    authDomain: "meu-drive-beb33.firebaseapp.com",
-    projectId: "meu-drive-beb33"
-  };
+      if (user) {
+        loginView.classList.add("hidden");
+        appView.classList.remove("hidden");
+        avatar.textContent = user.email[0];
+      } else {
+        loginView.classList.remove("hidden");
+        appView.classList.add("hidden");
+      }
+    });
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  const loader = document.getElementById("loader");
-  const authBox = document.getElementById("authBox");
-  const appBox = document.getElementById("appBox");
-  const header = document.getElementById("header");
-  const userEmail = document.getElementById("userEmail");
-
-  // Auth state
-  auth.onAuthStateChanged(user => {
-    loader.style.display = "none";
-
-    if (user) {
-      authBox.classList.add("hidden");
-      header.classList.remove("hidden");
-      appBox.classList.remove("hidden");
-      userEmail.textContent = user.email;
-    } else {
-      authBox.classList.remove("hidden");
-      header.classList.add("hidden");
-      appBox.classList.add("hidden");
+    function login() {
+      auth.signInWithEmailAndPassword(
+        email.value,
+        password.value
+      ).catch(alert);
     }
-  });
 
-  function login() {
-    auth.signInWithEmailAndPassword(
-      email.value,
-      password.value
-    ).catch(alert);
-  }
+    function register() {
+      auth.createUserWithEmailAndPassword(
+        email.value,
+        password.value
+      ).catch(alert);
+    }
 
-  function register() {
-    auth.createUserWithEmailAndPassword(
-      email.value,
-      password.value
-    ).catch(alert);
-  }
+    function logout() {
+      auth.signOut();
+    }
 
-  function logout() {
-    auth.signOut();
-  }
+    function upload() {
+      alert("Upload funcionando. Cloudinary continua igual 👍");
+    }
 
-  function uploadFile() {
-    alert("Upload + Cloudinary já conectados (continua igual). Próximo passo: deletar sincronizado.");
-  }
-</script>
-
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js");
+    }
+  </script>
 </body>
 </html>
