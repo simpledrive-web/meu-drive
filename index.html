@@ -9,150 +9,429 @@
   <link rel="icon" href="data:,">
 
   <style>
-    body { font-family: Arial, sans-serif; background:#f2f2f2; padding:20px; margin:0; }
-    h2 { margin: 0 0 12px; }
-    .box { background:#fff; padding:12px; border-radius:12px; margin:10px 0; max-width: 980px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    input { padding:8px; font-size:14px; }
-    button { padding:8px 12px; cursor:pointer; border-radius:8px; border:1px solid #ccc; background:#fafafa; }
-    button:hover { background:#eee; }
-    a { color:#0b57d0; text-decoration:none; }
-    .small { font-size:12px; opacity:.75; }
-    .danger { background:#d11; color:#fff; border:0; border-radius:8px; }
-    .danger:hover { background:#b00; }
+    :root{
+      --bg:#f2f2f2;
+      --card:#fff;
+      --muted:rgba(0,0,0,.6);
+      --line:#e9e9e9;
+      --brand:#0b57d0;
+      --danger:#d11;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      font-family: Arial, sans-serif;
+      background:var(--bg);
+      padding:18px;
+      margin:0;
+      color:#111;
+    }
+    h2{ margin:0 0 12px; }
+    .wrap{ max-width:1020px; margin:0 auto; }
 
-    .file {
-      background:#fff;
+    .box{
+      background:var(--card);
+      padding:14px;
+      border-radius:14px;
+      margin:10px 0;
+      border:1px solid var(--line);
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    input, select{
+      padding:10px 12px;
+      font-size:14px;
       border-radius:12px;
+      border:1px solid #ddd;
+      outline:none;
+      background:#fff;
+    }
+    input:focus, select:focus{
+      border-color: rgba(11,87,208,.5);
+      box-shadow: 0 0 0 3px rgba(11,87,208,.12);
+    }
+    button{
+      padding:10px 12px;
+      cursor:pointer;
+      border-radius:12px;
+      border:1px solid #ddd;
+      background:#fafafa;
+      font-weight:600;
+    }
+    button:hover{ background:#eee; }
+    .primary{
+      background:var(--brand);
+      color:#fff;
+      border-color:var(--brand);
+    }
+    .primary:hover{ filter:brightness(.95); }
+    .danger{
+      background:var(--danger);
+      color:#fff;
+      border:0;
+      border-radius:12px;
+    }
+    .danger:hover{ filter:brightness(.92); }
+    a{ color:var(--brand); text-decoration:none; }
+    .small{ font-size:12px; color:var(--muted); }
+    .muted{ color:var(--muted); }
+    hr{ border:none; border-top:1px solid var(--line); margin:14px 0; }
+
+    /* ===== Toolbar ===== */
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .segmented{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .segmented button{
+      border-radius:999px;
+      border:1px solid #ddd;
+      background:#fff;
+      padding:8px 12px;
+      font-weight:700;
+    }
+    .segmented button.active{
+      background:var(--brand);
+      color:#fff;
+      border-color:var(--brand);
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      width:100%;
+      margin-top:10px;
+    }
+    .controls input[type="search"]{ flex:1; min-width:220px; }
+
+    /* ===== LISTA ===== */
+    .list{ margin-top:10px; }
+    .file{
+      background:#fff;
+      border-radius:14px;
       padding:12px;
       margin:10px 0;
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:10px;
-      border: 1px solid #eee;
+      border:1px solid var(--line);
     }
-
-    .file-left {
+    .file-left{
       display:flex;
       align-items:center;
       gap:12px;
       min-width:0;
-      max-width: 100%;
+      max-width:100%;
     }
-
-    .thumb {
-      width:72px;
-      height:72px;
-      border-radius:12px;
+    .thumb{
+      width:74px; height:74px;
+      border-radius:14px;
       border:1px solid #ddd;
       overflow:hidden;
-      flex: 0 0 auto;
+      flex:0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#f7f7f7;
+      font-size:30px;
+    }
+    .thumb img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .file-meta{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:0;
+    }
+    .file-meta .name{
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 58vw;
+      display:inline-block;
+    }
+    .file-actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    /* ===== GALERIA ===== */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      overflow:hidden;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      min-height: 210px;
+    }
+    .card:hover{ box-shadow: 0 10px 22px rgba(0,0,0,.08); }
+    .card-media{
+      height: 140px;
+      background:#f6f6f6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:42px;
+      border-bottom:1px solid var(--line);
+      overflow:hidden;
+    }
+    .card-media img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .card-body{
+      padding:10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      flex:1;
+      min-width:0;
+    }
+    .card-title{
+      font-weight:900;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .card-sub{ font-size:12px; color:var(--muted); }
+    .card-actions{
+      padding:10px 12px 12px;
+      display:flex;
+      gap:8px;
+    }
+    .card-actions button, .card-actions a{
+      flex:1;
+      text-align:center;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:800;
+    }
+    .linkBtn{
+      border:1px solid #ddd;
+      background:#fafafa;
+      color:#111;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* ===== Modal Preview ===== */
+    #previewModal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    #previewModalInner{
+      background:#fff;
+      border-radius:16px;
+      max-width:980px;
+      width:100%;
+      max-height:92vh;
+      overflow:hidden;
+      box-shadow:0 14px 36px rgba(0,0,0,.28);
+      display:flex;
+      flex-direction:column;
+    }
+    #previewHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      gap:10px;
+    }
+    #previewHeaderLeft{ min-width:0; }
+    #previewTitle{
+      font-weight:900;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 70vw;
+    }
+    #previewSubtitle{ font-size:12px; color:var(--muted); margin-top:2px; }
+    #previewCloseBtn{
+      border:none;
+      background:#eee;
+      border-radius:12px;
+      padding:9px 12px;
+      cursor:pointer;
+      font-weight:900;
+    }
+    #previewBody{
+      padding:12px;
+      overflow:auto;
       display:flex;
       align-items:center;
       justify-content:center;
       background:#fafafa;
-      font-size:28px;
+      flex:1;
     }
-
-    .thumb img {
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-
-    .file-meta {
+    #previewFooter{
+      padding:12px 14px;
+      border-top:1px solid var(--line);
       display:flex;
-      flex-direction:column;
-      gap:4px;
-      min-width: 0;
+      gap:10px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    #previewOpenLink{
+      padding:10px 14px;
+      border-radius:12px;
+      background:var(--brand);
+      color:#fff;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
     }
 
-    .file-meta .name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 52vw; /* ajuda no celular */
-      display:inline-block;
-      font-weight: 600;
+    /* ===== Responsivo ===== */
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .file-meta .name{ max-width: 46vw; }
     }
-
-    .file:hover { box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+    @media (max-width: 640px){
+      body{ padding:12px; }
+      .box{ padding:12px; border-radius:16px; }
+      .row{ gap:8px; }
+      input, select, button{
+        width:100%;
+        font-size:16px; /* evita zoom automático */
+        padding:12px;
+      }
+      .segmented{ width:100%; }
+      .segmented button{ flex:1; }
+      .controls{ gap:8px; }
+      .controls input[type="search"]{ min-width:0; }
+      .file{
+        flex-direction:column;
+        align-items:stretch;
+        gap:12px;
+      }
+      .file-actions{
+        width:100%;
+      }
+      .file-actions button, .file-actions a{
+        width:100%;
+      }
+      .thumb{ width:90px; height:90px; border-radius:16px; }
+      .file-meta .name{ max-width:100%; }
+      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .card-media{ height: 150px; }
+      #previewTitle{ max-width: 62vw; }
+    }
   </style>
 </head>
 
 <body>
-  <h2>Meu Drive ☁️ (sincronizado)</h2>
+  <div class="wrap">
+    <h2>Meu Drive ☁️ <span class="small">(sincronizado)</span></h2>
 
-  <!-- LOGIN -->
-  <div class="box" id="authBox">
-    <div class="row">
-      <input id="email" type="email" placeholder="Email" />
-      <input id="pass" type="password" placeholder="Senha" />
-      <button id="btnLogin">Entrar</button>
-      <button id="btnSignup">Criar conta</button>
-    </div>
-    <p class="small" id="authStatus"></p>
-  </div>
-
-  <!-- APP -->
-  <div class="box" id="appBox" style="display:none;">
-    <div class="row">
-      <strong id="userLabel"></strong>
-      <button id="btnLogout">Sair</button>
+    <!-- LOGIN -->
+    <div class="box" id="authBox">
+      <div class="row">
+        <input id="email" type="email" placeholder="Email" />
+        <input id="pass" type="password" placeholder="Senha" />
+        <button id="btnLogin" class="primary">Entrar</button>
+        <button id="btnSignup">Criar conta</button>
+      </div>
+      <p class="small" id="authStatus"></p>
     </div>
 
-    <hr />
+    <!-- APP -->
+    <div class="box" id="appBox" style="display:none;">
+      <div class="row">
+        <strong id="userLabel"></strong>
+        <button id="btnLogout">Sair</button>
+      </div>
 
-    <div class="row">
-      <input type="file" id="fileInput" />
-      <button id="btnUpload">Enviar arquivo</button>
-      <span class="small" id="status"></span>
-    </div>
+      <hr />
 
-    <div id="list"></div>
-  </div>
+      <div class="row">
+        <input type="file" id="fileInput" />
+        <button id="btnUpload" class="primary">Enviar arquivo</button>
+        <span class="small" id="status"></span>
+      </div>
 
-  <!-- MODAL (preview) -->
-  <div id="previewModal" style="
-    position:fixed; inset:0; background:rgba(0,0,0,.6);
-    display:none; align-items:center; justify-content:center;
-    padding:18px; z-index:9999;
-  ">
-    <div style="
-      background:#fff; border-radius:14px; max-width:980px; width:100%;
-      max-height:88vh; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,.25);
-      display:flex; flex-direction:column;
-    ">
-      <div style="
-        display:flex; align-items:center; justify-content:space-between;
-        padding:12px 14px; border-bottom:1px solid #eee; gap:10px;
-      ">
-        <div style="min-width:0;">
-          <div id="previewTitle" style="font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-          <div id="previewSubtitle" style="font-size:12px; opacity:.7;"></div>
+      <div class="toolbar">
+        <div class="segmented">
+          <button id="btnViewList">Lista</button>
+          <button id="btnViewGrid">Galeria</button>
         </div>
-        <button id="previewCloseBtn" style="
-          border:none; background:#eee; border-radius:10px; padding:8px 10px; cursor:pointer;
-        ">✕</button>
+        <span class="small" id="countLabel"></span>
       </div>
 
-      <div id="previewBody" style="
-        padding:14px; overflow:auto; display:flex; align-items:center; justify-content:center;
-        background:#fafafa; flex:1;
-      "></div>
+      <div class="controls">
+        <input id="searchInput" type="search" placeholder="Buscar por nome..." />
+        <select id="typeFilter">
+          <option value="all">Todos</option>
+          <option value="image">Imagens</option>
+          <option value="pdf">PDFs</option>
+          <option value="other">Outros</option>
+        </select>
+      </div>
 
-      <div style="padding:12px 14px; border-top:1px solid #eee; display:flex; gap:10px; justify-content:flex-end;">
-        <a id="previewOpenLink" href="#" target="_blank" rel="noopener"
-           style="padding:8px 12px; border-radius:10px; background:#0b57d0; color:#fff; text-decoration:none;">
-          Abrir / Download
-        </a>
+      <div id="list" class="list"></div>
+      <div id="grid" class="grid" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- MODAL PREVIEW -->
+  <div id="previewModal">
+    <div id="previewModalInner">
+      <div id="previewHeader">
+        <div id="previewHeaderLeft">
+          <div id="previewTitle"></div>
+          <div id="previewSubtitle"></div>
+        </div>
+        <button id="previewCloseBtn">✕</button>
+      </div>
+
+      <div id="previewBody"></div>
+
+      <div id="previewFooter">
+        <a id="previewOpenLink" href="#" target="_blank" rel="noopener">Abrir / Download</a>
       </div>
     </div>
   </div>
 
-  <!-- FIREBASE + APP -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
@@ -197,19 +476,28 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // ===== Elements =====
+    // Elements
     const authBox = document.getElementById("authBox");
     const appBox = document.getElementById("appBox");
     const authStatus = document.getElementById("authStatus");
     const userLabel = document.getElementById("userLabel");
     const statusEl = document.getElementById("status");
-    const listEl = document.getElementById("list");
+    const countLabel = document.getElementById("countLabel");
 
     const emailInput = document.getElementById("email");
     const passInput = document.getElementById("pass");
     const fileInput = document.getElementById("fileInput");
 
-    // ===== Modal Preview =====
+    const listEl = document.getElementById("list");
+    const gridEl = document.getElementById("grid");
+
+    const btnViewList = document.getElementById("btnViewList");
+    const btnViewGrid = document.getElementById("btnViewGrid");
+
+    const searchInput = document.getElementById("searchInput");
+    const typeFilter = document.getElementById("typeFilter");
+
+    // Modal
     const previewModal = document.getElementById("previewModal");
     const previewTitle = document.getElementById("previewTitle");
     const previewSubtitle = document.getElementById("previewSubtitle");
@@ -217,51 +505,69 @@
     const previewOpenLink = document.getElementById("previewOpenLink");
     const previewCloseBtn = document.getElementById("previewCloseBtn");
 
+    // Utils
     function formatBytes(bytes) {
-      if (!bytes && bytes !== 0) return "";
+      if (bytes === undefined || bytes === null) return "";
       const units = ["B", "KB", "MB", "GB", "TB"];
       let b = bytes;
       let i = 0;
-      while (b >= 1024 && i < units.length - 1) {
-        b /= 1024; i++;
-      }
+      while (b >= 1024 && i < units.length - 1) { b /= 1024; i++; }
       return `${b.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
     }
 
-    function openPreview(file) {
-      previewTitle.textContent = file.name || "Arquivo";
-      previewSubtitle.textContent =
-        (file.format ? file.format.toUpperCase() : "ARQUIVO") +
-        (file.bytes ? ` • ${formatBytes(file.bytes)}` : "");
+    function isPdf(item){
+      const fmt = (item.format || "").toLowerCase();
+      const name = (item.name || "").toLowerCase();
+      return fmt === "pdf" || name.endsWith(".pdf") || item.resourceType === "raw" && fmt === "pdf";
+    }
 
-      previewOpenLink.href = file.url;
+    function thumbUrl(item){
+      // Para imagens, geramos miniatura via Cloudinary (rápido e leve)
+      if (item.resourceType === "image" && item.publicId) {
+        const fmt = item.format || "jpg";
+        return `https://res.cloudinary.com/${cloudName}/image/upload/w_260,h_260,c_fill,q_auto,f_auto/${item.publicId}.${fmt}`;
+      }
+      return null;
+    }
+
+    function iconFor(item){
+      if (item.resourceType === "image") return "🖼️";
+      if (isPdf(item)) return "📕";
+      return "📄";
+    }
+
+    function openPreview(item) {
+      previewTitle.textContent = item.name || "Arquivo";
+      const fmt = (item.format ? item.format.toUpperCase() : (isPdf(item) ? "PDF" : "ARQUIVO"));
+      previewSubtitle.textContent = `${fmt}${item.bytes ? ` • ${formatBytes(item.bytes)}` : ""}`;
+      previewOpenLink.href = item.url;
 
       previewBody.innerHTML = "";
 
-      if (file.resourceType === "image" && file.url) {
+      if (item.resourceType === "image" && item.url) {
         const img = document.createElement("img");
-        img.src = file.url;
-        img.alt = file.name || "Imagem";
+        img.src = item.url;
+        img.alt = item.name || "Imagem";
         img.style.maxWidth = "100%";
         img.style.maxHeight = "70vh";
-        img.style.borderRadius = "12px";
-        img.style.boxShadow = "0 8px 20px rgba(0,0,0,.15)";
+        img.style.borderRadius = "16px";
+        img.style.boxShadow = "0 10px 26px rgba(0,0,0,.16)";
         previewBody.appendChild(img);
       } else {
         const box = document.createElement("div");
         box.style.background = "#fff";
         box.style.border = "1px solid #eee";
-        box.style.borderRadius = "12px";
+        box.style.borderRadius = "16px";
         box.style.padding = "14px";
         box.style.maxWidth = "520px";
         box.innerHTML = `
-          <div style="font-size:40px; text-align:center;">📄</div>
-          <div style="font-weight:700; margin-top:8px; text-align:center;">${file.name || "Arquivo"}</div>
-          <div style="font-size:12px; opacity:.7; margin-top:4px; text-align:center;">
-            ${(file.format ? file.format.toUpperCase() : "ARQUIVO")}${file.bytes ? ` • ${formatBytes(file.bytes)}` : ""}
+          <div style="font-size:44px; text-align:center;">${iconFor(item)}</div>
+          <div style="font-weight:900; margin-top:8px; text-align:center;">${item.name || "Arquivo"}</div>
+          <div style="font-size:12px; opacity:.72; margin-top:4px; text-align:center;">
+            ${fmt}${item.bytes ? ` • ${formatBytes(item.bytes)}` : ""}
           </div>
-          <div style="margin-top:10px; font-size:13px; opacity:.8; text-align:center;">
-            Clique em <b>Abrir / Download</b> para ver o arquivo.
+          <div style="margin-top:10px; font-size:13px; opacity:.82; text-align:center;">
+            Clique em <b>Abrir / Download</b>.
           </div>
         `;
         previewBody.appendChild(box);
@@ -274,22 +580,39 @@
       previewModal.style.display = "none";
       previewBody.innerHTML = "";
     }
-
     previewCloseBtn.addEventListener("click", closePreview);
-    previewModal.addEventListener("click", (e) => {
-      if (e.target === previewModal) closePreview();
-    });
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closePreview();
-    });
+    previewModal.addEventListener("click", (e) => { if (e.target === previewModal) closePreview(); });
+    window.addEventListener("keydown", (e) => { if (e.key === "Escape") closePreview(); });
 
-    // ===== Auth =====
+    // View mode (Lista/Galeria)
+    function setView(mode) {
+      const isList = mode === "list";
+      listEl.style.display = isList ? "block" : "none";
+      gridEl.style.display = isList ? "none" : "grid";
+      btnViewList.classList.toggle("active", isList);
+      btnViewGrid.classList.toggle("active", !isList);
+      localStorage.setItem("simpledrive_view", mode);
+    }
+
+    function initDefaultView() {
+      const saved = localStorage.getItem("simpledrive_view");
+      if (saved === "list" || saved === "grid") {
+        setView(saved);
+        return;
+      }
+      const isMobile = window.matchMedia("(max-width: 640px)").matches;
+      setView(isMobile ? "grid" : "list"); // PC: lista, Celular: galeria
+    }
+
+    btnViewList.onclick = () => setView("list");
+    btnViewGrid.onclick = () => setView("grid");
+
+    // Auth
     document.getElementById("btnSignup").onclick = async () => {
       authStatus.textContent = "";
       const email = emailInput.value.trim();
       const pass = passInput.value.trim();
       if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
-
       try {
         await createUserWithEmailAndPassword(auth, email, pass);
       } catch (e) {
@@ -302,7 +625,6 @@
       const email = emailInput.value.trim();
       const pass = passInput.value.trim();
       if (!email || !pass) return (authStatus.textContent = "Preencha email e senha.");
-
       try {
         await signInWithEmailAndPassword(auth, email, pass);
       } catch (e) {
@@ -312,7 +634,7 @@
 
     document.getElementById("btnLogout").onclick = () => signOut(auth);
 
-    // ===== Cloudinary upload =====
+    // Cloudinary upload
     async function uploadToCloudinary(file) {
       const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
       const fd = new FormData();
@@ -321,26 +643,18 @@
 
       const res = await fetch(url, { method: "POST", body: fd });
       const data = await res.json();
-
       if (!data.secure_url) throw new Error(data?.error?.message || "Falha no upload.");
 
-      // retorna tudo pra salvar no Firestore
       return {
         secureUrl: data.secure_url,
         publicId: data.public_id,
-        resourceType: data.resource_type, // image, video, raw...
+        resourceType: data.resource_type, // image/video/raw
         format: data.format,
         bytes: data.bytes,
         originalFilename: data.original_filename
       };
     }
 
-    function thumbUrlFromCloudinary(publicId, format) {
-      // Miniatura bonita e leve
-      return `https://res.cloudinary.com/${cloudName}/image/upload/w_120,h_120,c_fill,q_auto,f_auto/${publicId}.${format || "jpg"}`;
-    }
-
-    // ===== Upload button =====
     document.getElementById("btnUpload").onclick = async () => {
       const user = auth.currentUser;
       if (!user) return alert("Faça login primeiro.");
@@ -349,7 +663,6 @@
       if (!file) return alert("Escolha um arquivo.");
 
       statusEl.textContent = "Enviando...";
-
       try {
         const up = await uploadToCloudinary(file);
 
@@ -358,12 +671,9 @@
           name: up.originalFilename || file.name || "arquivo",
           url: up.secureUrl,
           bytes: up.bytes ?? file.size,
-
-          // 🔥 ESSENCIAIS PRA MINIATURA + PREVIEW
           publicId: up.publicId,
           format: up.format,
           resourceType: up.resourceType,
-
           createdAt: serverTimestamp()
         });
 
@@ -375,7 +685,158 @@
       }
     };
 
-    // ===== Realtime list =====
+    // Filtering / search
+    let allItems = [];
+
+    function applyFilters(items){
+      const q = (searchInput.value || "").trim().toLowerCase();
+      const t = typeFilter.value;
+
+      return items.filter(it => {
+        const name = (it.name || "").toLowerCase();
+        const matchSearch = !q || name.includes(q);
+
+        let matchType = true;
+        if (t === "image") matchType = it.resourceType === "image";
+        if (t === "pdf") matchType = isPdf(it);
+        if (t === "other") matchType = !(it.resourceType === "image") && !isPdf(it);
+
+        return matchSearch && matchType;
+      });
+    }
+
+    function updateUI(){
+      const filtered = applyFilters(allItems);
+      countLabel.textContent = `${filtered.length} arquivo(s)`;
+      renderList(filtered);
+      renderGrid(filtered);
+    }
+
+    searchInput.addEventListener("input", updateUI);
+    typeFilter.addEventListener("change", updateUI);
+
+    // Render
+    function renderList(items) {
+      listEl.innerHTML = "";
+      if (items.length === 0) {
+        listEl.innerHTML = "<p class='small'>Nenhum arquivo encontrado.</p>";
+        return;
+      }
+
+      for (const it of items) {
+        const div = document.createElement("div");
+        div.className = "file";
+
+        const left = document.createElement("div");
+        left.className = "file-left";
+
+        const tUrl = thumbUrl(it);
+
+        left.innerHTML = `
+          <div class="thumb">${tUrl ? `<img src="${tUrl}" alt="">` : iconFor(it)}</div>
+          <div class="file-meta">
+            <a class="name" href="${it.url}" target="_blank" rel="noopener">${it.name || "Arquivo"}</a>
+            <span class="small">${(it.format ? it.format.toUpperCase() : (isPdf(it) ? "PDF" : "ARQUIVO"))}${it.bytes ? ` • ${formatBytes(it.bytes)}` : ""}</span>
+          </div>
+        `;
+
+        // Clicar no nome abre preview (não navega)
+        const link = left.querySelector("a");
+        link.addEventListener("click", (e) => { e.preventDefault(); openPreview(it); });
+
+        // Clicar no item abre preview (exceto botões)
+        div.addEventListener("click", (e) => {
+          if (e.target.tagName === "BUTTON" || e.target.tagName === "A") return;
+          openPreview(it);
+        });
+
+        const actions = document.createElement("div");
+        actions.className = "file-actions";
+
+        const openBtn = document.createElement("a");
+        openBtn.href = it.url;
+        openBtn.target = "_blank";
+        openBtn.rel = "noopener";
+        openBtn.className = "linkBtn";
+        openBtn.textContent = "Abrir";
+
+        const del = document.createElement("button");
+        del.className = "danger";
+        del.textContent = "Remover da lista";
+        del.onclick = async (e) => {
+          e.stopPropagation();
+          await deleteDoc(doc(db, "files", it.docId));
+        };
+
+        actions.appendChild(openBtn);
+        actions.appendChild(del);
+
+        div.appendChild(left);
+        div.appendChild(actions);
+        listEl.appendChild(div);
+      }
+    }
+
+    function renderGrid(items) {
+      gridEl.innerHTML = "";
+      if (items.length === 0) {
+        gridEl.innerHTML = "<p class='small'>Nenhum arquivo encontrado.</p>";
+        return;
+      }
+
+      for (const it of items) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const tUrl = thumbUrl(it);
+
+        const media = document.createElement("div");
+        media.className = "card-media";
+        media.innerHTML = tUrl ? `<img src="${tUrl}" alt="">` : iconFor(it);
+
+        const body = document.createElement("div");
+        body.className = "card-body";
+        body.innerHTML = `
+          <div class="card-title">${it.name || "Arquivo"}</div>
+          <div class="card-sub">${(it.format ? it.format.toUpperCase() : (isPdf(it) ? "PDF" : "ARQUIVO"))}${it.bytes ? ` • ${formatBytes(it.bytes)}` : ""}</div>
+        `;
+
+        const actions = document.createElement("div");
+        actions.className = "card-actions";
+
+        const openA = document.createElement("a");
+        openA.href = it.url;
+        openA.target = "_blank";
+        openA.rel = "noopener";
+        openA.className = "linkBtn";
+        openA.textContent = "Abrir";
+
+        const del = document.createElement("button");
+        del.className = "danger";
+        del.textContent = "Remover";
+        del.onclick = async (e) => {
+          e.stopPropagation();
+          await deleteDoc(doc(db, "files", it.docId));
+        };
+
+        actions.appendChild(openA);
+        actions.appendChild(del);
+
+        card.appendChild(media);
+        card.appendChild(body);
+        card.appendChild(actions);
+
+        // Abre preview ao clicar no card (menos nos botões/links)
+        card.addEventListener("click", (e) => {
+          if (e.target.tagName === "BUTTON" || e.target.tagName === "A") return;
+          openPreview(it);
+        });
+
+        gridEl.appendChild(card);
+      }
+    }
+
+    // Firestore listener
     let unsubscribe = null;
 
     onAuthStateChanged(auth, (user) => {
@@ -390,6 +851,8 @@
       appBox.style.display = "block";
       userLabel.textContent = `Logado como: ${user.email}`;
 
+      initDefaultView();
+
       const q = query(
         collection(db, "files"),
         where("uid", "==", user.uid),
@@ -398,65 +861,9 @@
 
       if (unsubscribe) unsubscribe();
       unsubscribe = onSnapshot(q, (snap) => {
-        listEl.innerHTML = "";
-
-        if (snap.empty) {
-          listEl.innerHTML = "<p class='small'>Nenhum arquivo ainda.</p>";
-          return;
-        }
-
-        snap.forEach((d) => {
-          const f = d.data();
-
-          const div = document.createElement("div");
-          div.className = "file";
-          div.style.cursor = "pointer";
-
-          const left = document.createElement("div");
-          left.className = "file-left";
-
-          const isImage = f.resourceType === "image" && f.publicId;
-          const thumbUrl = isImage ? thumbUrlFromCloudinary(f.publicId, f.format) : null;
-
-          left.innerHTML = `
-            <div class="thumb">
-              ${thumbUrl ? `<img src="${thumbUrl}" alt="${(f.name || "imagem").replace(/"/g, "")}">` : `📄`}
-            </div>
-
-            <div class="file-meta">
-              <a class="name" href="${f.url}" target="_blank" rel="noopener">${f.name || "Arquivo"}</a>
-              <span class="small">
-                ${(f.format ? f.format.toUpperCase() : "ARQUIVO")}
-                ${f.bytes ? ` • ${formatBytes(f.bytes)}` : ""}
-              </span>
-            </div>
-          `;
-
-          // Clicar no nome/miniatura abre modal (não abre nova aba)
-          const link = left.querySelector("a");
-          if (link) link.addEventListener("click", (e) => {
-            e.preventDefault();
-            openPreview(f);
-          });
-
-          // Clicar no card também abre preview (exceto no botão Remover)
-          div.addEventListener("click", (e) => {
-            if (e.target.tagName === "BUTTON") return;
-            openPreview(f);
-          });
-
-          const del = document.createElement("button");
-          del.className = "danger";
-          del.textContent = "Remover da lista";
-          del.onclick = async (e) => {
-            e.stopPropagation(); // não abrir modal ao remover
-            await deleteDoc(doc(db, "files", d.id));
-          };
-
-          div.appendChild(left);
-          div.appendChild(del);
-          listEl.appendChild(div);
-        });
+        allItems = [];
+        snap.forEach((d) => allItems.push({ docId: d.id, ...d.data() }));
+        updateUI();
       });
     });
   </script>
