@@ -1,22 +1,16 @@
 <!doctype html>
-<!-- TESTE COMIT 123 -->
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0b57d0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Meu Drive</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="icon" href="./icon-192.png" />
-  <link rel="apple-touch-icon" href="./icon-192.png" />
 
   <style>
     :root{
       --bg1:#071022;
       --bg2:#0b2a66;
       --card:rgba(255,255,255,.08);
+      --card2:rgba(255,255,255,.06);
       --stroke:rgba(255,255,255,.12);
       --txt:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
@@ -27,11 +21,9 @@
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius:22px;
     }
+
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
-    html { color-scheme: dark; }
-    select, option { color-scheme: dark; }
-
     body{
       margin:0;
       color:var(--txt);
@@ -43,51 +35,87 @@
       overflow-x:hidden;
     }
 
+    /* Fix geral pro “listão branco” no Chrome/Android */
+    html { color-scheme: dark; }
+    select, option { color-scheme: dark; }
+
     .wrap{ width:min(1180px, 92vw); margin: 26px auto 40px; }
 
     .topbar{
       display:flex; align-items:center; justify-content:space-between;
       gap:14px; margin-bottom:16px;
     }
+
     .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
     .appIcon{
-      width:48px; height:48px; border-radius:14px; overflow:hidden;
+      width:48px; height:48px; border-radius:14px;
+      overflow:hidden;
       background: rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.14);
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      flex:0 0 auto; display:flex; align-items:center; justify-content:center;
+      flex:0 0 auto;
+      display:flex; align-items:center; justify-content:center;
     }
     .appIcon img{ width:100%; height:100%; object-fit:cover; display:block; }
+
     .titleWrap{ min-width:0; }
-    h1{ font-size:28px; margin:0; letter-spacing:.2px; white-space:nowrap; }
+    h1{
+      font-size:28px; margin:0; letter-spacing:.2px;
+      display:flex; gap:8px; align-items:center;
+      white-space:nowrap;
+    }
     .subtitle{
-      margin:4px 0 0; color:var(--muted); font-size:14px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:65vw;
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .userChip{
-      display:none; align-items:center; gap:10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
       background: var(--card);
       border:1px solid var(--stroke);
       border-radius:999px;
       padding:8px 10px;
       box-shadow: 0 10px 30px rgba(0,0,0,.18);
-      max-width: 48%;
+      max-width: 52%;
+      min-width: 260px;
+      justify-content:space-between;
     }
+    .userLeft{ display:flex; align-items:center; gap:10px; min-width:0; }
     .avatar{
       width:34px; height:34px; border-radius:999px;
       background: linear-gradient(135deg, rgba(79,124,240,.9), rgba(45,212,191,.9));
-      display:grid; place-items:center; font-weight:900; flex:0 0 auto;
+      display:grid; place-items:center;
+      font-weight:800;
+      flex:0 0 auto;
+      overflow:hidden;
+    }
+    .avatar img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+      background: transparent; /* tentativa de manter “transparente” */
     }
     .userMeta{ min-width:0; }
-    .userName{ font-size:13px; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .userEmail{ font-size:12px; color:var(--muted2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .userName{
+      font-size:13px; font-weight:800;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .userEmail{
+      font-size:12px; color:var(--muted2);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
 
-    /* Layout */
-    .mainGrid{ display:grid; gap:16px; grid-template-columns: 1fr; }
-    .leftCol, .rightCol{ display:flex; flex-direction:column; gap:16px; }
-    @media (min-width: 980px){
-      .mainGrid{ grid-template-columns: 320px 1fr; align-items:start; }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+      align-items:start;
     }
 
     .card{
@@ -97,17 +125,22 @@
       box-shadow: var(--shadow);
       overflow:hidden;
     }
+
     .cardHead{
       padding:14px 16px;
       border-bottom:1px solid rgba(255,255,255,.10);
       background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
     }
     .cardHead b{ font-size:14px; }
     .cardBody{ padding:14px 16px; }
 
-    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .field{ flex:1 1 220px; min-width:180px; }
+    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+
+    .field{ flex:1 1 220px; min-width: 180px; }
     label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
 
     input, select{
@@ -123,7 +156,8 @@
     input::placeholder{ color: rgba(255,255,255,.45); }
 
     select{
-      appearance:none; -webkit-appearance:none;
+      appearance:none;
+      -webkit-appearance:none;
       background-image:
         linear-gradient(45deg, transparent 50%, rgba(255,255,255,.75) 50%),
         linear-gradient(135deg, rgba(255,255,255,.75) 50%, transparent 50%),
@@ -136,11 +170,17 @@
       background-repeat:no-repeat;
       padding-right: 44px;
     }
-    option{ background-color:#0b1220; color:#fff; }
+    option{
+      background-color: #0b1220;
+      color: #fff;
+    }
 
     .btn{
-      border:0; border-radius:16px;
-      padding:12px 16px; font-weight:900; cursor:pointer;
+      border:0;
+      border-radius:16px;
+      padding:12px 16px;
+      font-weight:800;
+      cursor:pointer;
       background: rgba(255,255,255,.10);
       color: var(--txt);
       border:1px solid rgba(255,255,255,.14);
@@ -160,20 +200,23 @@
       padding:10px 12px;
       border-radius:14px;
       font-size:13px;
-      font-weight:900;
+      font-weight:800;
       text-decoration:none;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:8px;
-      white-space:nowrap;
     }
 
+    .pillRow{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+
     .tabs{
-      display:flex; gap:10px;
+      display:flex;
+      gap:10px;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
-      padding:8px; border-radius:999px;
+      padding:8px;
+      border-radius:999px;
       width: fit-content;
     }
     .tab{
@@ -191,11 +234,14 @@
       color: var(--txt);
     }
 
-    /* Files list */
     .list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+
     .item{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px;
       border-radius:18px;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
@@ -214,20 +260,16 @@
     .name{
       font-weight:900;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 64vw;
+      max-width: 52vw;
     }
     .sub{
       font-size:12px;
       color: var(--muted2);
       margin-top:2px;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 64vw;
+      max-width: 52vw;
     }
-    @media(min-width: 980px){
-      .name{ max-width: 520px; }
-      .sub{ max-width: 520px; }
-    }
-    .right{ display:flex; gap:8px; flex:0 0 auto; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    .right{ display:flex; gap:8px; flex:0 0 auto; }
 
     .empty{
       margin-top:12px;
@@ -239,150 +281,14 @@
       background: rgba(255,255,255,.03);
     }
 
-    /* Gallery */
-    .gallery{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap:12px;
-      margin-top:12px;
-    }
-    @media(min-width: 720px){ .gallery{ grid-template-columns: repeat(3, 1fr); } }
-    @media(min-width: 1060px){ .gallery{ grid-template-columns: repeat(4, 1fr); } }
-
-    .thumb{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+    /* Views + animação */
+    .view{ transition: opacity .25s ease, transform .25s ease; }
+    .hide{
+      opacity:0;
+      transform: translateY(10px);
+      pointer-events:none;
+      height:0;
       overflow:hidden;
-      cursor:pointer;
-      display:flex;
-      flex-direction:column;
-      min-height: 168px;
-      position:relative;
-    }
-    .thumbTop{
-      flex:1; display:grid; place-items:center;
-      background: rgba(0,0,0,.15);
-      position:relative;
-    }
-    .thumbTop img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .thumbTop .fileIcon{ font-size:34px; opacity:.9; }
-    .thumbBottom{ padding:10px 10px 12px; }
-    .thumbName{
-      font-weight:900; font-size:13px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .thumbSub{
-      margin-top:4px; font-size:12px;
-      color:var(--muted2);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-
-    .thumbActions{
-      position:absolute; top:10px; right:10px;
-      display:flex; gap:6px; z-index:5; flex-wrap:wrap; justify-content:flex-end;
-    }
-    .chipBtn{
-      width:36px; height:36px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(10,18,32,.55);
-      color: rgba(255,255,255,.90);
-      display:grid; place-items:center;
-      cursor:pointer;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 10px 25px rgba(0,0,0,.22);
-      transition: transform .06s ease, filter .2s ease;
-      user-select:none;
-    }
-    .chipBtn:active{ transform: translateY(1px); }
-    .chipBtnDanger{
-      border-color: rgba(239,68,68,.38);
-      background: rgba(239,68,68,.18);
-    }
-
-    /* Folder UI */
-    .folderList{ display:flex; flex-direction:column; gap:8px; }
-    .folderRow{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      padding:10px 10px;
-      border-radius:16px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      cursor:pointer;
-    }
-    .folderRow.active{
-      background: rgba(79,124,240,.20);
-      border-color: rgba(79,124,240,.35);
-    }
-    .folderLeft{ display:flex; align-items:center; gap:10px; min-width:0; }
-    .folderIcon{
-      width:34px; height:34px; border-radius:12px;
-      display:grid; place-items:center;
-      background: rgba(45,212,191,.16);
-      border:1px solid rgba(45,212,191,.22);
-      flex:0 0 auto;
-    }
-    .folderName{
-      font-weight:900;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .folderCount{
-      font-size:12px; color: var(--muted2);
-      white-space:nowrap;
-    }
-    .folderActions{ display:flex; gap:6px; flex:0 0 auto; }
-    .iconBtn{
-      width:34px; height:34px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.90);
-      cursor:pointer;
-      display:grid; place-items:center;
-      user-select:none;
-    }
-    .iconBtnDanger{
-      border-color: rgba(239,68,68,.38);
-      background: rgba(239,68,68,.18);
-    }
-
-    /* Mobile folders: cards */
-    .folderCards{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap:10px;
-    }
-    @media(min-width: 520px){
-      .folderCards{ grid-template-columns: repeat(3, 1fr); }
-    }
-    .folderCard{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      padding:12px;
-      cursor:pointer;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-height: 92px;
-    }
-    .folderCard.active{
-      background: rgba(79,124,240,.20);
-      border-color: rgba(79,124,240,.35);
-    }
-    .folderCardTop{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .folderCardName{
-      font-weight:900;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .folderCardSub{ font-size:12px; color: var(--muted2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    .foldersDesktop{ display:none; }
-    .foldersMobile{ display:block; }
-    @media(min-width: 980px){
-      .foldersDesktop{ display:block; }
-      .foldersMobile{ display:none; }
     }
 
     /* Loader overlay */
@@ -404,255 +310,184 @@
     }
     @keyframes spin{ to{ transform: rotate(360deg); } }
 
-    /* Modal */
+    /* Modal preview */
     .modal{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(8px);
+      position:fixed; inset:0;
       display:none;
       align-items:center;
       justify-content:center;
-      z-index: 9998;
-      padding: 18px;
+      background: rgba(2,8,18,.60);
+      backdrop-filter: blur(8px);
+      z-index:9998;
+      padding: 16px;
     }
     .modalCard{
-      width:min(980px, 94vw);
-      max-height: 86vh;
-      background: rgba(10,18,32,.86);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius: 22px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+      width: min(920px, 96vw);
+      max-height: min(84vh, 760px);
       overflow:hidden;
+      border-radius: 22px;
+      background: rgba(10,18,32,.70);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
       display:flex;
       flex-direction:column;
     }
     .modalHead{
       padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+      gap:10px;
     }
-    .modalTitle{
-      font-weight:900;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
+    .modalTitle{ font-weight:900; font-size:14px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .modalBody{
       padding: 12px;
       overflow:auto;
-      display:grid;
-      place-items:center;
-      min-height: 40vh;
-      gap:12px;
     }
-    .modalBody img, .modalBody video{
-      max-width: 100%;
-      max-height: 70vh;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.25);
-    }
-    .modalBody iframe{
+    .previewFrame{
       width: 100%;
       height: 70vh;
-      border:0;
+      border: 0;
       border-radius: 16px;
       background: rgba(0,0,0,.25);
     }
-    .mutedNote{
-      font-size:12px;
-      color: var(--muted2);
-      margin-top:8px;
-      text-align:center;
+    .previewImg, .previewVideo{
+      width: 100%;
+      max-height: 70vh;
+      border-radius: 16px;
+      display:block;
+      background: rgba(0,0,0,.25);
     }
 
-    .view{ transition: opacity .25s ease, transform .25s ease; }
-    .hide{
-      opacity:0;
-      transform: translateY(10px);
-      pointer-events:none;
-      height:0;
-      overflow:hidden;
+    @media (min-width: 980px){
+      .grid{ grid-template-columns: 420px 1fr; }
+      .name{ max-width: 360px; }
+      .sub{ max-width: 360px; }
     }
   </style>
 </head>
 
 <body>
-  <div id="loaderOverlay" class="loaderOverlay" aria-hidden="true">
-    <div class="spinner" aria-label="Carregando"></div>
-  </div>
+  <div class="loaderOverlay" id="loaderOverlay"><div class="spinner"></div></div>
 
-  <!-- Modal Preview -->
-  <div id="previewModal" class="modal" role="dialog" aria-modal="true">
+  <div class="modal" id="previewModal" aria-hidden="true">
     <div class="modalCard">
       <div class="modalHead">
         <div class="modalTitle" id="previewTitle">Preview</div>
-        <div class="row" style="gap:8px;">
-          <a id="previewOpenNew" class="btn btnSmall" href="#" target="_blank" rel="noopener">Abrir em nova aba</a>
-          <button id="previewClose" class="btn btnSmall">Fechar</button>
+        <div class="pillRow">
+          <a class="btn btnSmall" id="previewOpenNew" target="_blank" rel="noreferrer">Abrir em nova aba</a>
+          <button class="btn btnSmall btnDanger" id="previewClose">Fechar</button>
         </div>
       </div>
       <div class="modalBody" id="previewBody"></div>
     </div>
   </div>
 
-  <!-- Modal Move -->
-  <div id="moveModal" class="modal" role="dialog" aria-modal="true">
-    <div class="modalCard">
-      <div class="modalHead">
-        <div class="modalTitle" id="moveTitle">Mover arquivo</div>
-        <div class="row" style="gap:8px;">
-          <button id="moveCancel" class="btn btnSmall">Cancelar</button>
-        </div>
-      </div>
-      <div class="modalBody" style="place-items:stretch;">
-        <div class="field" style="width:100%;">
-          <label for="moveSelect">Mover para</label>
-          <select id="moveSelect"></select>
-        </div>
-        <div class="row" style="justify-content:flex-end; width:100%;">
-          <button id="moveConfirm" class="btn btnPrimary">Mover</button>
-        </div>
-        <div class="mutedNote">Dica: “Sem pasta” é tipo raiz (Meu Drive).</div>
-      </div>
-    </div>
-  </div>
-
   <div class="wrap">
+
     <div class="topbar">
       <div class="brand">
-        <div class="appIcon"><img src="./icon-192.png" alt="Meu Drive"></div>
+        <div class="appIcon">
+          <!-- se tiver um ícone, coloca aqui -->
+          <img alt="App" src="https://dummyimage.com/96x96/0b2a66/ffffff.png&text=MD" />
+        </div>
         <div class="titleWrap">
           <h1>Meu Drive ☁️</h1>
-          <div class="subtitle" id="subtitleLine">Seus arquivos em um só lugar.</div>
+          <div class="subtitle">Seus arquivos em um só lugar.</div>
         </div>
       </div>
 
-      <div id="userChip" class="userChip">
-        <div id="avatar" class="avatar">U</div>
-        <div class="userMeta">
-          <div id="userName" class="userName">Usuário</div>
-          <div id="userEmail" class="userEmail">—</div>
+      <div class="userChip" id="userChip" style="display:none;">
+        <div class="userLeft">
+          <div class="avatar" id="avatar">
+            <span id="avatarLetter">U</span>
+          </div>
+          <div class="userMeta">
+            <div class="userName" id="userName">Conectado</div>
+            <div class="userEmail" id="userEmail">—</div>
+          </div>
+        </div>
+        <button class="btn btnSmall btnDanger" id="btnLogout">Sair</button>
+      </div>
+    </div>
+
+    <!-- LOGIN VIEW -->
+    <div class="view" id="loginView">
+      <div class="grid">
+        <div class="card" style="grid-column:1/-1;">
+          <div class="cardHead"><b>Entrar</b></div>
+          <div class="cardBody">
+            <div class="row">
+              <div class="field">
+                <label for="email">E-mail</label>
+                <input id="email" type="email" placeholder="seuemail@gmail.com" autocomplete="email" />
+              </div>
+              <div class="field">
+                <label for="password">Senha</label>
+                <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:12px;">
+              <button class="btn btnPrimary" id="btnLogin">Entrar</button>
+              <button class="btn" id="btnRegister">Criar conta</button>
+            </div>
+
+            <div style="margin-top:10px;color:var(--muted2);font-size:12px;">
+              Dica: se der erro, abre o Console (F12) e me manda o print 😉
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- LOGIN -->
-    <div id="loginView" class="view card">
-      <div class="cardHead"><b>Entrar / Criar conta</b></div>
-      <div class="cardBody">
-        <div class="row">
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" type="email" placeholder="seuemail@gmail.com" autocomplete="email" />
+    <!-- APP VIEW -->
+    <div class="view hide" id="appView">
+      <div class="grid">
+        <!-- COLUNA ESQUERDA: UPLOAD + PASTAS + FILTRO -->
+        <div class="card">
+          <div class="cardHead">
+            <b>Upload</b>
+            <span style="font-size:12px;color:var(--muted)">Cloudinary + Firestore</span>
           </div>
-          <div class="field">
-            <label for="password">Senha</label>
-            <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-          </div>
-        </div>
-        <div class="row" style="margin-top:12px;">
-          <button id="btnLogin" class="btn btnPrimary">Entrar</button>
-          <button id="btnRegister" class="btn">Criar conta</button>
-        </div>
-        <div class="mutedNote" style="margin-top:12px;">Dica: cada usuário vê só os próprios arquivos.</div>
-      </div>
-    </div>
+          <div class="cardBody">
 
-    <!-- APP -->
-    <div id="appView" class="view hide">
-      <div class="mainGrid">
-        <!-- LEFT -->
-        <div class="leftCol">
+            <div class="row">
+              <div class="field" style="flex:1 1 100%;">
+                <label for="fileInput">Arquivo</label>
+                <input id="fileInput" type="file" />
+              </div>
+            </div>
 
-          <!-- Sessão -->
-          <div class="card">
-            <div class="cardHead">
-              <b>Sessão</b>
-              <button id="btnLogout" class="btn btnSmall btnDanger">Sair</button>
+            <div class="row" style="margin-top:10px;">
+              <div class="field">
+                <label for="folderSelect">Pasta</label>
+                <select id="folderSelect"></select>
+              </div>
+              <div class="field">
+                <label for="customName">Nome do arquivo (opcional)</label>
+                <input id="customName" type="text" placeholder="Ex: Contrato aluguel 2026" />
+              </div>
             </div>
-            <div class="cardBody">
-              <div style="color:var(--muted); font-size:12px;">Logado como:</div>
-              <div id="sessionEmail" style="margin-top:6px; font-weight:900; word-break:break-word;">—</div>
-            </div>
-          </div>
 
-          <!-- Pastas (PC sidebar) -->
-          <div class="card foldersDesktop">
-            <div class="cardHead">
-              <b>Pastas</b>
-              <button id="btnNewFolderDesktop" class="btn btnSmall">+ Pasta</button>
+            <div class="row" style="margin-top:12px;">
+              <button class="btn btnPrimary" id="btnUpload">Enviar arquivo</button>
+              <button class="btn" id="btnNewFolder">+ Nova pasta</button>
             </div>
-            <div class="cardBody">
-              <div id="folderListDesktop" class="folderList"></div>
-              <div class="mutedNote">No PC: clique na pasta pra filtrar.</div>
-            </div>
-          </div>
 
-          <!-- Pastas (Mobile cards) -->
-          <div class="card foldersMobile">
-            <div class="cardHead">
-              <b>Pastas</b>
-              <button id="btnNewFolderMobile" class="btn btnSmall">+ Pasta</button>
-            </div>
-            <div class="cardBody">
-              <div id="folderCardsMobile" class="folderCards"></div>
-              <div class="mutedNote">No celular: toque numa pasta pra abrir os arquivos.</div>
-            </div>
-          </div>
-
-          <!-- Upload -->
-          <div class="card">
-            <div class="cardHead">
-              <b>Upload</b>
-              <div style="font-size:12px;color:var(--muted)">Cloudinary + Firestore</div>
-            </div>
-            <div class="cardBody">
+            <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.10);padding-top:14px;">
               <div class="row">
-                <div class="field" style="flex: 1 1 100%;">
-                  <label for="fileInput">Arquivo</label>
-                  <input id="fileInput" type="file" />
-                </div>
-              </div>
-
-              <div class="row" style="margin-top:10px;">
-                <div class="field" style="flex: 1 1 100%;">
-                  <label for="customName">Nome do arquivo (opcional)</label>
-                  <input id="customName" type="text" placeholder="Ex: Contrato aluguel 2026" />
-                </div>
-              </div>
-
-              <div class="row" style="margin-top:10px;">
-                <div class="field">
-                  <label for="folderSelect">Salvar em</label>
-                  <select id="folderSelect"></select>
-                </div>
-              </div>
-
-              <div class="row" style="margin-top:12px;">
-                <button id="btnUpload" class="btn btnPrimary">Enviar arquivo</button>
-                <span id="uploadStatus" style="color:var(--muted); font-size:13px;"></span>
-              </div>
-
-              <div class="mutedNote" style="margin-top:10px;">
-                Obs: se você digitar o nome sem extensão, eu coloco a extensão original automaticamente.
-              </div>
-            </div>
-          </div>
-
-          <!-- Busca + modo -->
-          <div class="card">
-            <div class="cardHead"><b>Busca</b></div>
-            <div class="cardBody">
-              <div class="row">
-                <div class="field">
+                <div class="field" style="flex:1 1 100%;">
                   <label for="searchInput">Buscar por nome</label>
-                  <input id="searchInput" type="text" placeholder="Ex: contrato, foto, video..." />
+                  <input id="searchInput" type="text" placeholder="Ex: contrato, foto, vídeo..." />
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:10px;">
+                <div class="field">
+                  <label for="filterFolder">Filtrar por pasta</label>
+                  <select id="filterFolder"></select>
                 </div>
                 <div class="field">
                   <label for="filterType">Filtrar por tipo</label>
@@ -665,934 +500,560 @@
                   </select>
                 </div>
               </div>
-
-              <div class="row" style="margin-top:10px; justify-content:space-between;">
-                <div class="tabs">
-                  <button id="tabList" class="tab active" type="button">Lista</button>
-                  <button id="tabGallery" class="tab" type="button">Galeria</button>
-                </div>
-                <button id="btnRefresh" class="btn btnSmall">Atualizar</button>
-              </div>
             </div>
+
           </div>
         </div>
 
-        <!-- RIGHT -->
-        <div class="rightCol">
-          <div class="card">
-            <div class="cardHead">
-              <div style="display:flex; flex-direction:column; gap:4px; min-width:0;">
-                <b id="filesTitle">Arquivos</b>
-                <div style="font-size:12px;color:var(--muted2)" id="breadcrumb">Todos</div>
-              </div>
-              <div style="font-size:12px;color:var(--muted)">
-                <span id="countLabel">0</span> itens
-              </div>
-            </div>
-            <div class="cardBody">
-              <div id="listView" class="list"></div>
-              <div id="galleryView" class="gallery" style="display:none;"></div>
-              <div id="emptyState" class="empty" style="display:none;">Nenhum arquivo aqui ainda.</div>
+        <!-- COLUNA DIREITA: LISTA -->
+        <div class="card">
+          <div class="cardHead">
+            <b>Arquivos</b>
+            <div class="tabs" id="viewTabs">
+              <button class="tab active" data-view="lista">Lista</button>
+              <button class="tab" data-view="galeria">Galeria</button>
             </div>
           </div>
-
-          <div class="mutedNote">
-            ✅ Correção aplicada: pastas e arquivos são carregados em tempo real (onSnapshot). No refresh, não some mais.
+          <div class="cardBody">
+            <div id="filesList" class="list"></div>
+            <div id="emptyState" class="empty" style="display:none;">Nenhum arquivo ainda.</div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
-  <!-- Firebase compat -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  <script>
-    const FIREBASE_CONFIG = {
-      apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
-      authDomain: "meu-drive-beb33.firebaseapp.com",
-      projectId: "meu-drive-beb33",
-      storageBucket: "meu-drive-beb33.firebasestorage.app",
-      messagingSenderId: "661176300748",
-      appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
-    };
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      query,
+      where,
+      orderBy,
+      serverTimestamp,
+      doc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const CLOUDINARY_CLOUD = "dilyddwkg";
-    const CLOUDINARY_PRESET = "kv9sjt0g";
-  </script>
+    /* ============================================================
+       ✅ COLE AQUI O SEU firebaseConfig DO FIREBASE CONSOLE
+       Firebase Console > Project settings > General > Your apps > Config
+       ============================================================ */
+    const firebaseConfig = {
+     apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
+     authDomain: "meu-drive-beb33.firebaseapp.com",
+     projectId: "meu-drive-beb33",
+     storageBucket: "meu-drive-beb33.firebasestorage.app",
+     messagingSenderId: "661176300748",
+     appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
+};
 
-  <script>
-    firebase.initializeApp(FIREBASE_CONFIG);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    /* ============================================================
+       ✅ CLOUDINARY (seus dados)
+       ============================================================ */
+    const CLOUD_NAME = "dilyddwkg";
+    const UPLOAD_PRESET = "kv9sjt0g";
 
-    // DOM
+    // ====== init firebase ======
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ====== UI refs ======
+    const loaderOverlay = document.getElementById("loaderOverlay");
+
     const loginView = document.getElementById("loginView");
     const appView = document.getElementById("appView");
-    const loaderOverlay = document.getElementById("loaderOverlay");
+
+    const userChip = document.getElementById("userChip");
+    const userName = document.getElementById("userName");
+    const userEmail = document.getElementById("userEmail");
+
+    const avatar = document.getElementById("avatar");
+    const avatarLetter = document.getElementById("avatarLetter");
+
+    const btnLogin = document.getElementById("btnLogin");
+    const btnRegister = document.getElementById("btnRegister");
+    const btnLogout = document.getElementById("btnLogout");
 
     const emailEl = document.getElementById("email");
     const passEl = document.getElementById("password");
-    const btnLogin = document.getElementById("btnLogin");
-    const btnRegister = document.getElementById("btnRegister");
-
-    const userChip = document.getElementById("userChip");
-    const avatarEl = document.getElementById("avatar");
-    const userNameEl = document.getElementById("userName");
-    const userEmailEl = document.getElementById("userEmail");
-    const sessionEmail = document.getElementById("sessionEmail");
-    const btnLogout = document.getElementById("btnLogout");
-
-    const folderListDesktop = document.getElementById("folderListDesktop");
-    const folderCardsMobile = document.getElementById("folderCardsMobile");
-    const btnNewFolderDesktop = document.getElementById("btnNewFolderDesktop");
-    const btnNewFolderMobile = document.getElementById("btnNewFolderMobile");
-
-    const folderSelect = document.getElementById("folderSelect");
 
     const fileInput = document.getElementById("fileInput");
-    const customNameInput = document.getElementById("customName");
+    const customName = document.getElementById("customName");
+    const folderSelect = document.getElementById("folderSelect");
     const btnUpload = document.getElementById("btnUpload");
-    const uploadStatus = document.getElementById("uploadStatus");
+    const btnNewFolder = document.getElementById("btnNewFolder");
+
+    const filesList = document.getElementById("filesList");
+    const emptyState = document.getElementById("emptyState");
 
     const searchInput = document.getElementById("searchInput");
+    const filterFolder = document.getElementById("filterFolder");
     const filterType = document.getElementById("filterType");
-    const btnRefresh = document.getElementById("btnRefresh");
-
-    const tabList = document.getElementById("tabList");
-    const tabGallery = document.getElementById("tabGallery");
-
-    const listView = document.getElementById("listView");
-    const galleryView = document.getElementById("galleryView");
-    const emptyState = document.getElementById("emptyState");
-    const countLabel = document.getElementById("countLabel");
-
-    const filesTitle = document.getElementById("filesTitle");
-    const breadcrumb = document.getElementById("breadcrumb");
 
     // Preview modal
     const previewModal = document.getElementById("previewModal");
+    const previewClose = document.getElementById("previewClose");
     const previewTitle = document.getElementById("previewTitle");
     const previewBody = document.getElementById("previewBody");
-    const previewClose = document.getElementById("previewClose");
     const previewOpenNew = document.getElementById("previewOpenNew");
 
-    // Move modal
-    const moveModal = document.getElementById("moveModal");
-    const moveTitle = document.getElementById("moveTitle");
-    const moveSelect = document.getElementById("moveSelect");
-    const moveCancel = document.getElementById("moveCancel");
-    const moveConfirm = document.getElementById("moveConfirm");
-
-    // State
+    // Estado
     let currentUser = null;
-    let allFiles = [];
     let folders = [];
-    let selectedFolderId = "all";
-    let currentMode = "list";
+    let files = [];
+    let currentView = "lista"; // lista | galeria (galeria fica pra evoluir depois)
 
-    // Move state
-    let movingFile = null;
-
-    // Realtime unsubscribers (✅ resolve o “some no refresh”)
-    let unsubFolders = null;
-    let unsubFiles = null;
-
-    // Helpers
-    function showLoader(msg){
-      loaderOverlay.style.display = "flex";
-      loaderOverlay.setAttribute("aria-hidden", "false");
-      uploadStatus.textContent = msg || "";
+    function showLoader(show){
+      loaderOverlay.style.display = show ? "flex" : "none";
     }
-    function hideLoader(){
-      loaderOverlay.style.display = "none";
-      loaderOverlay.setAttribute("aria-hidden", "true");
-      uploadStatus.textContent = "";
-    }
-    function toast(msg){ alert(msg); }
 
-    function setView(isLogged){
-      if(isLogged){
-        loginView.classList.add("hide");
-        appView.classList.remove("hide");
-        userChip.style.display = "flex";
-      } else {
-        appView.classList.add("hide");
-        loginView.classList.remove("hide");
-        userChip.style.display = "none";
-      }
+    function showApp(){
+      loginView.classList.add("hide");
+      appView.classList.remove("hide");
     }
-    function getInitials(email){ return (email||"U").trim().charAt(0).toUpperCase(); }
+    function showLogin(){
+      appView.classList.add("hide");
+      loginView.classList.remove("hide");
+      userChip.style.display = "none";
+    }
 
-    function niceType(mime){
+    function firstLetter(email){
+      if(!email) return "U";
+      return (email.trim()[0] || "U").toUpperCase();
+    }
+
+    function guessType(mime){
       if(!mime) return "other";
       if(mime.startsWith("image/")) return "image";
       if(mime.startsWith("video/")) return "video";
       if(mime === "application/pdf") return "pdf";
       return "other";
     }
+
     function typeBadge(t){
-      if(t==="image") return "🖼️";
-      if(t==="video") return "🎬";
-      if(t==="pdf") return "📄";
-      return "📦";
-    }
-    function bytesToSize(bytes){
-      if(!bytes && bytes !== 0) return "";
-      const sizes = ["B","KB","MB","GB"];
-      let i = 0, v = bytes;
-      while(v >= 1024 && i < sizes.length-1){ v/=1024; i++; }
-      return `${v.toFixed(v >= 10 || i===0 ? 0 : 1)} ${sizes[i]}`;
-    }
-    function formatDate(ts){
-      try{
-        const d = ts?.toDate ? ts.toDate() : (ts ? new Date(ts) : null);
-        if(!d) return "";
-        return d.toLocaleString("pt-BR");
-      }catch{ return ""; }
+      if(t === "image") return "IMG";
+      if(t === "video") return "VID";
+      if(t === "pdf") return "PDF";
+      return "ARQ";
     }
 
-    // Name + extension (B)
-    function getFileExtension(filename){
-      const name = (filename || "").trim();
-      const i = name.lastIndexOf(".");
-      if(i <= 0 || i === name.length - 1) return "";
-      return name.slice(i).toLowerCase();
-    }
-    function ensureNameWithExtension(baseName, originalFilename){
-      const base = (baseName || "").trim();
-      const orig = (originalFilename || "").trim();
-      const origExt = getFileExtension(orig);
-      const baseExt = getFileExtension(base);
-      if(!base) return orig || ("arquivo" + (origExt || ""));
-      if(baseExt) return base;
-      return base + (origExt || "");
-    }
-
-    function filesCol(){ return db.collection("files"); }
-    function foldersCol(){ return db.collection("folders"); }
-
-    // Preview
-    function closePreview(){
-      previewModal.style.display = "none";
-      previewBody.innerHTML = "";
-      previewOpenNew.href = "#";
-    }
     function openPreview(file){
       previewTitle.textContent = file.name || "Preview";
-      previewOpenNew.href = file.url || "#";
-      previewBody.innerHTML = "";
+      previewOpenNew.href = file.url;
 
-      const t = file.type;
-      if(t === "image"){
+      previewBody.innerHTML = "";
+      if(file.type === "image"){
         const img = document.createElement("img");
+        img.className = "previewImg";
         img.src = file.url;
         img.alt = file.name || "Imagem";
         previewBody.appendChild(img);
-      } else if(t === "video"){
-        const video = document.createElement("video");
-        video.src = file.url;
-        video.controls = true;
-        video.playsInline = true;
-        previewBody.appendChild(video);
-      } else if(t === "pdf"){
+      } else if(file.type === "video"){
+        const v = document.createElement("video");
+        v.className = "previewVideo";
+        v.src = file.url;
+        v.controls = true;
+        v.playsInline = true;
+        previewBody.appendChild(v);
+      } else if(file.type === "pdf"){
         const iframe = document.createElement("iframe");
+        iframe.className = "previewFrame";
         iframe.src = file.url;
         previewBody.appendChild(iframe);
       } else {
-        const box = document.createElement("div");
-        box.style.textAlign = "center";
-        box.innerHTML = `
-          <div style="font-size:54px;margin-bottom:10px;">${typeBadge(t)}</div>
-          <div style="font-weight:900;font-size:16px;">${(file.name || "Arquivo")}</div>
-          <div class="mutedNote">Sem preview nativo. Use “Abrir em nova aba”.</div>
-        `;
-        previewBody.appendChild(box);
+        // fallback
+        const iframe = document.createElement("iframe");
+        iframe.className = "previewFrame";
+        iframe.src = file.url;
+        previewBody.appendChild(iframe);
       }
+
       previewModal.style.display = "flex";
+      previewModal.setAttribute("aria-hidden", "false");
     }
+
+    function closePreview(){
+      previewModal.style.display = "none";
+      previewModal.setAttribute("aria-hidden", "true");
+      previewBody.innerHTML = "";
+    }
+
     previewClose.addEventListener("click", closePreview);
-    previewModal.addEventListener("click", (e) => { if(e.target === previewModal) closePreview(); });
+    previewModal.addEventListener("click", (e)=>{
+      if(e.target === previewModal) closePreview();
+    });
 
-    // Folder label
-    function getFolderLabelById(id){
-      if(id === "all") return "Todos";
-      if(id === "unfiled") return "Sem pasta";
-      const f = folders.find(x => x.id === id);
-      return f ? f.name : "Pasta";
-    }
-
-    // Move modal
-    function closeMove(){
-      moveModal.style.display = "none";
-      movingFile = null;
-      moveSelect.innerHTML = "";
-    }
-    moveCancel.addEventListener("click", closeMove);
-    moveModal.addEventListener("click", (e) => { if(e.target === moveModal) closeMove(); });
-
-    function openMove(file){
-      movingFile = file;
-      moveTitle.textContent = `Mover: ${file.name || "Arquivo"}`;
-
-      moveSelect.innerHTML = `
-        <option value="unfiled">Sem pasta</option>
-        ${folders.map(f => `<option value="${f.id}">${f.name}</option>`).join("")}
-      `;
-      const current = file.folderId || "unfiled";
-      moveSelect.value = current;
-
-      moveModal.style.display = "flex";
-    }
-
-    moveConfirm.addEventListener("click", async () => {
-      if(!movingFile) return;
-      const newFolderId = moveSelect.value || "unfiled";
-      const current = movingFile.folderId || "unfiled";
-      if(newFolderId === current){ closeMove(); return; }
-
-      showLoader("Movendo...");
+    // ====== AUTH ======
+    btnLogin.addEventListener("click", async ()=>{
       try{
-        const folderName = (newFolderId === "unfiled")
-          ? "Sem pasta"
-          : (folders.find(x => x.id === newFolderId)?.name || "Pasta");
-
-        await filesCol().doc(movingFile.id).update({
-          folderId: newFolderId,
-          folderName: folderName
-        });
-
-        closeMove();
+        showLoader(true);
+        await signInWithEmailAndPassword(auth, emailEl.value.trim(), passEl.value);
       }catch(err){
         console.error(err);
-        toast("Erro ao mover arquivo.");
+        alert("Erro ao entrar: " + (err?.message || err));
       }finally{
-        hideLoader();
+        showLoader(false);
       }
     });
 
-    function setSelectedFolder(id){
-      selectedFolderId = id;
-      breadcrumb.textContent = getFolderLabelById(id);
-      folderSelect.value = (id === "all") ? "unfiled" : id;
-      applyFilters();
-      renderFoldersUI();
-    }
-
-    function renderFoldersUI(){
-      const counts = new Map();
-      for(const f of allFiles){
-        const fid = f.folderId || "unfiled";
-        counts.set(fid, (counts.get(fid) || 0) + 1);
+    btnRegister.addEventListener("click", async ()=>{
+      try{
+        showLoader(true);
+        await createUserWithEmailAndPassword(auth, emailEl.value.trim(), passEl.value);
+      }catch(err){
+        console.error(err);
+        alert("Erro ao criar conta: " + (err?.message || err));
+      }finally{
+        showLoader(false);
       }
+    });
 
-      folderListDesktop.innerHTML = "";
-      const desktopItems = [
-        { id:"all", name:"Todos os arquivos", icon:"📁" },
-        { id:"unfiled", name:"Sem pasta", icon:"🗂️" },
-        ...folders.map(x => ({ id:x.id, name:x.name, icon:"📁" }))
-      ];
+    btnLogout.addEventListener("click", async ()=>{
+      try{
+        showLoader(true);
+        await signOut(auth);
+      }catch(err){
+        console.error(err);
+      }finally{
+        showLoader(false);
+      }
+    });
 
-      for(const it of desktopItems){
-        const row = document.createElement("div");
-        row.className = "folderRow" + (it.id === selectedFolderId ? " active" : "");
-        row.addEventListener("click", () => setSelectedFolder(it.id));
-
-        const left = document.createElement("div");
-        left.className = "folderLeft";
-
-        const icon = document.createElement("div");
-        icon.className = "folderIcon";
-        icon.textContent = it.icon;
-
-        const name = document.createElement("div");
-        name.className = "folderName";
-        name.textContent = it.name;
-
-        const count = document.createElement("div");
-        count.className = "folderCount";
-        count.textContent = `${counts.get(it.id) || 0}`;
-
-        left.appendChild(icon);
-        left.appendChild(name);
-
-        const actions = document.createElement("div");
-        actions.className = "folderActions";
-
-        if(it.id !== "all" && it.id !== "unfiled"){
-          const btnEdit = document.createElement("button");
-          btnEdit.className = "iconBtn";
-          btnEdit.title = "Renomear pasta";
-          btnEdit.textContent = "✏️";
-          btnEdit.addEventListener("click", (e) => { e.stopPropagation(); renameFolder(it.id, it.name); });
-
-          const btnDel = document.createElement("button");
-          btnDel.className = "iconBtn iconBtnDanger";
-          btnDel.title = "Excluir pasta";
-          btnDel.textContent = "🗑️";
-          btnDel.addEventListener("click", (e) => { e.stopPropagation(); deleteFolder(it.id, it.name); });
-
-          actions.appendChild(btnEdit);
-          actions.appendChild(btnDel);
+    onAuthStateChanged(auth, async (user)=>{
+      showLoader(true);
+      try{
+        currentUser = user || null;
+        if(!currentUser){
+          showLogin();
+          return;
         }
 
-        row.appendChild(left);
-        row.appendChild(count);
-        row.appendChild(actions);
+        // Header user
+        userChip.style.display = "flex";
+        userName.textContent = "Conectado";
+        userEmail.textContent = currentUser.email || "—";
+        avatarLetter.textContent = firstLetter(currentUser.email);
+        // (se um dia você salvar photoURL, dá pra usar aqui)
+        // avatar.innerHTML = `<img src="..." alt="Avatar" />`;
 
-        folderListDesktop.appendChild(row);
+        showApp();
+
+        await loadFolders();
+        await loadFiles();
+        renderAll();
+
+      } finally {
+        showLoader(false);
+      }
+    });
+
+    // ====== FIRESTORE: FOLDERS ======
+    async function loadFolders(){
+      folders = [];
+      if(!currentUser) return;
+
+      const qy = query(
+        collection(db, "folders"),
+        where("uid", "==", currentUser.uid),
+        orderBy("createdAt", "asc")
+      );
+
+      const snap = await getDocs(qy);
+      snap.forEach(d=>{
+        folders.push({ id:d.id, ...d.data() });
+      });
+
+      // fallback: se não tiver nenhuma, cria "Geral" local (não salva)
+      if(folders.length === 0){
+        // você pode decidir se quer criar automaticamente no Firestore
       }
 
-      folderCardsMobile.innerHTML = "";
-      const mobileItems = [
-        { id:"all", name:"Todos", sub:`${allFiles.length} itens`, icon:"📁" },
-        { id:"unfiled", name:"Sem pasta", sub:`${counts.get("unfiled") || 0} itens`, icon:"🗂️" },
-        ...folders.map(x => ({ id:x.id, name:x.name, sub:`${counts.get(x.id) || 0} itens`, icon:"📁" }))
-      ];
-
-      for(const it of mobileItems){
-        const card = document.createElement("div");
-        card.className = "folderCard" + (it.id === selectedFolderId ? " active" : "");
-        card.addEventListener("click", () => setSelectedFolder(it.id));
-
-        const top = document.createElement("div");
-        top.className = "folderCardTop";
-
-        const name = document.createElement("div");
-        name.className = "folderCardName";
-        name.textContent = `${it.icon} ${it.name}`;
-
-        const act = document.createElement("div");
-        act.style.display = "flex";
-        act.style.gap = "6px";
-
-        if(it.id !== "all" && it.id !== "unfiled"){
-          const b1 = document.createElement("button");
-          b1.className = "iconBtn";
-          b1.title = "Renomear";
-          b1.textContent = "✏️";
-          b1.addEventListener("click", (e) => { e.stopPropagation(); renameFolder(it.id, it.name); });
-
-          const b2 = document.createElement("button");
-          b2.className = "iconBtn iconBtnDanger";
-          b2.title = "Excluir";
-          b2.textContent = "🗑️";
-          b2.addEventListener("click", (e) => { e.stopPropagation(); deleteFolder(it.id, it.name); });
-
-          act.appendChild(b1);
-          act.appendChild(b2);
-        }
-
-        top.appendChild(name);
-        top.appendChild(act);
-
-        const sub = document.createElement("div");
-        sub.className = "folderCardSub";
-        sub.textContent = it.sub;
-
-        card.appendChild(top);
-        card.appendChild(sub);
-
-        folderCardsMobile.appendChild(card);
-      }
-
-      folderSelect.innerHTML = `
-        <option value="all" disabled>— selecionar pasta —</option>
-        <option value="unfiled">Sem pasta</option>
-        ${folders.map(f => `<option value="${f.id}">${f.name}</option>`).join("")}
-      `;
-      folderSelect.value = (selectedFolderId === "all") ? "unfiled" : selectedFolderId;
+      fillFolderSelects();
     }
 
     async function createFolder(){
-      if(!currentUser) return;
-      const name = prompt("Nome da nova pasta:");
+      const name = prompt("Nome da pasta:");
       if(!name) return;
-      const trimmed = name.trim();
-      if(!trimmed) return;
 
-      const exists = folders.some(f => f.name.toLowerCase() === trimmed.toLowerCase());
-      if(exists) return toast("Já existe uma pasta com esse nome.");
+      if(!currentUser){
+        alert("Usuário não autenticado");
+        return;
+      }
 
-      showLoader("Criando pasta...");
+      showLoader(true);
       try{
-        await foldersCol().add({
+        await addDoc(collection(db, "folders"), {
+          name: name.trim(),
           uid: currentUser.uid,
-          name: trimmed,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          createdAt: serverTimestamp()
         });
-        toast("Pasta criada ✅");
+        await loadFolders();
+        renderAll();
       }catch(err){
         console.error(err);
-        toast("Erro ao criar pasta.");
+        alert("Erro ao criar pasta");
       }finally{
-        hideLoader();
+        showLoader(false);
       }
     }
 
-    async function renameFolder(folderId, currentName){
-      const newNameRaw = prompt("Novo nome da pasta:", currentName);
-      if(!newNameRaw) return;
-      const newName = newNameRaw.trim();
-      if(!newName) return;
+    function fillFolderSelects(){
+      // Upload select
+      folderSelect.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = "— Sem pasta —";
+      folderSelect.appendChild(opt0);
 
-      const exists = folders.some(f => f.id !== folderId && f.name.toLowerCase() === newName.toLowerCase());
-      if(exists) return toast("Já existe uma pasta com esse nome.");
+      folders.forEach(f=>{
+        const op = document.createElement("option");
+        op.value = f.id;
+        op.textContent = f.name;
+        folderSelect.appendChild(op);
+      });
 
-      showLoader("Renomeando pasta...");
-      try{
-        await foldersCol().doc(folderId).update({ name: newName });
-      }catch(err){
-        console.error(err);
-        toast("Erro ao renomear pasta.");
-      }finally{
-        hideLoader();
-      }
+      // Filter select
+      filterFolder.innerHTML = "";
+      const f0 = document.createElement("option");
+      f0.value = "all";
+      f0.textContent = "Todas";
+      filterFolder.appendChild(f0);
+
+      const f1 = document.createElement("option");
+      f1.value = "none";
+      f1.textContent = "Sem pasta";
+      filterFolder.appendChild(f1);
+
+      folders.forEach(f=>{
+        const op = document.createElement("option");
+        op.value = f.id;
+        op.textContent = f.name;
+        filterFolder.appendChild(op);
+      });
     }
 
-    async function deleteFolder(folderId, folderName){
-      const ok = confirm(`Excluir a pasta "${folderName}"?\n\nSó dá pra excluir se estiver vazia.`);
-      if(!ok) return;
+    btnNewFolder.addEventListener("click", createFolder);
 
-      showLoader("Verificando pasta...");
+    // ====== FIRESTORE: FILES ======
+    async function loadFiles(){
+      files = [];
+      if(!currentUser) return;
+
+      const qy = query(
+        collection(db, "files"),
+        where("uid", "==", currentUser.uid),
+        orderBy("createdAt", "desc")
+      );
+
+      const snap = await getDocs(qy);
+      snap.forEach(d=>{
+        files.push({ id:d.id, ...d.data() });
+      });
+    }
+
+    // ====== UPLOAD (Cloudinary + salvar no Firestore) ======
+    btnUpload.addEventListener("click", uploadArquivo);
+
+    async function uploadArquivo(){
+      const file = fileInput.files[0];
+      if(!file){
+        alert("Selecione um arquivo");
+        return;
+      }
+      if(!currentUser){
+        alert("Usuário não autenticado");
+        return;
+      }
+
+      const folderId = folderSelect.value || null;
+      const nomeFinal = customName.value.trim() || file.name;
+      const tipo = guessType(file.type);
+
+      // Cloudinary upload
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", UPLOAD_PRESET);
+
+      // Dica: Cloudinary "folder" precisa ser string.
+      // Aqui usamos folderId (id do Firestore) pra organizar, funciona bem.
+      if(folderId) formData.append("folder", folderId);
+
+      showLoader(true);
       try{
-        const snap = await filesCol()
-          .where("uid", "==", currentUser.uid)
-          .where("folderId", "==", folderId)
-          .limit(1)
-          .get();
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, {
+          method:"POST",
+          body: formData
+        });
 
-        if(!snap.empty){
-          return toast("Essa pasta não está vazia. Mova os arquivos antes.");
+        const data = await res.json();
+        if(!data.secure_url){
+          console.error("Cloudinary:", data);
+          throw new Error("Falha no upload (Cloudinary)");
         }
 
-        await foldersCol().doc(folderId).delete();
-        if(selectedFolderId === folderId) setSelectedFolder("all");
-        toast("Pasta excluída ✅");
+        // Salvar no Firestore
+        await addDoc(collection(db, "files"), {
+          name: nomeFinal,
+          originalName: file.name,
+          url: data.secure_url,
+          type: tipo,
+          folderId: folderId,
+          uid: currentUser.uid,
+          createdAt: serverTimestamp()
+        });
+
+        // limpar
+        fileInput.value = "";
+        customName.value = "";
+
+        await loadFiles();
+        renderAll();
+
+        alert("Arquivo enviado e salvo ✅");
       }catch(err){
         console.error(err);
-        toast("Erro ao excluir pasta.");
+        alert("Erro no upload: " + (err?.message || err));
       }finally{
-        hideLoader();
+        showLoader(false);
       }
     }
 
-    function renderFiles(files){
-      countLabel.textContent = String(files.length);
-      emptyState.style.display = files.length ? "none" : "block";
-      listView.innerHTML = "";
-      galleryView.innerHTML = "";
-
-      if(currentMode === "list"){
-        listView.style.display = "flex";
-        galleryView.style.display = "none";
-        files.forEach(file => listView.appendChild(renderListItem(file)));
-      } else {
-        listView.style.display = "none";
-        galleryView.style.display = "grid";
-        files.forEach(file => galleryView.appendChild(renderThumb(file)));
-      }
+    // ====== LISTA + FILTROS ======
+    function getFolderName(folderId){
+      if(!folderId) return "Sem pasta";
+      const f = folders.find(x=>x.id === folderId);
+      return f ? f.name : "Pasta";
     }
 
-    function renderListItem(file){
-      const item = document.createElement("div");
-      item.className = "item";
-
-      const left = document.createElement("div");
-      left.className = "left";
-
-      const badge = document.createElement("div");
-      badge.className = "badge";
-      badge.textContent = typeBadge(file.type);
-
-      const meta = document.createElement("div");
-      meta.className = "meta";
-
-      const name = document.createElement("div");
-      name.className = "name";
-      name.textContent = file.name || "Arquivo";
-
-      const sub = document.createElement("div");
-      sub.className = "sub";
-      const folderLabel = file.folderId ? getFolderLabelById(file.folderId) : (file.folder || "Sem pasta");
-      const parts = [
-        `📁 ${folderLabel}`,
-        (file.size ?? null) !== null ? `📦 ${bytesToSize(file.size)}` : null,
-        file.createdAt ? `🕒 ${formatDate(file.createdAt)}` : null
-      ].filter(Boolean);
-      sub.textContent = parts.join(" • ");
-
-      meta.appendChild(name);
-      meta.appendChild(sub);
-      left.appendChild(badge);
-      left.appendChild(meta);
-
-      const right = document.createElement("div");
-      right.className = "right";
-
-      const btnPreview = document.createElement("button");
-      btnPreview.className = "btn btnSmall";
-      btnPreview.textContent = "Ver";
-      btnPreview.addEventListener("click", (e) => { e.stopPropagation(); openPreview(file); });
-
-      const btnMove = document.createElement("button");
-      btnMove.className = "btn btnSmall";
-      btnMove.textContent = "Mover";
-      btnMove.addEventListener("click", (e) => { e.stopPropagation(); openMove(file); });
-
-      const btnRename = document.createElement("button");
-      btnRename.className = "btn btnSmall";
-      btnRename.textContent = "Renomear";
-      btnRename.addEventListener("click", (e) => { e.stopPropagation(); renameFile(file); });
-
-      const btnDelete = document.createElement("button");
-      btnDelete.className = "btn btnSmall btnDanger";
-      btnDelete.textContent = "Excluir";
-      btnDelete.addEventListener("click", (e) => { e.stopPropagation(); deleteFile(file); });
-
-      right.appendChild(btnPreview);
-      right.appendChild(btnMove);
-      right.appendChild(btnRename);
-      right.appendChild(btnDelete);
-
-      item.appendChild(left);
-      item.appendChild(right);
-      return item;
-    }
-
-    function renderThumb(file){
-      const thumb = document.createElement("div");
-      thumb.className = "thumb";
-      thumb.addEventListener("click", () => openPreview(file));
-
-      const actions = document.createElement("div");
-      actions.className = "thumbActions";
-
-      const aView = document.createElement("button");
-      aView.className = "chipBtn";
-      aView.type = "button";
-      aView.title = "Ver";
-      aView.textContent = "👁️";
-      aView.addEventListener("click", (e) => { e.stopPropagation(); openPreview(file); });
-
-      const aMove = document.createElement("button");
-      aMove.className = "chipBtn";
-      aMove.type = "button";
-      aMove.title = "Mover";
-      aMove.textContent = "📁";
-      aMove.addEventListener("click", (e) => { e.stopPropagation(); openMove(file); });
-
-      const aRename = document.createElement("button");
-      aRename.className = "chipBtn";
-      aRename.type = "button";
-      aRename.title = "Renomear";
-      aRename.textContent = "✏️";
-      aRename.addEventListener("click", (e) => { e.stopPropagation(); renameFile(file); });
-
-      const aDelete = document.createElement("button");
-      aDelete.className = "chipBtn chipBtnDanger";
-      aDelete.type = "button";
-      aDelete.title = "Excluir";
-      aDelete.textContent = "🗑️";
-      aDelete.addEventListener("click", (e) => { e.stopPropagation(); deleteFile(file); });
-
-      actions.appendChild(aView);
-      actions.appendChild(aMove);
-      actions.appendChild(aRename);
-      actions.appendChild(aDelete);
-
-      const top = document.createElement("div");
-      top.className = "thumbTop";
-
-      if(file.type === "image"){
-        const img = document.createElement("img");
-        img.src = file.url;
-        img.alt = file.name || "Imagem";
-        top.appendChild(img);
-      } else {
-        const icon = document.createElement("div");
-        icon.className = "fileIcon";
-        icon.textContent = typeBadge(file.type);
-        top.appendChild(icon);
-      }
-
-      const bottom = document.createElement("div");
-      bottom.className = "thumbBottom";
-
-      const n = document.createElement("div");
-      n.className = "thumbName";
-      n.textContent = file.name || "Arquivo";
-
-      const folderLabel = file.folderId ? getFolderLabelById(file.folderId) : (file.folder || "Sem pasta");
-      const s = document.createElement("div");
-      s.className = "thumbSub";
-      s.textContent = `${folderLabel} • ${bytesToSize(file.size || 0)}`;
-
-      bottom.appendChild(n);
-      bottom.appendChild(s);
-
-      thumb.appendChild(actions);
-      thumb.appendChild(top);
-      thumb.appendChild(bottom);
-
-      return thumb;
-    }
-
-    function applyFilters(){
+    function applyFilters(list){
       const q = (searchInput.value || "").trim().toLowerCase();
-      const t = filterType.value;
+      const fFolder = filterFolder.value;
+      const fType = filterType.value;
 
-      let filtered = allFiles.slice();
+      return list.filter(item=>{
+        const nameOk = !q || (item.name || "").toLowerCase().includes(q);
 
-      if(selectedFolderId !== "all"){
-        filtered = filtered.filter(f => (f.folderId || "unfiled") === selectedFolderId);
-      }
-      if(q){
-        filtered = filtered.filter(x => (x.name||"").toLowerCase().includes(q));
-      }
-      if(t !== "all"){
-        filtered = filtered.filter(x => x.type === t);
-      }
+        let folderOk = true;
+        if(fFolder === "none") folderOk = !item.folderId;
+        else if(fFolder !== "all") folderOk = item.folderId === fFolder;
 
+        let typeOk = true;
+        if(fType !== "all") typeOk = item.type === fType;
+
+        return nameOk && folderOk && typeOk;
+      });
+    }
+
+    function renderAll(){
+      const filtered = applyFilters(files);
       renderFiles(filtered);
     }
 
-    // ✅ Realtime watchers (resolvem o bug do refresh)
-    function watchFolders(){
-      if(!currentUser) return;
-      if(unsubFolders) unsubFolders();
+    function renderFiles(list){
+      filesList.innerHTML = "";
 
-      unsubFolders = foldersCol()
-        .where("uid","==", currentUser.uid)
-        .onSnapshot((snap) => {
-          folders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          folders.sort((a,b) => (a.name || "").localeCompare((b.name || ""), "pt-BR"));
-          renderFoldersUI();
-          applyFilters();
+      if(!list || list.length === 0){
+        emptyState.style.display = "block";
+        return;
+      }
+      emptyState.style.display = "none";
+
+      list.forEach(file=>{
+        const el = document.createElement("div");
+        el.className = "item";
+
+        const left = document.createElement("div");
+        left.className = "left";
+
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = typeBadge(file.type);
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = file.name || "Arquivo";
+
+        const sub = document.createElement("div");
+        sub.className = "sub";
+        sub.textContent = `${getFolderName(file.folderId)} • ${file.originalName || ""}`;
+
+        meta.appendChild(name);
+        meta.appendChild(sub);
+
+        left.appendChild(badge);
+        left.appendChild(meta);
+
+        const right = document.createElement("div");
+        right.className = "right";
+
+        const btnPrev = document.createElement("button");
+        btnPrev.className = "btn btnSmall btnPrimary";
+        btnPrev.textContent = "Ver";
+        btnPrev.addEventListener("click", ()=>{
+          openPreview(file);
         });
-    }
 
-    function watchFiles(){
-      if(!currentUser) return;
-      if(unsubFiles) unsubFiles();
-
-      unsubFiles = filesCol()
-        .where("uid","==", currentUser.uid)
-        .orderBy("createdAt","desc")
-        .onSnapshot((snap) => {
-          allFiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderFoldersUI();
-          applyFilters();
+        const btnRename = document.createElement("button");
+        btnRename.className = "btn btnSmall";
+        btnRename.textContent = "Renomear";
+        btnRename.addEventListener("click", async ()=>{
+          const novo = prompt("Novo nome:", file.name || "");
+          if(!novo) return;
+          try{
+            showLoader(true);
+            await updateDoc(doc(db, "files", file.id), { name: novo.trim() });
+            await loadFiles();
+            renderAll();
+          }catch(err){
+            console.error(err);
+            alert("Erro ao renomear");
+          }finally{
+            showLoader(false);
+          }
         });
+
+        right.appendChild(btnPrev);
+        right.appendChild(btnRename);
+
+        el.appendChild(left);
+        el.appendChild(right);
+
+        filesList.appendChild(el);
+      });
     }
 
-    async function deleteFile(file){
-      if(!currentUser) return;
-      const ok = confirm(`Excluir "${file.name}"?`);
-      if(!ok) return;
+    // filtros ao vivo
+    searchInput.addEventListener("input", renderAll);
+    filterFolder.addEventListener("change", renderAll);
+    filterType.addEventListener("change", renderAll);
 
-      showLoader("Excluindo...");
-      try{
-        await filesCol().doc(file.id).delete();
-      }catch(err){
-        console.error(err);
-        toast("Erro ao excluir.");
-      } finally {
-        hideLoader();
-      }
-    }
-
-    async function renameFile(file){
-      if(!currentUser) return;
-      const current = file.name || file.originalName || "arquivo";
-      const typed = prompt("Novo nome (com ou sem extensão):", current);
-      if(!typed) return;
-
-      const newName = ensureNameWithExtension(typed.trim(), file.originalName || file.name);
-
-      showLoader("Renomeando...");
-      try{
-        await filesCol().doc(file.id).update({ name: newName });
-      }catch(err){
-        console.error(err);
-        toast("Erro ao renomear.");
-      }finally{
-        hideLoader();
-      }
-    }
-
-    async function uploadToCloudinary(file, folderPath){
-      const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`;
-      const form = new FormData();
-      form.append("file", file);
-      form.append("upload_preset", CLOUDINARY_PRESET);
-      form.append("folder", folderPath);
-
-      const res = await fetch(url, { method:"POST", body: form });
-      const data = await res.json();
-      if(!res.ok){
-        console.error("Cloudinary error:", data);
-        throw new Error(data?.error?.message || "Erro no Cloudinary");
-      }
-      return data;
-    }
-
-    async function doUpload(){
-      if(!currentUser) return;
-
-      const f = fileInput.files?.[0];
-      if(!f){ toast("Escolha um arquivo primeiro."); return; }
-
-      let fid = folderSelect.value || "unfiled";
-      if(fid === "all") fid = "unfiled";
-
-      const folderName = (fid === "unfiled")
-        ? "Sem pasta"
-        : (folders.find(x => x.id === fid)?.name || "Pasta");
-
-      const cloudFolder = `${currentUser.uid}/${folderName}`;
-
-      const typed = (customNameInput?.value || "").trim();
-      const displayName = ensureNameWithExtension(typed, f.name);
-
-      btnUpload.disabled = true;
-      showLoader("Enviando...");
-      uploadStatus.textContent = "Enviando...";
-
-      try{
-        const cloud = await uploadToCloudinary(f, cloudFolder);
-
-        const record = {
-          uid: currentUser.uid,
-          name: displayName,
-          originalName: f.name,
-          folderId: fid,
-          folderName: folderName,
-          type: niceType(f.type),
-          mime: f.type || "",
-          size: cloud.bytes ?? f.size ?? 0,
-          url: cloud.secure_url || cloud.url,
-          public_id: cloud.public_id || "",
-          resource_type: cloud.resource_type || "",
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        await filesCol().add(record);
-
-        fileInput.value = "";
-        if(customNameInput) customNameInput.value = "";
-        uploadStatus.textContent = "Upload concluído ✅";
-      }catch(err){
-        console.error(err);
-        toast(`Erro no upload: ${err.message || err}`);
-      } finally {
-        btnUpload.disabled = false;
-        hideLoader();
-      }
-    }
-
-    // Auth
-    btnLogin.addEventListener("click", async () => {
-      const email = (emailEl.value || "").trim();
-      const pass = passEl.value || "";
-      if(!email || !pass) return toast("Preencha email e senha.");
-
-      showLoader("Entrando...");
-      try{ await auth.signInWithEmailAndPassword(email, pass); }
-      catch(err){ console.error(err); toast(err?.message || "Erro ao entrar."); }
-      finally{ hideLoader(); }
+    // tabs (por enquanto só troca visual)
+    document.getElementById("viewTabs").addEventListener("click",(e)=>{
+      const b = e.target.closest(".tab");
+      if(!b) return;
+      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+      b.classList.add("active");
+      currentView = b.dataset.view || "lista";
+      renderAll();
     });
 
-    btnRegister.addEventListener("click", async () => {
-      const email = (emailEl.value || "").trim();
-      const pass = passEl.value || "";
-      if(!email || !pass) return toast("Preencha email e senha.");
-
-      showLoader("Criando conta...");
-      try{ await auth.createUserWithEmailAndPassword(email, pass); }
-      catch(err){ console.error(err); toast(err?.message || "Erro ao criar conta."); }
-      finally{ hideLoader(); }
-    });
-
-    btnLogout.addEventListener("click", async () => {
-      showLoader("Saindo...");
-      try{ await auth.signOut(); }
-      catch(err){ console.error(err); toast("Erro ao sair."); }
-      finally{ hideLoader(); }
-    });
-
-    btnNewFolderDesktop.addEventListener("click", createFolder);
-    btnNewFolderMobile.addEventListener("click", createFolder);
-    btnUpload.addEventListener("click", doUpload);
-
-    tabList.addEventListener("click", () => {
-      currentMode = "list";
-      tabList.classList.add("active");
-      tabGallery.classList.remove("active");
-      applyFilters();
-    });
-    tabGallery.addEventListener("click", () => {
-      currentMode = "gallery";
-      tabGallery.classList.add("active");
-      tabList.classList.remove("active");
-      applyFilters();
-    });
-
-    searchInput.addEventListener("input", applyFilters);
-    filterType.addEventListener("change", applyFilters);
-
-    // "Atualizar" agora só força re-render (realtime já mantém tudo sincronizado)
-    btnRefresh.addEventListener("click", () => {
-      renderFoldersUI();
-      applyFilters();
-      toast("Sincronizado ✅");
-    });
-
-    // Auth state
-    auth.onAuthStateChanged(async (user) => {
-      showLoader("Validando sessão...");
-      try{
-        // limpa watchers antigos
-        if(unsubFolders) { unsubFolders(); unsubFolders = null; }
-        if(unsubFiles) { unsubFiles(); unsubFiles = null; }
-
-        currentUser = user || null;
-
-        if(currentUser){
-          const email = currentUser.email || "—";
-          setView(true);
-
-          sessionEmail.textContent = email;
-          userEmailEl.textContent = email;
-          userNameEl.textContent = (email.split("@")[0] || "Usuário");
-          avatarEl.textContent = getInitials(email);
-
-          selectedFolderId = "all";
-          breadcrumb.textContent = "Todos";
-
-          // ✅ inicia realtime
-          watchFolders();
-          watchFiles();
-        } else {
-          setView(false);
-          allFiles = [];
-          folders = [];
-          listView.innerHTML = "";
-          galleryView.innerHTML = "";
-          emptyState.style.display = "none";
-        }
-      } finally {
-        hideLoader();
-      }
-    });
-
-    // PWA
-    if("serviceWorker" in navigator){
-      navigator.serviceWorker.register("./service-worker.js").catch(console.warn);
-    }
   </script>
 </body>
 </html>
-
