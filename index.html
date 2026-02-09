@@ -7,67 +7,44 @@
 
   <style>
     :root{
-      --bg1:#071022;
-      --bg2:#0b2a66;
+      --bg1:#071022; --bg2:#0b2a66;
       --card:rgba(255,255,255,.08);
       --stroke:rgba(255,255,255,.12);
       --txt:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
       --muted2:rgba(255,255,255,.55);
       --brand:#4f7cf0;
-      --brand2:#2dd4bf;
       --danger:#ef4444;
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius:22px;
     }
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    html,body{ height:100%; color-scheme:dark; }
     body{
-      margin:0;
-      color:var(--txt);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0; color:var(--txt);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:
         radial-gradient(1200px 700px at 30% 20%, rgba(79,124,240,.35), transparent 60%),
         radial-gradient(900px 600px at 80% 60%, rgba(45,212,191,.22), transparent 55%),
-        linear-gradient(160deg, var(--bg1), var(--bg2));
+        linear-gradient(160deg,var(--bg1),var(--bg2));
       overflow-x:hidden;
     }
-
-    /* Fix geral pro “listão branco” (Chrome/Android) */
-    html { color-scheme: dark; }
     select, option { color-scheme: dark; }
-
-    .wrap{ width:min(1050px, 92vw); margin: 20px auto 40px; }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:16px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:12px; min-width:0;
-    }
+    .wrap{ width:min(1050px,92vw); margin:20px auto 40px; }
+    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; }
+    .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
     .appIcon{
       width:44px; height:44px; border-radius:14px;
       background: rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.14);
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      flex:0 0 auto;
       display:grid; place-items:center;
       font-weight:900;
-      letter-spacing:.5px;
     }
-    .titleWrap{ min-width:0; }
-    h1{ font-size:28px; margin:0; display:flex; gap:8px; align-items:center; white-space:nowrap; }
+    h1{ font-size:28px; margin:0; white-space:nowrap; }
     .subtitle{ margin:4px 0 0; color:var(--muted); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    /* Topo alinhado e-mail/nome (sem passar por cima do título) */
     .userChip{
-      display:none;
-      align-items:center;
-      gap:10px;
+      display:none; align-items:center; gap:10px;
       background: var(--card);
       border:1px solid var(--stroke);
       border-radius:999px;
@@ -84,45 +61,10 @@
       flex:0 0 auto;
     }
     .userMeta{ min-width:0; line-height:1.1; }
-    .userName{
-      font-size:13px; font-weight:900;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .userEmail{
-      font-size:12px; color:var(--muted2);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
+    .userName{ font-size:13px; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .userEmail{ font-size:12px; color:var(--muted2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-    .btn{
-      border:0;
-      border-radius:16px;
-      padding:12px 16px;
-      font-weight:800;
-      cursor:pointer;
-      background: rgba(255,255,255,.10);
-      color: var(--txt);
-      border:1px solid rgba(255,255,255,.14);
-      transition: transform .06s ease, filter .2s ease;
-      user-select:none;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btnPrimary{ background: linear-gradient(135deg, rgba(79,124,240,.95), rgba(79,124,240,.65)); border-color: rgba(79,124,240,.55); }
-    .btnDanger{ background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55)); border-color: rgba(239,68,68,.55); }
-    .btnSmall{
-      padding:10px 12px;
-      border-radius:14px;
-      font-size:13px;
-      font-weight:900;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      white-space:nowrap;
-    }
-
-    .grid{ display:grid; grid-template-columns: 1fr; gap:16px; }
-
+    .grid{ display:grid; grid-template-columns:1fr; gap:16px; }
     .card{
       background: var(--card);
       border:1px solid var(--stroke);
@@ -134,18 +76,14 @@
       padding:14px 16px;
       border-bottom:1px solid rgba(255,255,255,.10);
       background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
     .cardHead b{ font-size:14px; }
     .cardBody{ padding:14px 16px; }
 
     .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; }
-    .field{ flex:1 1 220px; min-width: 180px; }
+    .field{ flex:1 1 220px; min-width:180px; }
     label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
-
     input, select{
       width:100%;
       padding:12px 12px;
@@ -157,10 +95,8 @@
       font-size:14px;
     }
     input::placeholder{ color: rgba(255,255,255,.45); }
-
     select{
-      appearance:none;
-      -webkit-appearance:none;
+      appearance:none; -webkit-appearance:none;
       background-image:
         linear-gradient(45deg, transparent 50%, rgba(255,255,255,.75) 50%),
         linear-gradient(135deg, rgba(255,255,255,.75) 50%, transparent 50%),
@@ -175,82 +111,60 @@
     }
     option{ background-color:#0b1220; color:#fff; }
 
+    .btn{
+      border:0;
+      border-radius:16px;
+      padding:12px 16px;
+      font-weight:900;
+      cursor:pointer;
+      background: rgba(255,255,255,.10);
+      color: var(--txt);
+      border:1px solid rgba(255,255,255,.14);
+      transition: transform .06s ease, filter .2s ease;
+      user-select:none;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btnPrimary{ background: linear-gradient(135deg, rgba(79,124,240,.95), rgba(79,124,240,.65)); border-color: rgba(79,124,240,.55); }
+    .btnDanger{ background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55)); border-color: rgba(239,68,68,.55); }
+    .btnSmall{ padding:10px 12px; border-radius:14px; font-size:13px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+
     .tabs{
-      display:flex;
-      gap:10px;
+      display:flex; gap:10px;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
-      padding:8px;
-      border-radius:999px;
+      padding:8px; border-radius:999px;
       width: fit-content;
     }
     .tab{
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:900;
-      cursor:pointer;
+      padding:10px 14px; border-radius:999px;
+      font-weight:900; cursor:pointer;
       border:1px solid transparent;
       color: rgba(255,255,255,.75);
       background: transparent;
     }
-    .tab.active{
-      background: rgba(79,124,240,.35);
-      border-color: rgba(79,124,240,.45);
-      color: var(--txt);
-    }
+    .tab.active{ background: rgba(79,124,240,.35); border-color: rgba(79,124,240,.45); color: var(--txt); }
 
     .list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
     .item{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px;
-      border-radius:18px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:12px; border-radius:18px;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
     }
-    .left{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .left{ display:flex; align-items:center; gap:10px; min-width:0; cursor:pointer; }
     .badge{
-      width:42px; height:42px;
-      border-radius:14px;
+      width:42px; height:42px; border-radius:14px;
       display:grid; place-items:center;
       background: rgba(79,124,240,.22);
       border:1px solid rgba(79,124,240,.25);
-      flex:0 0 auto;
+      overflow:hidden; flex:0 0 auto;
       font-weight:900;
-      overflow:hidden;
     }
-    .thumb{
-      width:42px; height:42px;
-      border-radius:14px;
-      object-fit:cover;
-      display:block;
-    }
+    .thumb{ width:42px; height:42px; border-radius:14px; object-fit:cover; display:block; }
     .meta{ min-width:0; }
-    .name{
-      font-weight:900;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 52vw;
-    }
-    .sub{
-      font-size:12px;
-      color: var(--muted2);
-      margin-top:2px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 52vw;
-    }
-    .right{ display:flex; gap:8px; flex:0 0 auto; flex-wrap:wrap; justify-content:flex-end; }
-
-    .empty{
-      margin-top:12px;
-      color: var(--muted2);
-      text-align:center;
-      padding:18px 10px;
-      border-radius:18px;
-      border:1px dashed rgba(255,255,255,.16);
-      background: rgba(255,255,255,.03);
-    }
+    .name{ font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:52vw; }
+    .sub{ font-size:12px; color:var(--muted2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:52vw; }
+    .right{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
 
     .gallery{
       margin-top:12px;
@@ -269,25 +183,28 @@
       aspect-ratio: 4/3;
       width:100%;
       background: rgba(0,0,0,.18);
-      display:grid;
-      place-items:center;
-      position:relative;
+      display:grid; place-items:center;
     }
-    .gTop img, .gTop video{
-      width:100%; height:100%;
-      object-fit:cover;
-      display:block;
-    }
+    .gTop img, .gTop video{ width:100%; height:100%; object-fit:cover; display:block; }
     .gMeta{ padding:10px; }
     .gName{ font-weight:900; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .gSub{ font-size:12px; color:var(--muted2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-    /* Modal preview */
+    .empty{
+      margin-top:12px;
+      color: var(--muted2);
+      text-align:center;
+      padding:18px 10px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(255,255,255,.03);
+    }
+
+    /* Modal */
     .modal{
       position:fixed; inset:0;
       display:none;
-      align-items:center;
-      justify-content:center;
+      align-items:center; justify-content:center;
       background: rgba(2,8,18,.70);
       backdrop-filter: blur(8px);
       z-index:9999;
@@ -303,11 +220,8 @@
       box-shadow: var(--shadow);
     }
     .modalHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:12px 14px;
       border-bottom:1px solid rgba(255,255,255,.10);
     }
     .modalBody{ padding:14px; }
@@ -324,14 +238,6 @@
       object-fit:contain;
       background: rgba(0,0,0,.35);
     }
-
-    /* Auth */
-    .authWrap{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:16px;
-    }
-    .hint{ font-size:12px; color:var(--muted2); margin-top:8px; }
 
     /* Loader */
     .loaderOverlay{
@@ -354,10 +260,8 @@
 
     @media (min-width: 860px){
       .grid{ grid-template-columns: 1fr 1fr; }
-      .card.span2{ grid-column: 1 / -1; }
       .gallery{ grid-template-columns: repeat(3, 1fr); }
-      .name{ max-width: 360px; }
-      .sub{ max-width: 360px; }
+      .name, .sub{ max-width:360px; }
     }
   </style>
 </head>
@@ -366,9 +270,9 @@
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <div class="appIcon" id="logoIcon">MD</div>
-        <div class="titleWrap">
-          <h1>Meu Drive <span style="opacity:.8">☁️</span></h1>
+        <div class="appIcon">MD</div>
+        <div style="min-width:0">
+          <h1>Meu Drive ☁️</h1>
           <div class="subtitle">Seus arquivos em um só lugar.</div>
         </div>
       </div>
@@ -387,17 +291,16 @@
     <div class="grid" id="authView">
       <div class="card">
         <div class="cardHead">
-          <b>Entrar</b>
-          <span style="font-size:12px;color:var(--muted2)">Login</span>
+          <b>Entrar</b><span style="font-size:12px;color:var(--muted2)">Login</span>
         </div>
         <div class="cardBody">
           <div class="row">
             <div class="field">
-              <label for="loginEmail">Email</label>
+              <label>Email</label>
               <input id="loginEmail" type="email" placeholder="seuemail@gmail.com" />
             </div>
             <div class="field">
-              <label for="loginPass">Senha</label>
+              <label>Senha</label>
               <input id="loginPass" type="password" placeholder="••••••••" />
             </div>
           </div>
@@ -409,26 +312,24 @@
 
       <div class="card">
         <div class="cardHead">
-          <b>Criar conta</b>
-          <span style="font-size:12px;color:var(--muted2)">Nome + Email + Senha</span>
+          <b>Criar conta</b><span style="font-size:12px;color:var(--muted2)">Nome + Email + Senha</span>
         </div>
         <div class="cardBody">
           <div class="row">
             <div class="field">
-              <label for="signupName">Nome (visível no topo)</label>
+              <label>Nome (visível no topo)</label>
               <input id="signupName" type="text" placeholder="Ex: Isaias" />
-              <div class="hint">O topo vai mostrar: <b>👋 Olá, Seu Nome</b></div>
             </div>
           </div>
 
           <div class="row" style="margin-top:10px">
             <div class="field">
-              <label for="signupEmail">Email</label>
+              <label>Email</label>
               <input id="signupEmail" type="email" placeholder="seuemail@gmail.com" />
             </div>
             <div class="field">
-              <label for="signupPass">Senha</label>
-              <input id="signupPass" type="password" placeholder="Crie uma senha" />
+              <label>Senha</label>
+              <input id="signupPass" type="password" placeholder="Crie uma senha (min 6)" />
             </div>
           </div>
 
@@ -441,28 +342,25 @@
 
     <!-- APP -->
     <div class="grid" id="appView" style="display:none;">
-      <!-- Upload + filtros -->
       <div class="card">
         <div class="cardHead">
-          <b>Upload</b>
-          <span style="font-size:12px;color:var(--muted2)">Cloudinary + Firestore</span>
+          <b>Upload</b><span style="font-size:12px;color:var(--muted2)">Cloudinary (direto) + Firestore</span>
         </div>
         <div class="cardBody">
-
           <div class="row">
             <div class="field">
-              <label for="fileInput">Arquivo</label>
+              <label>Arquivo</label>
               <input id="fileInput" type="file" />
             </div>
           </div>
 
           <div class="row" style="margin-top:10px">
             <div class="field">
-              <label for="folderSelect">Pasta</label>
+              <label>Pasta</label>
               <select id="folderSelect"></select>
             </div>
             <div class="field">
-              <label for="customName">Nome do arquivo (opcional)</label>
+              <label>Nome do arquivo (opcional)</label>
               <input id="customName" type="text" placeholder="Ex: Contrato aluguel 2026" />
             </div>
           </div>
@@ -476,18 +374,18 @@
 
           <div class="row">
             <div class="field">
-              <label for="searchInput">Buscar por nome</label>
+              <label>Buscar por nome</label>
               <input id="searchInput" type="text" placeholder="Ex: contrato, foto, vídeo..." />
             </div>
           </div>
 
           <div class="row" style="margin-top:10px">
             <div class="field">
-              <label for="filterFolder">Filtrar por pasta</label>
+              <label>Filtrar por pasta</label>
               <select id="filterFolder"></select>
             </div>
             <div class="field">
-              <label for="filterType">Filtrar por tipo</label>
+              <label>Filtrar por tipo</label>
               <select id="filterType">
                 <option value="all">Todos</option>
                 <option value="image">Imagens</option>
@@ -497,10 +395,10 @@
             </div>
           </div>
 
+          <div style="margin-top:8px;font-size:12px;color:var(--muted2)" id="statusLine"></div>
         </div>
       </div>
 
-      <!-- Arquivos -->
       <div class="card">
         <div class="cardHead">
           <b>Arquivos</b>
@@ -515,10 +413,9 @@
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- Preview Modal -->
+  <!-- Modal preview -->
   <div class="modal" id="modal">
     <div class="modalCard">
       <div class="modalHead">
@@ -540,25 +437,20 @@
     </div>
   </div>
 
-  <div class="loaderOverlay" id="loader">
-    <div class="spinner"></div>
-  </div>
+  <div class="loaderOverlay" id="loader"><div class="spinner"></div></div>
 
   <script type="module">
     // =========================
-    // CONFIG (edite só aqui)
+    // CONFIG (PREENCHA AQUI)
     // =========================
     const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
-  authDomain: "meu-drive-beb33.firebaseapp.com",
-  projectId: "meu-drive-beb33",
-  storageBucket: "meu-drive-beb33.firebasestorage.app",
-  messagingSenderId: "661176300748",
-  appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
-};
+      // COLE AQUI seu firebaseConfig (apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId)
+    };
 
-    const CLOUDINARY_CLOUD_NAME = "dilyddwkg";
-    const CLOUDINARY_UNSIGNED_PRESET = "kv9sjt0g"; // unsigned preset
+    // ✅ Para testar no PC:
+    const API_BASE = "http://localhost:3333";
+    // ✅ Depois de publicar no Render, você troca pra:
+    // const API_BASE = "https://seu-backend.onrender.com";
     // =========================
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -575,62 +467,57 @@
       onSnapshot, query, where, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    // --- helpers UI
     const $ = (id) => document.getElementById(id);
     const showLoader = (v) => { $("loader").style.display = v ? "flex" : "none"; };
-    const toast = (msg) => alert(msg);
+    const setStatus = (t) => { $("statusLine").textContent = t || ""; };
 
-    // --- init
     const app = initializeApp(FIREBASE_CONFIG);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // --- state
+    // UI
+    const authView = $("authView");
+    const appView  = $("appView");
+    const userChip = $("userChip");
+
+    // State
     let currentUser = null;
-    let folders = []; // {id, name}
-    let files = [];   // {id, name, url, type, folderId, folderName, createdAt}
+    let folders = [];
+    let files = [];
     let selectedFile = null;
     let unsubFolders = null;
     let unsubFiles = null;
 
-    // --- DOM refs
-    const authView = $("authView");
-    const appView = $("appView");
-    const userChip = $("userChip");
-
-    // =========================
-    // AUTH
-    // =========================
-    $("btnLogin").addEventListener("click", async () => {
+    // ---------------- AUTH ----------------
+    $("btnLogin").onclick = async () => {
       try{
         showLoader(true);
         const email = $("loginEmail").value.trim();
-        const pass = $("loginPass").value.trim();
+        const pass  = $("loginPass").value.trim();
         await signInWithEmailAndPassword(auth, email, pass);
-      }catch(e){
+      } catch(e){
         console.error(e);
-        toast("Erro no login. Veja o console.");
-      }finally{
+        alert("Erro no login. Veja o console.");
+      } finally {
         showLoader(false);
       }
-    });
+    };
 
-    $("btnSignup").addEventListener("click", async () => {
+    $("btnSignup").onclick = async () => {
       try{
         showLoader(true);
-        const name = $("signupName").value.trim();
+        const name  = $("signupName").value.trim();
         const email = $("signupEmail").value.trim();
-        const pass = $("signupPass").value.trim();
-        if(!name) return toast("Digite seu nome.");
-        if(!email) return toast("Digite seu email.");
-        if(pass.length < 6) return toast("Senha precisa ter pelo menos 6 caracteres.");
+        const pass  = $("signupPass").value.trim();
+
+        if(!name) return alert("Digite seu nome.");
+        if(!email) return alert("Digite seu email.");
+        if(pass.length < 6) return alert("Senha precisa ter no mínimo 6 caracteres.");
 
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
 
-        // Nome no Auth (pra ficar bonitinho)
         await updateProfile(cred.user, { displayName: name });
 
-        // Perfil no Firestore (users/{uid})
         await setDoc(doc(db, "users", cred.user.uid), {
           uid: cred.user.uid,
           name,
@@ -638,23 +525,20 @@
           createdAt: serverTimestamp(),
         }, { merge:true });
 
-      }catch(e){
+      } catch(e){
         console.error(e);
-        toast("Erro ao criar conta. Veja o console.");
-      }finally{
+        alert("Erro ao criar conta. Veja o console.");
+      } finally {
         showLoader(false);
       }
-    });
+    };
 
-    $("btnLogout").addEventListener("click", async () => {
-      await signOut(auth);
-    });
+    $("btnLogout").onclick = () => signOut(auth);
 
     onAuthStateChanged(auth, async (u) => {
       currentUser = u || null;
 
       if(!currentUser){
-        // cleanup
         if(unsubFolders) unsubFolders();
         if(unsubFiles) unsubFiles();
         folders = [];
@@ -671,87 +555,67 @@
       appView.style.display = "grid";
       userChip.style.display = "flex";
 
-      await loadProfileAndHeader();
+      await loadProfileHeader();
       listenFolders();
       listenFiles();
     });
 
-    async function loadProfileAndHeader(){
+    async function loadProfileHeader(){
       try{
-        // tenta pegar do Auth
         let displayName = currentUser.displayName || "";
         const email = currentUser.email || "";
 
-        // tenta pegar do Firestore (se o Auth estiver vazio)
         if(!displayName){
-          const snap = await getDoc(doc(db, "users", currentUser.uid));
-          if(snap.exists()){
-            displayName = (snap.data().name || "");
-          }
+          const snap = await getDoc(doc(db,"users",currentUser.uid));
+          if(snap.exists()) displayName = snap.data().name || "";
         }
-
         const finalName = displayName || (email ? email.split("@")[0] : "Usuário");
+
         $("userName").textContent = `👋 Olá, ${capitalize(finalName)}`;
         $("userEmail").textContent = email || "—";
         $("avatar").textContent = (finalName || "U").trim().slice(0,1).toUpperCase();
-
-      }catch(e){
+      } catch(e){
         console.error(e);
-        toast("Erro ao carregar sua conta. Veja o console.");
+        alert("Erro ao carregar seu perfil. Veja o console.");
       }
     }
+    function capitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
-    function capitalize(s){
-      if(!s) return s;
-      return s.charAt(0).toUpperCase() + s.slice(1);
-    }
-
-    // =========================
-    // FOLDERS
-    // =========================
-    $("btnNewFolder").addEventListener("click", async () => {
+    // ---------------- FOLDERS ----------------
+    $("btnNewFolder").onclick = async () => {
       const name = prompt("Nome da nova pasta:");
       if(!name) return;
 
       try{
         showLoader(true);
-        await addDoc(collection(db, "folders"), {
+        await addDoc(collection(db,"folders"), {
           uid: currentUser.uid,
           name: name.trim(),
           createdAt: serverTimestamp(),
         });
-      }catch(e){
+      } catch(e){
         console.error(e);
-        toast("Erro ao criar pasta");
-      }finally{
+        alert("Erro ao criar pasta.");
+      } finally {
         showLoader(false);
       }
-    });
+    };
 
     function listenFolders(){
       if(unsubFolders) unsubFolders();
 
-      const qFolders = query(
-        collection(db, "folders"),
-        where("uid", "==", currentUser.uid)
-      );
+      const qFolders = query(collection(db,"folders"), where("uid","==", currentUser.uid));
 
       unsubFolders = onSnapshot(qFolders, (snap) => {
-        folders = snap.docs
-          .map(d => ({ id: d.id, ...(d.data()||{}) }))
+        folders = snap.docs.map(d => ({ id:d.id, ...(d.data()||{}) }))
           .sort((a,b)=> (a.name||"").localeCompare(b.name||""));
 
         renderFolderSelects();
-      }, (err)=>{
-        console.error(err);
-        // Se der permissão aqui, é rules
-      });
+      }, (err)=> console.error(err));
     }
 
     function renderFolderSelects(){
-      // Upload select
       $("folderSelect").innerHTML = "";
-      // Filter select
       $("filterFolder").innerHTML = "";
 
       const allOpt = document.createElement("option");
@@ -759,7 +623,7 @@
       allOpt.textContent = "Todas";
       $("filterFolder").appendChild(allOpt);
 
-      const defaultFolders = [
+      const defaults = [
         { id:"images", name:"Imagens" },
         { id:"videos", name:"Vídeos" },
         { id:"docs", name:"Documentos" },
@@ -767,8 +631,8 @@
       ];
 
       const merged = [
-        ...defaultFolders,
-        ...folders.filter(f => !defaultFolders.some(d => d.name.toLowerCase() === (f.name||"").toLowerCase()))
+        ...defaults,
+        ...folders.filter(f => !defaults.some(d => d.name.toLowerCase() === (f.name||"").toLowerCase()))
       ];
 
       for(const f of merged){
@@ -784,21 +648,14 @@
       }
     }
 
-    // =========================
-    // FILES (Firestore)
-    // =========================
+    // ---------------- FILES (Firestore) ----------------
     function listenFiles(){
       if(unsubFiles) unsubFiles();
 
-      const qFiles = query(
-        collection(db, "files"),
-        where("uid", "==", currentUser.uid)
-      );
-
+      const qFiles = query(collection(db,"files"), where("uid","==", currentUser.uid));
       unsubFiles = onSnapshot(qFiles, (snap) => {
         files = snap.docs.map(d => ({ id:d.id, ...(d.data()||{}) }));
 
-        // ordena no client (pra não pedir index composto)
         files.sort((a,b)=>{
           const ta = a.createdAt?.seconds || 0;
           const tb = b.createdAt?.seconds || 0;
@@ -806,86 +663,103 @@
         });
 
         renderFiles();
-      }, (err)=>{
-        console.error(err);
-      });
+      }, (err)=> console.error(err));
     }
 
-    // =========================
-    // UPLOAD (Cloudinary unsigned)
-    // =========================
-    $("btnUpload").addEventListener("click", async () => {
-      const f = $("fileInput").files?.[0];
-      if(!f) return toast("Escolha um arquivo.");
+    // ---------------- Upload direto (Cloudinary) + salvar no Firestore ----------------
+    $("btnUpload").onclick = async () => {
+      const file = $("fileInput").files?.[0];
+      if(!file) return alert("Escolha um arquivo.");
+
+      const folderId = $("folderSelect").value;
+      const folderName = $("folderSelect").selectedOptions?.[0]?.textContent || "—";
+      const customName = $("customName").value.trim();
+      const finalName = customName || file.name;
 
       try{
+        setStatus("Enviando...");
         showLoader(true);
 
-        const folderId = $("folderSelect").value;
-        const folderName = ($("folderSelect").selectedOptions?.[0]?.textContent || "—");
+        const up = await uploadDirectSigned(file, folderId, customName);
 
-        const custom = $("customName").value.trim();
-        const baseName = custom || f.name;
-
-        const res = await uploadToCloudinary(f);
-        // res: { secure_url, resource_type, format, bytes, public_id, original_filename }
-
-        const type = res.resource_type || guessTypeFromFile(f);
-
-        await addDoc(collection(db, "files"), {
+        const type = up.resource_type || guessType(file);
+        await addDoc(collection(db,"files"), {
           uid: currentUser.uid,
-          name: baseName,
-          originalName: f.name,
-          url: res.secure_url,
-          type, // image | video | raw
-          bytes: res.bytes || null,
+          name: finalName,
+          originalName: file.name,
+          url: up.secure_url,
+          public_id: up.public_id,        // <- importante pra deletar depois
+          type,                           // image | video | raw
+          bytes: up.bytes || file.size,
           folderId,
           folderName,
-          createdAt: serverTimestamp(),
+          createdAt: serverTimestamp()
         });
 
         $("fileInput").value = "";
         $("customName").value = "";
+        setStatus("Upload concluído ✅");
 
-      }catch(e){
+      } catch(e){
         console.error(e);
-        toast("Erro no upload. Veja o console.");
-      }finally{
+        setStatus("");
+        alert("Erro no upload: " + (e.message || "Veja o console"));
+      } finally {
         showLoader(false);
+        setTimeout(()=> setStatus(""), 2200);
       }
-    });
+    };
 
-    function guessTypeFromFile(file){
-      const t = (file.type || "").toLowerCase();
+    function guessType(file){
+      const t = (file.type||"").toLowerCase();
       if(t.startsWith("image/")) return "image";
       if(t.startsWith("video/")) return "video";
       return "raw";
     }
 
-    async function uploadToCloudinary(file){
-      const url = `https://api.cloudinary.com/v1_1/${encodeURIComponent(CLOUDINARY_CLOUD_NAME)}/upload`;
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", CLOUDINARY_UNSIGNED_PRESET);
-      fd.append("resource_type", "auto");
+    async function uploadDirectSigned(file, folderId, customName){
+      // 1) pede assinatura pro backend
+      const sigRes = await fetch(`${API_BASE}/signature`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          folder: folderId || "",
+          customName: customName || "",
+          mimeType: file.type || ""
+        })
+      });
 
-      const r = await fetch(url, { method:"POST", body: fd });
-      if(!r.ok){
-        const txt = await r.text().catch(()=> "");
-        throw new Error("Cloudinary upload failed: " + txt);
-      }
-      return await r.json();
+      const sig = await sigRes.json();
+      if(!sigRes.ok || !sig.ok) throw new Error(sig.error || "Falha ao gerar assinatura");
+
+      // 2) manda pro endpoint certo conforme tipo
+      const resourceType = sig.resource_type || guessType(file);
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${sig.cloudName}/${resourceType}/upload`;
+
+      const form = new FormData();
+      form.append("file", file);
+      form.append("api_key", sig.apiKey);
+      form.append("timestamp", String(sig.timestamp));
+      form.append("signature", sig.signature);
+      form.append("overwrite", "false");
+
+      if(sig.folder) form.append("folder", sig.folder);
+      if(sig.public_id) form.append("public_id", sig.public_id);
+
+      const upRes = await fetch(uploadUrl, { method:"POST", body: form });
+      const upData = await upRes.json();
+      if(!upRes.ok) throw new Error(upData?.error?.message || "Cloudinary upload falhou");
+
+      return upData;
     }
 
-    // =========================
-    // FILTERS + RENDER
-    // =========================
+    // ---------------- Filters + render ----------------
     $("searchInput").addEventListener("input", renderFiles);
     $("filterFolder").addEventListener("change", renderFiles);
     $("filterType").addEventListener("change", renderFiles);
 
-    $("tabList").addEventListener("click", () => switchView("list"));
-    $("tabGallery").addEventListener("click", () => switchView("gallery"));
+    $("tabList").onclick = () => switchView("list");
+    $("tabGallery").onclick = () => switchView("gallery");
 
     function switchView(v){
       const isList = v === "list";
@@ -901,21 +775,14 @@
       const ff = $("filterFolder").value;
       const ft = $("filterType").value;
 
-      let filtered = [...files];
-
-      if(search){
-        filtered = filtered.filter(x => (x.name||"").toLowerCase().includes(search));
-      }
-      if(ff && ff !== "all"){
-        filtered = filtered.filter(x => x.folderId === ff);
-      }
-      if(ft && ft !== "all"){
-        filtered = filtered.filter(x => x.type === ft);
-      }
+      let arr = [...files];
+      if(search) arr = arr.filter(x => (x.name||"").toLowerCase().includes(search));
+      if(ff && ff !== "all") arr = arr.filter(x => x.folderId === ff);
+      if(ft && ft !== "all") arr = arr.filter(x => x.type === ft);
 
       const isList = $("tabList").classList.contains("active");
-      if(isList) renderList(filtered);
-      else renderGallery(filtered);
+      if(isList) renderList(arr);
+      else renderGallery(arr);
     }
 
     function iconForType(type){
@@ -923,13 +790,16 @@
       if(type === "video") return "🎬";
       return "📄";
     }
-
     function prettyBytes(n){
       if(!n && n !== 0) return "";
-      const units = ["B","KB","MB","GB"];
-      let i=0; let v=n;
-      while(v >= 1024 && i < units.length-1){ v/=1024; i++; }
-      return `${v.toFixed(i===0?0:1)} ${units[i]}`;
+      const u=["B","KB","MB","GB"]; let i=0; let v=n;
+      while(v>=1024 && i<u.length-1){ v/=1024; i++; }
+      return `${v.toFixed(i===0?0:1)} ${u[i]}`;
+    }
+    function esc(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
 
     function renderList(arr){
@@ -938,28 +808,25 @@
         box.innerHTML = `<div class="empty">Nenhum arquivo ainda.</div>`;
         return;
       }
-
-      const html = arr.map(file => {
-        const sub = `${file.folderName||"—"} • ${file.type||"—"} ${file.bytes?("• "+prettyBytes(file.bytes)):""}`;
-        const isImg = file.type === "image";
-
+      const html = arr.map(f=>{
+        const sub = `${f.folderName||"—"} • ${f.type||"—"} ${f.bytes?("• "+prettyBytes(f.bytes)):""}`;
+        const isImg = f.type === "image";
         return `
           <div class="item">
-            <div class="left" data-open="${file.id}">
+            <div class="left" data-open="${f.id}">
               <div class="badge">
-                ${isImg ? `<img class="thumb" alt="" src="${escapeHtml(file.url)}" data-thumb="${file.id}">`
-                        : `<span>${iconForType(file.type)}</span>`}
+                ${isImg ? `<img class="thumb" alt="" src="${esc(f.url)}" data-thumb="${f.id}">`
+                        : `<span>${iconForType(f.type)}</span>`}
               </div>
               <div class="meta">
-                <div class="name">${escapeHtml(file.name||"Sem nome")}</div>
-                <div class="sub">${escapeHtml(sub)}</div>
+                <div class="name">${esc(f.name||"Sem nome")}</div>
+                <div class="sub">${esc(sub)}</div>
               </div>
             </div>
             <div class="right">
-              <button class="btn btnSmall" data-rename="${file.id}">Renomear</button>
-              <button class="btn btnSmall" data-move="${file.id}">Mover</button>
-              <a class="btn btnSmall" href="${escapeHtml(file.url)}" target="_blank" rel="noopener">Abrir</a>
-              <button class="btn btnSmall btnDanger" data-delete="${file.id}">Excluir</button>
+              <button class="btn btnSmall" data-rename="${f.id}">Renomear</button>
+              <button class="btn btnSmall" data-move="${f.id}">Mover</button>
+              <button class="btn btnSmall btnDanger" data-delete="${f.id}">Excluir</button>
             </div>
           </div>
         `;
@@ -967,27 +834,26 @@
 
       box.innerHTML = `<div class="list">${html}</div>`;
 
-      // FIX do erro "style of null": thumb pode falhar -> troca por ícone sem mexer em style de null
+      // fallback seguro thumb
       box.querySelectorAll("img.thumb").forEach(img=>{
         img.addEventListener("error", ()=>{
           const badge = img.closest(".badge");
-          if(!badge) return; // <- NUNCA mexe em null
+          if(!badge) return;
           badge.innerHTML = `<span>${iconForType("image")}</span>`;
         }, { once:true });
       });
 
-      // ações
       box.querySelectorAll("[data-open]").forEach(el=>{
         el.addEventListener("click", ()=> openModal(el.getAttribute("data-open")));
       });
       box.querySelectorAll("[data-rename]").forEach(btn=>{
-        btn.addEventListener("click", (e)=>{ e.stopPropagation(); renameFile(btn.dataset.rename); });
+        btn.addEventListener("click",(e)=>{ e.stopPropagation(); renameFile(btn.dataset.rename); });
       });
       box.querySelectorAll("[data-move]").forEach(btn=>{
-        btn.addEventListener("click", (e)=>{ e.stopPropagation(); moveFile(btn.dataset.move); });
+        btn.addEventListener("click",(e)=>{ e.stopPropagation(); moveFile(btn.dataset.move); });
       });
       box.querySelectorAll("[data-delete]").forEach(btn=>{
-        btn.addEventListener("click", (e)=>{ e.stopPropagation(); deleteFile(btn.dataset.delete); });
+        btn.addEventListener("click",(e)=>{ e.stopPropagation(); deleteFile(btn.dataset.delete); });
       });
     }
 
@@ -997,24 +863,22 @@
         box.innerHTML = `<div class="empty">Nenhum arquivo ainda.</div>`;
         return;
       }
-
-      const html = arr.map(file => {
-        const sub = `${file.folderName||"—"} • ${file.type||"—"}`;
-        const isImg = file.type === "image";
-        const isVideo = file.type === "video";
-
+      const html = arr.map(f=>{
+        const sub = `${f.folderName||"—"} • ${f.type||"—"}`;
+        const isImg = f.type === "image";
+        const isVideo = f.type === "video";
         return `
-          <div class="gItem" data-open="${file.id}">
+          <div class="gItem" data-open="${f.id}">
             <div class="gTop">
               ${
-                isImg ? `<img alt="" src="${escapeHtml(file.url)}" data-gthumb="${file.id}">`
-                : isVideo ? `<video src="${escapeHtml(file.url)}" muted playsinline></video>`
-                : `<div style="font-size:40px">${iconForType(file.type)}</div>`
+                isImg ? `<img alt="" src="${esc(f.url)}" data-gthumb="${f.id}">`
+                : isVideo ? `<video src="${esc(f.url)}" muted playsinline></video>`
+                : `<div style="font-size:40px">${iconForType(f.type)}</div>`
               }
             </div>
             <div class="gMeta">
-              <div class="gName">${escapeHtml(file.name||"Sem nome")}</div>
-              <div class="gSub">${escapeHtml(sub)}</div>
+              <div class="gName">${esc(f.name||"Sem nome")}</div>
+              <div class="gSub">${esc(sub)}</div>
             </div>
           </div>
         `;
@@ -1022,7 +886,6 @@
 
       box.innerHTML = `<div class="gallery">${html}</div>`;
 
-      // thumb error safe
       box.querySelectorAll("img[data-gthumb]").forEach(img=>{
         img.addEventListener("error", ()=>{
           const top = img.parentElement;
@@ -1036,18 +899,7 @@
       });
     }
 
-    function escapeHtml(s){
-      return String(s ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    // =========================
-    // Actions: rename/move/delete
-    // =========================
+    // ---------------- Actions (Firestore + Backend delete) ----------------
     async function renameFile(id){
       const f = files.find(x=>x.id===id);
       if(!f) return;
@@ -1057,10 +909,10 @@
       try{
         showLoader(true);
         await updateDoc(doc(db,"files",id), { name: newName.trim() });
-      }catch(e){
+      } catch(e){
         console.error(e);
-        toast("Erro ao renomear. Veja o console.");
-      }finally{
+        alert("Erro ao renomear.");
+      } finally {
         showLoader(false);
       }
     }
@@ -1069,22 +921,19 @@
       const f = files.find(x=>x.id===id);
       if(!f) return;
 
-      const options = [...$("folderSelect").options].map(o=>({id:o.value, name:o.textContent}));
-      const list = options.map((o,i)=> `${i+1}) ${o.name}`).join("\n");
+      const opts = [...$("folderSelect").options].map(o=>({id:o.value, name:o.textContent}));
+      const list = opts.map((o,i)=> `${i+1}) ${o.name}`).join("\n");
       const pick = prompt("Mover para qual pasta?\n\n" + list + "\n\nDigite o número:");
       const idx = Number(pick) - 1;
-      if(Number.isNaN(idx) || idx < 0 || idx >= options.length) return;
+      if(Number.isNaN(idx) || idx < 0 || idx >= opts.length) return;
 
       try{
         showLoader(true);
-        await updateDoc(doc(db,"files",id), {
-          folderId: options[idx].id,
-          folderName: options[idx].name
-        });
-      }catch(e){
+        await updateDoc(doc(db,"files",id), { folderId: opts[idx].id, folderName: opts[idx].name });
+      } catch(e){
         console.error(e);
-        toast("Erro ao mover. Veja o console.");
-      }finally{
+        alert("Erro ao mover.");
+      } finally {
         showLoader(false);
       }
     }
@@ -1092,35 +941,45 @@
     async function deleteFile(id){
       const f = files.find(x=>x.id===id);
       if(!f) return;
-      if(!confirm(`Excluir "${f.name}"?`)) return;
+      if(!confirm(`Excluir "${f.name}"?\n\nIsso remove do Cloudinary e da lista.`)) return;
 
       try{
         showLoader(true);
+
+        // 1) deletar no Cloudinary via backend
+        if(f.public_id){
+          const delRes = await fetch(`${API_BASE}/files/${encodeURIComponent(f.public_id)}`, { method:"DELETE" });
+          const delJson = await delRes.json().catch(()=> ({}));
+          if(!delRes.ok || !delJson.ok){
+            throw new Error(delJson.error || "Falha ao deletar no Cloudinary");
+          }
+        }
+
+        // 2) deletar no Firestore
         await deleteDoc(doc(db,"files",id));
-      }catch(e){
+
+      } catch(e){
         console.error(e);
-        toast("Erro ao excluir. Veja o console.");
-      }finally{
+        alert("Erro ao excluir: " + (e.message || ""));
+      } finally {
         showLoader(false);
       }
     }
 
-    // =========================
-    // MODAL PREVIEW (sem abrir outra janela)
-    // =========================
+    // ---------------- Modal Preview ----------------
     const modal = $("modal");
-    $("btnModalClose").addEventListener("click", closeModal);
-    modal.addEventListener("click", (e)=> { if(e.target === modal) closeModal(); });
+    $("btnModalClose").onclick = closeModal;
+    modal.addEventListener("click",(e)=>{ if(e.target === modal) closeModal(); });
 
-    $("btnModalRename").addEventListener("click", ()=> selectedFile && renameFile(selectedFile.id));
-    $("btnModalMove").addEventListener("click", ()=> selectedFile && moveFile(selectedFile.id));
-    $("btnModalDelete").addEventListener("click", ()=> { if(selectedFile) { closeModal(); deleteFile(selectedFile.id); } });
+    $("btnModalRename").onclick = ()=> selectedFile && renameFile(selectedFile.id);
+    $("btnModalMove").onclick   = ()=> selectedFile && moveFile(selectedFile.id);
+    $("btnModalDelete").onclick = ()=> { if(selectedFile){ const id=selectedFile.id; closeModal(); deleteFile(id); } };
 
     function openModal(id){
       const f = files.find(x=>x.id===id);
       if(!f) return;
-
       selectedFile = f;
+
       $("modalTitle").textContent = f.name || "Arquivo";
       $("modalSub").textContent = `${f.folderName||"—"} • ${f.type||"—"} ${f.bytes?("• "+prettyBytes(f.bytes)):""}`;
       $("btnModalOpen").href = f.url;
@@ -1130,26 +989,17 @@
 
       if(f.type === "image"){
         const img = document.createElement("img");
-        img.src = f.url;
-        img.alt = f.name || "";
-        img.addEventListener("error", ()=>{
-          box.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted2)">Não foi possível carregar a imagem.</div>`;
-        }, { once:true });
+        img.src = f.url; img.alt = f.name || "";
+        img.onerror = ()=> box.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted2)">Não foi possível carregar a imagem.</div>`;
         box.appendChild(img);
-      }else if(f.type === "video"){
+      } else if(f.type === "video"){
         const v = document.createElement("video");
-        v.src = f.url;
-        v.controls = true;
-        v.playsInline = true;
+        v.src = f.url; v.controls = true; v.playsInline = true;
         box.appendChild(v);
-      }else{
-        // PDF tenta iframe, senão mostra link
+      } else {
         const iframe = document.createElement("iframe");
         iframe.src = f.url;
-        iframe.referrerPolicy = "no-referrer";
-        iframe.addEventListener("error", ()=>{
-          box.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted2)">Preview indisponível. Use "Abrir".</div>`;
-        }, { once:true });
+        iframe.onerror = ()=> box.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted2)">Preview indisponível. Use "Abrir".</div>`;
         box.appendChild(iframe);
       }
 
