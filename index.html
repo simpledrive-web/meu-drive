@@ -226,7 +226,7 @@
       .name{ max-width: 520px; }
       .sub{ max-width: 520px; }
     }
-    .right{ display:flex; gap:8px; flex:0 0 auto; align-items:center; }
+    .right{ display:flex; gap:8px; flex:0 0 auto; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
 
     .empty{
       margin-top:12px;
@@ -279,7 +279,7 @@
 
     .thumbActions{
       position:absolute; top:10px; right:10px;
-      display:flex; gap:6px; z-index:5;
+      display:flex; gap:6px; z-index:5; flex-wrap:wrap; justify-content:flex-end;
     }
     .chipBtn{
       width:36px; height:36px; border-radius:12px;
@@ -377,7 +377,6 @@
     }
     .folderCardSub{ font-size:12px; color: var(--muted2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-    /* Show sidebar on PC; cards on mobile */
     .foldersDesktop{ display:none; }
     .foldersMobile{ display:block; }
     @media(min-width: 980px){
@@ -404,7 +403,7 @@
     }
     @keyframes spin{ to{ transform: rotate(360deg); } }
 
-    /* Modal preview */
+    /* Modal */
     .modal{
       position:fixed;
       inset:0;
@@ -448,6 +447,7 @@
       display:grid;
       place-items:center;
       min-height: 40vh;
+      gap:12px;
     }
     .modalBody img, .modalBody video{
       max-width: 100%;
@@ -470,7 +470,6 @@
       text-align:center;
     }
 
-    /* Views */
     .view{ transition: opacity .25s ease, transform .25s ease; }
     .hide{
       opacity:0;
@@ -498,6 +497,28 @@
         </div>
       </div>
       <div class="modalBody" id="previewBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal Move -->
+  <div id="moveModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modalCard">
+      <div class="modalHead">
+        <div class="modalTitle" id="moveTitle">Mover arquivo</div>
+        <div class="row" style="gap:8px;">
+          <button id="moveCancel" class="btn btnSmall">Cancelar</button>
+        </div>
+      </div>
+      <div class="modalBody" style="place-items:stretch;">
+        <div class="field" style="width:100%;">
+          <label for="moveSelect">Mover para</label>
+          <select id="moveSelect"></select>
+        </div>
+        <div class="row" style="justify-content:flex-end; width:100%;">
+          <button id="moveConfirm" class="btn btnPrimary">Mover</button>
+        </div>
+        <div class="mutedNote">Dica: “Sem pasta” é tipo raiz (Meu Drive).</div>
+      </div>
     </div>
   </div>
 
@@ -623,7 +644,7 @@
             </div>
           </div>
 
-          <!-- Filtros + modo -->
+          <!-- Busca + modo -->
           <div class="card">
             <div class="cardHead"><b>Busca</b></div>
             <div class="cardBody">
@@ -675,7 +696,7 @@
           </div>
 
           <div class="mutedNote">
-            Agora as pastas são “de verdade” (collection <b>folders</b>). Depois a gente faz “Mover” e delete Cloudinary via backend ✅
+            Mover funciona só no Firestore (folderId). Depois fazemos “mover também no Cloudinary” (via backend) ✅
           </div>
         </div>
       </div>
@@ -750,19 +771,29 @@
     const filesTitle = document.getElementById("filesTitle");
     const breadcrumb = document.getElementById("breadcrumb");
 
-    // Modal
+    // Preview modal
     const previewModal = document.getElementById("previewModal");
     const previewTitle = document.getElementById("previewTitle");
     const previewBody = document.getElementById("previewBody");
     const previewClose = document.getElementById("previewClose");
     const previewOpenNew = document.getElementById("previewOpenNew");
 
+    // Move modal
+    const moveModal = document.getElementById("moveModal");
+    const moveTitle = document.getElementById("moveTitle");
+    const moveSelect = document.getElementById("moveSelect");
+    const moveCancel = document.getElementById("moveCancel");
+    const moveConfirm = document.getElementById("moveConfirm");
+
     // State
     let currentUser = null;
     let allFiles = [];
-    let folders = []; // [{id,name,uid,createdAt}]
-    let selectedFolderId = "all"; // all | unfiled | <folderId>
+    let folders = [];
+    let selectedFolderId = "all";
     let currentMode = "list";
+
+    // Move state
+    let movingFile = null;
 
     // Helpers
     function showLoader(msg){
@@ -835,7 +866,6 @@
       return base + (origExt || "");
     }
 
-    // Collections
     function filesCol(){ return db.collection("files"); }
     function foldersCol(){ return db.collection("folders"); }
 
@@ -881,32 +911,93 @@
     previewClose.addEventListener("click", closePreview);
     previewModal.addEventListener("click", (e) => { if(e.target === previewModal) closePreview(); });
 
-    // Folder utilities
+    // Folder label
     function getFolderLabelById(id){
       if(id === "all") return "Todos";
       if(id === "unfiled") return "Sem pasta";
       const f = folders.find(x => x.id === id);
       return f ? f.name : "Pasta";
     }
+
+    // Move modal
+    function closeMove(){
+      moveModal.style.display = "none";
+      movingFile = null;
+      moveSelect.innerHTML = "";
+    }
+    moveCancel.addEventListener("click", closeMove);
+    moveModal.addEventListener("click", (e) => { if(e.target === moveModal) closeMove(); });
+
+    function openMove(file){
+      movingFile = file;
+      moveTitle.textContent = `Mover: ${file.name || "Arquivo"}`;
+
+      // options: Sem pasta + pastas
+      moveSelect.innerHTML = `
+        <option value="unfiled">Sem pasta</option>
+        ${folders.map(f => `<option value="${f.id}">${f.name}</option>`).join("")}
+      `;
+
+      const current = file.folderId || "unfiled";
+      moveSelect.value = current;
+
+      moveModal.style.display = "flex";
+    }
+
+    moveConfirm.addEventListener("click", async () => {
+      if(!movingFile) return;
+      const newFolderId = moveSelect.value || "unfiled";
+
+      // se não mudou, fecha
+      const current = movingFile.folderId || "unfiled";
+      if(newFolderId === current){
+        closeMove();
+        return;
+      }
+
+      showLoader("Movendo...");
+      try{
+        const folderName = (newFolderId === "unfiled")
+          ? "Sem pasta"
+          : (folders.find(x => x.id === newFolderId)?.name || "Pasta");
+
+        await filesCol().doc(movingFile.id).update({
+          folderId: newFolderId,
+          folderName: folderName
+        });
+
+        const idx = allFiles.findIndex(x => x.id === movingFile.id);
+        if(idx >= 0){
+          allFiles[idx].folderId = newFolderId;
+          allFiles[idx].folderName = folderName;
+        }
+
+        closeMove();
+        renderFoldersUI();
+        applyFilters();
+      }catch(err){
+        console.error(err);
+        toast("Erro ao mover arquivo.");
+      }finally{
+        hideLoader();
+      }
+    });
+
     function setSelectedFolder(id){
       selectedFolderId = id;
       breadcrumb.textContent = getFolderLabelById(id);
-      filesTitle.textContent = (id === "all") ? "Arquivos" : "Arquivos";
-      // atualiza select do upload
-      folderSelect.value = id;
+      folderSelect.value = (id === "all") ? "unfiled" : id;
       applyFilters();
       renderFoldersUI();
     }
 
     function renderFoldersUI(){
-      // contagem por folderId
       const counts = new Map();
       for(const f of allFiles){
         const fid = f.folderId || "unfiled";
         counts.set(fid, (counts.get(fid) || 0) + 1);
       }
 
-      // Desktop list
       folderListDesktop.innerHTML = "";
       const desktopItems = [
         { id:"all", name:"Todos os arquivos", icon:"📁" },
@@ -940,7 +1031,6 @@
         const actions = document.createElement("div");
         actions.className = "folderActions";
 
-        // ações só para pastas reais
         if(it.id !== "all" && it.id !== "unfiled"){
           const btnEdit = document.createElement("button");
           btnEdit.className = "iconBtn";
@@ -965,7 +1055,6 @@
         folderListDesktop.appendChild(row);
       }
 
-      // Mobile cards
       folderCardsMobile.innerHTML = "";
       const mobileItems = [
         { id:"all", name:"Todos", sub:`${allFiles.length} itens`, icon:"📁" },
@@ -1019,13 +1108,11 @@
         folderCardsMobile.appendChild(card);
       }
 
-      // Upload folder select
       folderSelect.innerHTML = `
         <option value="all" disabled>— selecionar pasta —</option>
         <option value="unfiled">Sem pasta</option>
         ${folders.map(f => `<option value="${f.id}">${f.name}</option>`).join("")}
       `;
-      // garantir seleção coerente
       folderSelect.value = (selectedFolderId === "all") ? "unfiled" : selectedFolderId;
     }
 
@@ -1036,7 +1123,6 @@
       const trimmed = name.trim();
       if(!trimmed) return;
 
-      // evita duplicar por nome
       const exists = folders.some(f => f.name.toLowerCase() === trimmed.toLowerCase());
       if(exists) return toast("Já existe uma pasta com esse nome.");
 
@@ -1047,7 +1133,6 @@
           name: trimmed,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        // atualiza local
         folders.unshift({ id: doc.id, uid: currentUser.uid, name: trimmed, createdAt: new Date() });
         renderFoldersUI();
         toast("Pasta criada ✅");
@@ -1071,13 +1156,8 @@
       showLoader("Renomeando pasta...");
       try{
         await foldersCol().doc(folderId).update({ name: newName });
-
         const idx = folders.findIndex(f => f.id === folderId);
         if(idx >= 0) folders[idx].name = newName;
-
-        // opcional: atualizar label nos arquivos (folderName) — não é obrigatório
-        // Mantemos só folderId como fonte principal.
-
         renderFoldersUI();
         breadcrumb.textContent = getFolderLabelById(selectedFolderId);
       }catch(err){
@@ -1094,7 +1174,6 @@
 
       showLoader("Verificando pasta...");
       try{
-        // verifica se tem arquivos na pasta
         const snap = await filesCol()
           .where("uid", "==", currentUser.uid)
           .where("folderId", "==", folderId)
@@ -1123,11 +1202,9 @@
       }
     }
 
-    // Files UI
     function renderFiles(files){
       countLabel.textContent = String(files.length);
       emptyState.style.display = files.length ? "none" : "block";
-
       listView.innerHTML = "";
       galleryView.innerHTML = "";
 
@@ -1162,11 +1239,7 @@
 
       const sub = document.createElement("div");
       sub.className = "sub";
-
-      const folderLabel =
-        file.folderId ? getFolderLabelById(file.folderId) :
-        (file.folder ? file.folder : "Sem pasta");
-
+      const folderLabel = file.folderId ? getFolderLabelById(file.folderId) : (file.folder || "Sem pasta");
       const parts = [
         `📁 ${folderLabel}`,
         (file.size ?? null) !== null ? `📦 ${bytesToSize(file.size)}` : null,
@@ -1176,7 +1249,6 @@
 
       meta.appendChild(name);
       meta.appendChild(sub);
-
       left.appendChild(badge);
       left.appendChild(meta);
 
@@ -1187,6 +1259,11 @@
       btnPreview.className = "btn btnSmall";
       btnPreview.textContent = "Ver";
       btnPreview.addEventListener("click", (e) => { e.stopPropagation(); openPreview(file); });
+
+      const btnMove = document.createElement("button");
+      btnMove.className = "btn btnSmall";
+      btnMove.textContent = "Mover";
+      btnMove.addEventListener("click", (e) => { e.stopPropagation(); openMove(file); });
 
       const btnRename = document.createElement("button");
       btnRename.className = "btn btnSmall";
@@ -1199,6 +1276,7 @@
       btnDelete.addEventListener("click", (e) => { e.stopPropagation(); deleteFile(file); });
 
       right.appendChild(btnPreview);
+      right.appendChild(btnMove);
       right.appendChild(btnRename);
       right.appendChild(btnDelete);
 
@@ -1222,6 +1300,13 @@
       aView.textContent = "👁️";
       aView.addEventListener("click", (e) => { e.stopPropagation(); openPreview(file); });
 
+      const aMove = document.createElement("button");
+      aMove.className = "chipBtn";
+      aMove.type = "button";
+      aMove.title = "Mover";
+      aMove.textContent = "📁";
+      aMove.addEventListener("click", (e) => { e.stopPropagation(); openMove(file); });
+
       const aRename = document.createElement("button");
       aRename.className = "chipBtn";
       aRename.type = "button";
@@ -1237,6 +1322,7 @@
       aDelete.addEventListener("click", (e) => { e.stopPropagation(); deleteFile(file); });
 
       actions.appendChild(aView);
+      actions.appendChild(aMove);
       actions.appendChild(aRename);
       actions.appendChild(aDelete);
 
@@ -1262,10 +1348,7 @@
       n.className = "thumbName";
       n.textContent = file.name || "Arquivo";
 
-      const folderLabel =
-        file.folderId ? getFolderLabelById(file.folderId) :
-        (file.folder ? file.folder : "Sem pasta");
-
+      const folderLabel = file.folderId ? getFolderLabelById(file.folderId) : (file.folder || "Sem pasta");
       const s = document.createElement("div");
       s.className = "thumbSub";
       s.textContent = `${folderLabel} • ${bytesToSize(file.size || 0)}`;
@@ -1286,11 +1369,9 @@
 
       let filtered = allFiles.slice();
 
-      // filtro por pasta selecionada
       if(selectedFolderId !== "all"){
         filtered = filtered.filter(f => (f.folderId || "unfiled") === selectedFolderId);
       }
-
       if(q){
         filtered = filtered.filter(x => (x.name||"").toLowerCase().includes(q));
       }
@@ -1307,23 +1388,19 @@
         .where("uid","==", currentUser.uid)
         .orderBy("createdAt","desc")
         .get();
-
       folders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderFoldersUI();
     }
 
     async function loadFiles(){
       if(!currentUser) return;
-
       showLoader("Carregando...");
       try{
         const snap = await filesCol()
           .where("uid","==", currentUser.uid)
           .orderBy("createdAt","desc")
           .get();
-
         allFiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
         renderFoldersUI();
         applyFilters();
       }catch(err){
@@ -1355,7 +1432,6 @@
 
     async function renameFile(file){
       if(!currentUser) return;
-
       const current = file.name || file.originalName || "arquivo";
       const typed = prompt("Novo nome (com ou sem extensão):", current);
       if(!typed) return;
@@ -1365,10 +1441,8 @@
       showLoader("Renomeando...");
       try{
         await filesCol().doc(file.id).update({ name: newName });
-
         const idx = allFiles.findIndex(x => x.id === file.id);
         if(idx >= 0) allFiles[idx].name = newName;
-
         applyFilters();
       }catch(err){
         console.error(err);
@@ -1378,14 +1452,11 @@
       }
     }
 
-    // Upload Cloudinary
     async function uploadToCloudinary(file, folderPath){
       const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`;
       const form = new FormData();
       form.append("file", file);
       form.append("upload_preset", CLOUDINARY_PRESET);
-
-      // organiza no Cloudinary por uid/pasta
       form.append("folder", folderPath);
 
       const res = await fetch(url, { method:"POST", body: form });
@@ -1401,16 +1472,15 @@
       if(!currentUser) return;
 
       const f = fileInput.files?.[0];
-      if(!f){
-        toast("Escolha um arquivo primeiro.");
-        return;
-      }
+      if(!f){ toast("Escolha um arquivo primeiro."); return; }
 
-      // folderId selecionado no upload
       let fid = folderSelect.value || "unfiled";
       if(fid === "all") fid = "unfiled";
 
-      const folderName = (fid === "unfiled") ? "Sem pasta" : (folders.find(x => x.id === fid)?.name || "Pasta");
+      const folderName = (fid === "unfiled")
+        ? "Sem pasta"
+        : (folders.find(x => x.id === fid)?.name || "Pasta");
+
       const cloudFolder = `${currentUser.uid}/${folderName}`;
 
       const typed = (customNameInput?.value || "").trim();
@@ -1427,8 +1497,8 @@
           uid: currentUser.uid,
           name: displayName,
           originalName: f.name,
-          folderId: fid,          // ✅ novo: pasta real
-          folderName: folderName, // opcional (ajuda no futuro)
+          folderId: fid,
+          folderName: folderName,
           type: niceType(f.type),
           mime: f.type || "",
           size: cloud.bytes ?? f.size ?? 0,
@@ -1484,14 +1554,10 @@
       finally{ hideLoader(); }
     });
 
-    // Folder buttons
     btnNewFolderDesktop.addEventListener("click", createFolder);
     btnNewFolderMobile.addEventListener("click", createFolder);
-
-    // Upload
     btnUpload.addEventListener("click", doUpload);
 
-    // Tabs
     tabList.addEventListener("click", () => {
       currentMode = "list";
       tabList.classList.add("active");
@@ -1505,18 +1571,95 @@
       applyFilters();
     });
 
-    // Filters
     searchInput.addEventListener("input", applyFilters);
     filterType.addEventListener("change", applyFilters);
-    btnRefresh.addEventListener("click", async () => {
-      await loadFolders();
-      await loadFiles();
-    });
+    btnRefresh.addEventListener("click", async () => { await loadFolders(); await loadFiles(); });
 
-    folderSelect.addEventListener("change", (e) => {
-      // só altera pasta padrão do upload, não a navegação
-      // (o filtro é controlado clicando na UI de pastas)
-    });
+    async function createFolder(){
+      if(!currentUser) return;
+      const name = prompt("Nome da nova pasta:");
+      if(!name) return;
+      const trimmed = name.trim();
+      if(!trimmed) return;
+
+      const exists = folders.some(f => f.name.toLowerCase() === trimmed.toLowerCase());
+      if(exists) return toast("Já existe uma pasta com esse nome.");
+
+      showLoader("Criando pasta...");
+      try{
+        const doc = await foldersCol().add({
+          uid: currentUser.uid,
+          name: trimmed,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        folders.unshift({ id: doc.id, uid: currentUser.uid, name: trimmed, createdAt: new Date() });
+        renderFoldersUI();
+        toast("Pasta criada ✅");
+      }catch(err){
+        console.error(err);
+        toast("Erro ao criar pasta.");
+      }finally{
+        hideLoader();
+      }
+    }
+
+    async function renameFolder(folderId, currentName){
+      const newNameRaw = prompt("Novo nome da pasta:", currentName);
+      if(!newNameRaw) return;
+      const newName = newNameRaw.trim();
+      if(!newName) return;
+
+      const exists = folders.some(f => f.id !== folderId && f.name.toLowerCase() === newName.toLowerCase());
+      if(exists) return toast("Já existe uma pasta com esse nome.");
+
+      showLoader("Renomeando pasta...");
+      try{
+        await foldersCol().doc(folderId).update({ name: newName });
+        const idx = folders.findIndex(f => f.id === folderId);
+        if(idx >= 0) folders[idx].name = newName;
+        renderFoldersUI();
+        breadcrumb.textContent = getFolderLabelById(selectedFolderId);
+      }catch(err){
+        console.error(err);
+        toast("Erro ao renomear pasta.");
+      }finally{
+        hideLoader();
+      }
+    }
+
+    async function deleteFolder(folderId, folderName){
+      const ok = confirm(`Excluir a pasta "${folderName}"?\n\nSó dá pra excluir se estiver vazia.`);
+      if(!ok) return;
+
+      showLoader("Verificando pasta...");
+      try{
+        const snap = await filesCol()
+          .where("uid", "==", currentUser.uid)
+          .where("folderId", "==", folderId)
+          .limit(1)
+          .get();
+
+        if(!snap.empty){
+          return toast("Essa pasta não está vazia. Mova os arquivos antes.");
+        }
+
+        await foldersCol().doc(folderId).delete();
+        folders = folders.filter(f => f.id !== folderId);
+
+        if(selectedFolderId === folderId){
+          setSelectedFolder("all");
+        } else {
+          renderFoldersUI();
+        }
+
+        toast("Pasta excluída ✅");
+      }catch(err){
+        console.error(err);
+        toast("Erro ao excluir pasta.");
+      }finally{
+        hideLoader();
+      }
+    }
 
     // Auth state
     auth.onAuthStateChanged(async (user) => {
@@ -1533,7 +1676,6 @@
           userNameEl.textContent = (email.split("@")[0] || "Usuário");
           avatarEl.textContent = getInitials(email);
 
-          // default
           selectedFolderId = "all";
           breadcrumb.textContent = "Todos";
 
