@@ -123,19 +123,17 @@
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
 
-    /* Layout principal: esquerda (upload+sessão) / direita (arquivos) */
+    /* Layout principal: esquerda / direita */
     .mainGrid{
       display:grid;
       gap:16px;
       grid-template-columns: 1fr;
     }
-
     .leftCol, .rightCol{
       display:flex;
       flex-direction:column;
       gap:16px;
     }
-
     @media (min-width: 980px){
       .mainGrid{ grid-template-columns: 420px 1fr; align-items:start; }
     }
@@ -189,10 +187,8 @@
       outline:none;
       font-size:14px;
     }
-
     input::placeholder{ color: rgba(255,255,255,.45); }
 
-    /* Dropdown com aparência dark */
     select{
       appearance:none;
       -webkit-appearance:none;
@@ -208,11 +204,7 @@
       background-repeat:no-repeat;
       padding-right: 44px;
     }
-
-    option{
-      background-color: #0b1220;
-      color: #fff;
-    }
+    option{ background-color:#0b1220; color:#fff; }
 
     .btn{
       border:0;
@@ -272,7 +264,6 @@
       color: var(--txt);
     }
 
-    /* Lista de arquivos */
     .list{
       display:flex;
       flex-direction:column;
@@ -319,7 +310,6 @@
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
       max-width: 64vw;
     }
-
     @media(min-width: 980px){
       .name{ max-width: 520px; }
       .sub{ max-width: 520px; }
@@ -352,6 +342,7 @@
     @media(min-width: 1060px){
       .gallery{ grid-template-columns: repeat(4, 1fr); }
     }
+
     .thumb{
       border-radius:18px;
       border:1px solid rgba(255,255,255,.12);
@@ -360,7 +351,8 @@
       cursor:pointer;
       display:flex;
       flex-direction:column;
-      min-height: 160px;
+      min-height: 168px;
+      position:relative;
     }
     .thumbTop{
       flex:1;
@@ -396,6 +388,36 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+    }
+
+    /* ✅ Ações na galeria */
+    .thumbActions{
+      position:absolute;
+      top:10px;
+      right:10px;
+      display:flex;
+      gap:6px;
+      z-index:5;
+    }
+    .chipBtn{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(10,18,32,.55);
+      color: rgba(255,255,255,.90);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,.22);
+      transition: transform .06s ease, filter .2s ease;
+      user-select:none;
+    }
+    .chipBtn:active{ transform: translateY(1px); }
+    .chipBtnDanger{
+      border-color: rgba(239,68,68,.38);
+      background: rgba(239,68,68,.18);
     }
 
     /* Views + animação */
@@ -518,7 +540,6 @@
   </div>
 
   <div class="wrap">
-    <!-- Top -->
     <div class="topbar">
       <div class="brand">
         <div class="appIcon">
@@ -539,7 +560,7 @@
       </div>
     </div>
 
-    <!-- LOGIN VIEW -->
+    <!-- LOGIN -->
     <div id="loginView" class="view card">
       <div class="cardHead">
         <b>Entrar / Criar conta</b>
@@ -567,12 +588,10 @@
       </div>
     </div>
 
-    <!-- APP VIEW -->
+    <!-- APP -->
     <div id="appView" class="view hide">
       <div class="mainGrid">
-        <!-- Left column -->
         <div class="leftCol">
-          <!-- Sessão -->
           <div class="card">
             <div class="cardHead">
               <b>Sessão</b>
@@ -584,7 +603,6 @@
             </div>
           </div>
 
-          <!-- Upload -->
           <div class="card">
             <div class="cardHead">
               <b>Upload</b>
@@ -595,6 +613,13 @@
                 <div class="field" style="flex: 1 1 100%;">
                   <label for="fileInput">Arquivo</label>
                   <input id="fileInput" type="file" />
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:10px;">
+                <div class="field" style="flex: 1 1 100%;">
+                  <label for="customName">Nome do arquivo (opcional)</label>
+                  <input id="customName" type="text" placeholder="Ex: Contrato aluguel 2026" />
                 </div>
               </div>
 
@@ -624,12 +649,11 @@
               </div>
 
               <div class="mutedNote" style="margin-top:10px;">
-                Obs: arquivos ficam organizados no Cloudinary por usuário/pasta.
+                Obs: se você digitar o nome sem extensão, eu coloco a extensão original automaticamente.
               </div>
             </div>
           </div>
 
-          <!-- Filtros -->
           <div class="card">
             <div class="cardHead">
               <b>Filtros</b>
@@ -669,7 +693,6 @@
           </div>
         </div>
 
-        <!-- Right column -->
         <div class="rightCol">
           <div class="card">
             <div class="cardHead">
@@ -683,19 +706,21 @@
               <div id="galleryView" class="gallery" style="display:none;"></div>
               <div id="emptyState" class="empty" style="display:none;">Nenhum arquivo ainda.</div>
             </div>
-            
+          </div>
+
+          <div class="mutedNote">
+            Delete remove do Firestore. Para apagar do Cloudinary também, depois fazemos com backend/Functions ✅
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Firebase compat (ordem correta) -->
+  <!-- Firebase compat -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <!-- ✅ CONFIG DEFINIDA (isso resolve o erro FIREBASE_CONFIG is not defined) -->
   <script>
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
@@ -706,13 +731,11 @@
       appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
     };
 
-    // Cloudinary (unsigned)
     const CLOUDINARY_CLOUD = "dilyddwkg";
     const CLOUDINARY_PRESET = "kv9sjt0g";
   </script>
 
   <script>
-    // Init Firebase
     firebase.initializeApp(FIREBASE_CONFIG);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -720,7 +743,6 @@
     // DOM
     const loginView = document.getElementById("loginView");
     const appView = document.getElementById("appView");
-
     const loaderOverlay = document.getElementById("loaderOverlay");
 
     const emailEl = document.getElementById("email");
@@ -736,6 +758,7 @@
     const btnLogout = document.getElementById("btnLogout");
 
     const fileInput = document.getElementById("fileInput");
+    const customNameInput = document.getElementById("customName");
     const folderSelect = document.getElementById("folderSelect");
     const newFolder = document.getElementById("newFolder");
     const btnAddFolder = document.getElementById("btnAddFolder");
@@ -765,9 +788,8 @@
     // State
     let currentUser = null;
     let allFiles = [];
-    let currentMode = "list"; // list | gallery
+    let currentMode = "list";
 
-    // Helpers
     function showLoader(msg){
       loaderOverlay.style.display = "flex";
       loaderOverlay.setAttribute("aria-hidden", "false");
@@ -778,10 +800,7 @@
       loaderOverlay.setAttribute("aria-hidden", "true");
       uploadStatus.textContent = "";
     }
-
-    function toast(msg){
-      alert(msg);
-    }
+    function toast(msg){ alert(msg); }
 
     function setView(isLogged){
       if(isLogged){
@@ -794,7 +813,6 @@
         userChip.style.display = "none";
       }
     }
-
     function getInitials(email){
       if(!email) return "U";
       return email.trim().charAt(0).toUpperCase();
@@ -807,14 +825,12 @@
       if(mime === "application/pdf") return "pdf";
       return "other";
     }
-
     function typeBadge(t){
       if(t==="image") return "🖼️";
       if(t==="video") return "🎬";
       if(t==="pdf") return "📄";
       return "📦";
     }
-
     function bytesToSize(bytes){
       if(!bytes && bytes !== 0) return "";
       const sizes = ["B","KB","MB","GB"];
@@ -823,7 +839,6 @@
       while(v >= 1024 && i < sizes.length-1){ v/=1024; i++; }
       return `${v.toFixed(v >= 10 || i===0 ? 0 : 1)} ${sizes[i]}`;
     }
-
     function formatDate(ts){
       try{
         const d = ts?.toDate ? ts.toDate() : (ts ? new Date(ts) : null);
@@ -832,12 +847,29 @@
       }catch{ return ""; }
     }
 
+    // Nome + extensão (B)
+    function getFileExtension(filename){
+      const name = (filename || "").trim();
+      const i = name.lastIndexOf(".");
+      if(i <= 0 || i === name.length - 1) return "";
+      return name.slice(i).toLowerCase();
+    }
+    function ensureNameWithExtension(baseName, originalFilename){
+      const base = (baseName || "").trim();
+      const orig = (originalFilename || "").trim();
+      const origExt = getFileExtension(orig);
+      const baseExt = getFileExtension(base);
+
+      if(!base) return orig || ("arquivo" + (origExt || ""));
+      if(baseExt) return base;
+      return base + (origExt || "");
+    }
+
     function closePreview(){
       previewModal.style.display = "none";
       previewBody.innerHTML = "";
       previewOpenNew.href = "#";
     }
-
     function openPreview(file){
       previewTitle.textContent = file.name || "Preview";
       previewOpenNew.href = file.url || "#";
@@ -864,7 +896,7 @@
         box.style.textAlign = "center";
         box.innerHTML = `
           <div style="font-size:54px;margin-bottom:10px;">${typeBadge(t)}</div>
-          <div style="font-weight:900;font-size:16px;">${file.name || "Arquivo"}</div>
+          <div style="font-weight:900;font-size:16px;">${(file.name || "Arquivo")}</div>
           <div class="mutedNote">Sem preview nativo. Use “Abrir em nova aba”.</div>
         `;
         previewBody.appendChild(box);
@@ -872,24 +904,26 @@
 
       previewModal.style.display = "flex";
     }
-
     previewClose.addEventListener("click", closePreview);
-    previewModal.addEventListener("click", (e) => {
-      if(e.target === previewModal) closePreview();
-    });
+    previewModal.addEventListener("click", (e) => { if(e.target === previewModal) closePreview(); });
 
-    // Folders (para filtros)
+    function filesCol(){ return db.collection("files"); }
+
+    function escapeHtml(str){
+      return (str||"")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;");
+    }
+
     function refreshFolderFilter(){
       const unique = Array.from(new Set(allFiles.map(f => f.folder || "Outros"))).sort();
       const current = filterFolder.value || "all";
-      filterFolder.innerHTML = `<option value="all">Todas</option>` + unique.map(f => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join("");
-      // tenta manter
+      filterFolder.innerHTML = `<option value="all">Todas</option>` +
+        unique.map(f => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join("");
       const exists = Array.from(filterFolder.options).some(o => o.value === current);
       filterFolder.value = exists ? current : "all";
-    }
-
-    function escapeHtml(str){
-      return (str||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
     }
 
     function applyFilters(){
@@ -898,27 +932,17 @@
       const f = filterFolder.value;
 
       let filtered = allFiles.slice();
-
-      if(q){
-        filtered = filtered.filter(x => (x.name||"").toLowerCase().includes(q));
-      }
-      if(t !== "all"){
-        filtered = filtered.filter(x => x.type === t);
-      }
-      if(f !== "all"){
-        filtered = filtered.filter(x => (x.folder || "Outros") === f);
-      }
+      if(q) filtered = filtered.filter(x => (x.name||"").toLowerCase().includes(q));
+      if(t !== "all") filtered = filtered.filter(x => x.type === t);
+      if(f !== "all") filtered = filtered.filter(x => (x.folder || "Outros") === f);
 
       renderFiles(filtered);
     }
 
     function renderFiles(files){
       countLabel.textContent = String(files.length);
-
-      // empty state
       emptyState.style.display = files.length ? "none" : "block";
 
-      // list
       listView.innerHTML = "";
       galleryView.innerHTML = "";
 
@@ -955,14 +979,13 @@
       sub.className = "sub";
       const parts = [
         file.folder ? `📁 ${file.folder}` : null,
-        file.size ? `📦 ${bytesToSize(file.size)}` : null,
+        (file.size ?? null) !== null ? `📦 ${bytesToSize(file.size)}` : null,
         file.createdAt ? `🕒 ${formatDate(file.createdAt)}` : null
       ].filter(Boolean);
       sub.textContent = parts.join(" • ");
 
       meta.appendChild(name);
       meta.appendChild(sub);
-
       left.appendChild(badge);
       left.appendChild(meta);
 
@@ -972,26 +995,69 @@
       const btnPreview = document.createElement("button");
       btnPreview.className = "btn btnSmall";
       btnPreview.textContent = "Ver";
-      btnPreview.addEventListener("click", () => openPreview(file));
+      btnPreview.addEventListener("click", (e) => { e.stopPropagation(); openPreview(file); });
+
+      const btnRename = document.createElement("button");
+      btnRename.className = "btn btnSmall";
+      btnRename.textContent = "Renomear";
+      btnRename.addEventListener("click", (e) => { e.stopPropagation(); renameFile(file); });
 
       const btnDelete = document.createElement("button");
       btnDelete.className = "btn btnSmall btnDanger";
       btnDelete.textContent = "Excluir";
-      btnDelete.addEventListener("click", () => deleteFile(file));
+      btnDelete.addEventListener("click", (e) => { e.stopPropagation(); deleteFile(file); });
 
       right.appendChild(btnPreview);
+      right.appendChild(btnRename);
       right.appendChild(btnDelete);
 
       item.appendChild(left);
       item.appendChild(right);
-
       return item;
     }
 
+    // ✅ GALERIA com botões: Ver / Renomear / Excluir
     function renderThumb(file){
       const thumb = document.createElement("div");
       thumb.className = "thumb";
       thumb.addEventListener("click", () => openPreview(file));
+
+      const actions = document.createElement("div");
+      actions.className = "thumbActions";
+
+      const aView = document.createElement("button");
+      aView.className = "chipBtn";
+      aView.type = "button";
+      aView.title = "Ver";
+      aView.textContent = "👁️";
+      aView.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openPreview(file);
+      });
+
+      const aRename = document.createElement("button");
+      aRename.className = "chipBtn";
+      aRename.type = "button";
+      aRename.title = "Renomear";
+      aRename.textContent = "✏️";
+      aRename.addEventListener("click", (e) => {
+        e.stopPropagation();
+        renameFile(file);
+      });
+
+      const aDelete = document.createElement("button");
+      aDelete.className = "chipBtn chipBtnDanger";
+      aDelete.type = "button";
+      aDelete.title = "Excluir";
+      aDelete.textContent = "🗑️";
+      aDelete.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteFile(file);
+      });
+
+      actions.appendChild(aView);
+      actions.appendChild(aRename);
+      actions.appendChild(aDelete);
 
       const top = document.createElement("div");
       top.className = "thumbTop";
@@ -1022,20 +1088,15 @@
       bottom.appendChild(n);
       bottom.appendChild(s);
 
+      thumb.appendChild(actions);
       thumb.appendChild(top);
       thumb.appendChild(bottom);
 
       return thumb;
     }
 
-    // Firestore paths
-    function filesCol(){
-      return db.collection("files");
-    }
-
     async function loadFiles(){
       if(!currentUser) return;
-
       showLoader("Carregando arquivos...");
       try{
         const snap = await filesCol()
@@ -1062,16 +1123,9 @@
       showLoader("Excluindo...");
       try{
         await filesCol().doc(file.id).delete();
-        // Atualiza local
         allFiles = allFiles.filter(x => x.id !== file.id);
         refreshFolderFilter();
         applyFilters();
-
-        // Aviso sobre Cloudinary
-        if(file.public_id){
-          // não bloqueia, só informa
-          console.log("public_id (Cloudinary):", file.public_id);
-        }
       }catch(err){
         console.error(err);
         toast("Erro ao excluir.");
@@ -1080,14 +1134,35 @@
       }
     }
 
-    // Upload Cloudinary
+    async function renameFile(file){
+      if(!currentUser) return;
+
+      const current = file.name || file.originalName || "arquivo";
+      const typed = prompt("Novo nome (com ou sem extensão):", current);
+      if(!typed) return;
+
+      const newName = ensureNameWithExtension(typed.trim(), file.originalName || file.name);
+
+      showLoader("Renomeando...");
+      try{
+        await filesCol().doc(file.id).update({ name: newName });
+        const idx = allFiles.findIndex(x => x.id === file.id);
+        if(idx >= 0) allFiles[idx].name = newName;
+        applyFilters();
+      }catch(err){
+        console.error(err);
+        toast("Erro ao renomear.");
+      }finally{
+        hideLoader();
+      }
+    }
+
     async function uploadToCloudinary(file, folderName){
       const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`;
       const form = new FormData();
       form.append("file", file);
       form.append("upload_preset", CLOUDINARY_PRESET);
 
-      // organização por user/pasta
       const cloudFolder = `${currentUser.uid}/${folderName || "Outros"}`;
       form.append("folder", cloudFolder);
 
@@ -1097,7 +1172,7 @@
         console.error("Cloudinary error:", data);
         throw new Error(data?.error?.message || "Erro no Cloudinary");
       }
-      return data; // secure_url, public_id, bytes, format, resource_type...
+      return data;
     }
 
     async function doUpload(){
@@ -1111,6 +1186,9 @@
 
       const folderName = folderSelect.value || "Outros";
 
+      const typed = (customNameInput?.value || "").trim();
+      const displayName = ensureNameWithExtension(typed, f.name);
+
       btnUpload.disabled = true;
       showLoader("Enviando arquivo...");
       uploadStatus.textContent = "Enviando...";
@@ -1120,19 +1198,22 @@
 
         const record = {
           uid: currentUser.uid,
-          name: f.name,
+          name: displayName,
+          originalName: f.name,
           folder: folderName,
           type: niceType(f.type),
           mime: f.type || "",
           size: cloud.bytes ?? f.size ?? 0,
           url: cloud.secure_url || cloud.url,
           public_id: cloud.public_id || "",
+          resource_type: cloud.resource_type || "",
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         await filesCol().add(record);
 
         fileInput.value = "";
+        if(customNameInput) customNameInput.value = "";
         uploadStatus.textContent = "Upload concluído ✅";
         await loadFiles();
       }catch(err){
@@ -1151,15 +1232,9 @@
       if(!email || !pass) return toast("Preencha email e senha.");
 
       showLoader("Entrando...");
-      try{
-        await auth.signInWithEmailAndPassword(email, pass);
-        // onAuthStateChanged cuida do resto
-      }catch(err){
-        console.error(err);
-        toast(err?.message || "Erro ao entrar.");
-      } finally {
-        hideLoader();
-      }
+      try{ await auth.signInWithEmailAndPassword(email, pass); }
+      catch(err){ console.error(err); toast(err?.message || "Erro ao entrar."); }
+      finally{ hideLoader(); }
     });
 
     btnRegister.addEventListener("click", async () => {
@@ -1168,26 +1243,16 @@
       if(!email || !pass) return toast("Preencha email e senha.");
 
       showLoader("Criando conta...");
-      try{
-        await auth.createUserWithEmailAndPassword(email, pass);
-      }catch(err){
-        console.error(err);
-        toast(err?.message || "Erro ao criar conta.");
-      } finally {
-        hideLoader();
-      }
+      try{ await auth.createUserWithEmailAndPassword(email, pass); }
+      catch(err){ console.error(err); toast(err?.message || "Erro ao criar conta."); }
+      finally{ hideLoader(); }
     });
 
     btnLogout.addEventListener("click", async () => {
       showLoader("Saindo...");
-      try{
-        await auth.signOut();
-      }catch(err){
-        console.error(err);
-        toast("Erro ao sair.");
-      } finally {
-        hideLoader();
-      }
+      try{ await auth.signOut(); }
+      catch(err){ console.error(err); toast("Erro ao sair."); }
+      finally{ hideLoader(); }
     });
 
     // Tabs
@@ -1230,12 +1295,10 @@
 
     btnUpload.addEventListener("click", doUpload);
 
-    // Auth state (evita bolinha infinita)
     auth.onAuthStateChanged(async (user) => {
       showLoader("Validando sessão...");
       try{
         currentUser = user || null;
-
         if(currentUser){
           const email = currentUser.email || "—";
           setView(true);
@@ -1258,7 +1321,7 @@
       }
     });
 
-    // Service Worker
+    // PWA
     if("serviceWorker" in navigator){
       navigator.serviceWorker.register("./service-worker.js").catch(console.warn);
     }
