@@ -696,7 +696,7 @@
           </div>
 
           <div class="mutedNote">
-            Mover funciona só no Firestore (folderId). Depois fazemos “mover também no Cloudinary” (via backend) ✅
+            ✅ Correção aplicada: pastas e arquivos são carregados em tempo real (onSnapshot). No refresh, não some mais.
           </div>
         </div>
       </div>
@@ -794,6 +794,10 @@
 
     // Move state
     let movingFile = null;
+
+    // Realtime unsubscribers (✅ resolve o “some no refresh”)
+    let unsubFolders = null;
+    let unsubFiles = null;
 
     // Helpers
     function showLoader(msg){
@@ -932,12 +936,10 @@
       movingFile = file;
       moveTitle.textContent = `Mover: ${file.name || "Arquivo"}`;
 
-      // options: Sem pasta + pastas
       moveSelect.innerHTML = `
         <option value="unfiled">Sem pasta</option>
         ${folders.map(f => `<option value="${f.id}">${f.name}</option>`).join("")}
       `;
-
       const current = file.folderId || "unfiled";
       moveSelect.value = current;
 
@@ -947,13 +949,8 @@
     moveConfirm.addEventListener("click", async () => {
       if(!movingFile) return;
       const newFolderId = moveSelect.value || "unfiled";
-
-      // se não mudou, fecha
       const current = movingFile.folderId || "unfiled";
-      if(newFolderId === current){
-        closeMove();
-        return;
-      }
+      if(newFolderId === current){ closeMove(); return; }
 
       showLoader("Movendo...");
       try{
@@ -966,15 +963,7 @@
           folderName: folderName
         });
 
-        const idx = allFiles.findIndex(x => x.id === movingFile.id);
-        if(idx >= 0){
-          allFiles[idx].folderId = newFolderId;
-          allFiles[idx].folderName = folderName;
-        }
-
         closeMove();
-        renderFoldersUI();
-        applyFilters();
       }catch(err){
         console.error(err);
         toast("Erro ao mover arquivo.");
@@ -1128,13 +1117,11 @@
 
       showLoader("Criando pasta...");
       try{
-        const doc = await foldersCol().add({
+        await foldersCol().add({
           uid: currentUser.uid,
           name: trimmed,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        folders.unshift({ id: doc.id, uid: currentUser.uid, name: trimmed, createdAt: new Date() });
-        renderFoldersUI();
         toast("Pasta criada ✅");
       }catch(err){
         console.error(err);
@@ -1156,10 +1143,6 @@
       showLoader("Renomeando pasta...");
       try{
         await foldersCol().doc(folderId).update({ name: newName });
-        const idx = folders.findIndex(f => f.id === folderId);
-        if(idx >= 0) folders[idx].name = newName;
-        renderFoldersUI();
-        breadcrumb.textContent = getFolderLabelById(selectedFolderId);
       }catch(err){
         console.error(err);
         toast("Erro ao renomear pasta.");
@@ -1185,14 +1168,7 @@
         }
 
         await foldersCol().doc(folderId).delete();
-        folders = folders.filter(f => f.id !== folderId);
-
-        if(selectedFolderId === folderId){
-          setSelectedFolder("all");
-        } else {
-          renderFoldersUI();
-        }
-
+        if(selectedFolderId === folderId) setSelectedFolder("all");
         toast("Pasta excluída ✅");
       }catch(err){
         console.error(err);
@@ -1382,33 +1358,33 @@
       renderFiles(filtered);
     }
 
-    async function loadFolders(){
+    // ✅ Realtime watchers (resolvem o bug do refresh)
+    function watchFolders(){
       if(!currentUser) return;
-      const snap = await foldersCol()
+      if(unsubFolders) unsubFolders();
+
+      unsubFolders = foldersCol()
         .where("uid","==", currentUser.uid)
-        .orderBy("createdAt","desc")
-        .get();
-      folders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderFoldersUI();
+        .onSnapshot((snap) => {
+          folders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          folders.sort((a,b) => (a.name || "").localeCompare((b.name || ""), "pt-BR"));
+          renderFoldersUI();
+          applyFilters();
+        });
     }
 
-    async function loadFiles(){
+    function watchFiles(){
       if(!currentUser) return;
-      showLoader("Carregando...");
-      try{
-        const snap = await filesCol()
-          .where("uid","==", currentUser.uid)
-          .orderBy("createdAt","desc")
-          .get();
-        allFiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderFoldersUI();
-        applyFilters();
-      }catch(err){
-        console.error(err);
-        toast("Erro ao carregar arquivos.");
-      } finally {
-        hideLoader();
-      }
+      if(unsubFiles) unsubFiles();
+
+      unsubFiles = filesCol()
+        .where("uid","==", currentUser.uid)
+        .orderBy("createdAt","desc")
+        .onSnapshot((snap) => {
+          allFiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderFoldersUI();
+          applyFilters();
+        });
     }
 
     async function deleteFile(file){
@@ -1419,9 +1395,6 @@
       showLoader("Excluindo...");
       try{
         await filesCol().doc(file.id).delete();
-        allFiles = allFiles.filter(x => x.id !== file.id);
-        renderFoldersUI();
-        applyFilters();
       }catch(err){
         console.error(err);
         toast("Erro ao excluir.");
@@ -1441,9 +1414,6 @@
       showLoader("Renomeando...");
       try{
         await filesCol().doc(file.id).update({ name: newName });
-        const idx = allFiles.findIndex(x => x.id === file.id);
-        if(idx >= 0) allFiles[idx].name = newName;
-        applyFilters();
       }catch(err){
         console.error(err);
         toast("Erro ao renomear.");
@@ -1513,8 +1483,6 @@
         fileInput.value = "";
         if(customNameInput) customNameInput.value = "";
         uploadStatus.textContent = "Upload concluído ✅";
-
-        await loadFiles();
       }catch(err){
         console.error(err);
         toast(`Erro no upload: ${err.message || err}`);
@@ -1573,98 +1541,22 @@
 
     searchInput.addEventListener("input", applyFilters);
     filterType.addEventListener("change", applyFilters);
-    btnRefresh.addEventListener("click", async () => { await loadFolders(); await loadFiles(); });
 
-    async function createFolder(){
-      if(!currentUser) return;
-      const name = prompt("Nome da nova pasta:");
-      if(!name) return;
-      const trimmed = name.trim();
-      if(!trimmed) return;
-
-      const exists = folders.some(f => f.name.toLowerCase() === trimmed.toLowerCase());
-      if(exists) return toast("Já existe uma pasta com esse nome.");
-
-      showLoader("Criando pasta...");
-      try{
-        const doc = await foldersCol().add({
-          uid: currentUser.uid,
-          name: trimmed,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        folders.unshift({ id: doc.id, uid: currentUser.uid, name: trimmed, createdAt: new Date() });
-        renderFoldersUI();
-        toast("Pasta criada ✅");
-      }catch(err){
-        console.error(err);
-        toast("Erro ao criar pasta.");
-      }finally{
-        hideLoader();
-      }
-    }
-
-    async function renameFolder(folderId, currentName){
-      const newNameRaw = prompt("Novo nome da pasta:", currentName);
-      if(!newNameRaw) return;
-      const newName = newNameRaw.trim();
-      if(!newName) return;
-
-      const exists = folders.some(f => f.id !== folderId && f.name.toLowerCase() === newName.toLowerCase());
-      if(exists) return toast("Já existe uma pasta com esse nome.");
-
-      showLoader("Renomeando pasta...");
-      try{
-        await foldersCol().doc(folderId).update({ name: newName });
-        const idx = folders.findIndex(f => f.id === folderId);
-        if(idx >= 0) folders[idx].name = newName;
-        renderFoldersUI();
-        breadcrumb.textContent = getFolderLabelById(selectedFolderId);
-      }catch(err){
-        console.error(err);
-        toast("Erro ao renomear pasta.");
-      }finally{
-        hideLoader();
-      }
-    }
-
-    async function deleteFolder(folderId, folderName){
-      const ok = confirm(`Excluir a pasta "${folderName}"?\n\nSó dá pra excluir se estiver vazia.`);
-      if(!ok) return;
-
-      showLoader("Verificando pasta...");
-      try{
-        const snap = await filesCol()
-          .where("uid", "==", currentUser.uid)
-          .where("folderId", "==", folderId)
-          .limit(1)
-          .get();
-
-        if(!snap.empty){
-          return toast("Essa pasta não está vazia. Mova os arquivos antes.");
-        }
-
-        await foldersCol().doc(folderId).delete();
-        folders = folders.filter(f => f.id !== folderId);
-
-        if(selectedFolderId === folderId){
-          setSelectedFolder("all");
-        } else {
-          renderFoldersUI();
-        }
-
-        toast("Pasta excluída ✅");
-      }catch(err){
-        console.error(err);
-        toast("Erro ao excluir pasta.");
-      }finally{
-        hideLoader();
-      }
-    }
+    // "Atualizar" agora só força re-render (realtime já mantém tudo sincronizado)
+    btnRefresh.addEventListener("click", () => {
+      renderFoldersUI();
+      applyFilters();
+      toast("Sincronizado ✅");
+    });
 
     // Auth state
     auth.onAuthStateChanged(async (user) => {
       showLoader("Validando sessão...");
       try{
+        // limpa watchers antigos
+        if(unsubFolders) { unsubFolders(); unsubFolders = null; }
+        if(unsubFiles) { unsubFiles(); unsubFiles = null; }
+
         currentUser = user || null;
 
         if(currentUser){
@@ -1679,8 +1571,9 @@
           selectedFolderId = "all";
           breadcrumb.textContent = "Todos";
 
-          await loadFolders();
-          await loadFiles();
+          // ✅ inicia realtime
+          watchFolders();
+          watchFiles();
         } else {
           setView(false);
           allFiles = [];
