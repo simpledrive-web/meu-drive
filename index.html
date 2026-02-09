@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
   <title>Meu Drive</title>
 
   <style>
@@ -11,7 +10,6 @@
       --bg1:#071022;
       --bg2:#0b2a66;
       --card:rgba(255,255,255,.08);
-      --card2:rgba(255,255,255,.06);
       --stroke:rgba(255,255,255,.12);
       --txt:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
@@ -22,7 +20,6 @@
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius:22px;
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
@@ -36,59 +33,39 @@
       overflow-x:hidden;
     }
 
-    /* fix “listão branco” */
+    /* Fix geral pro “listão branco” (Chrome/Android) */
     html { color-scheme: dark; }
     select, option { color-scheme: dark; }
 
-    .wrap{
-      width:min(1080px, 92vw);
-      margin: 22px auto 40px;
-    }
+    .wrap{ width:min(1050px, 92vw); margin: 20px auto 40px; }
 
-    /* TOP */
     .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:14px;
       margin-bottom:16px;
-      flex-wrap:wrap;
     }
-
     .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width: 260px;
+      display:flex; align-items:center; gap:12px; min-width:0;
     }
     .appIcon{
-      width:48px; height:48px; border-radius:14px;
-      overflow:hidden;
+      width:44px; height:44px; border-radius:14px;
       background: rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.14);
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
       flex:0 0 auto;
-      display:flex; align-items:center; justify-content:center;
+      display:grid; place-items:center;
+      font-weight:900;
+      letter-spacing:.5px;
     }
-    .appIcon img{ width:100%; height:100%; object-fit:cover; display:block; }
     .titleWrap{ min-width:0; }
-    h1{
-      font-size:28px; margin:0; letter-spacing:.2px;
-      display:flex; gap:8px; align-items:center;
-      white-space:nowrap;
-    }
-    .subtitle{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:14px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 460px;
-    }
+    h1{ font-size:28px; margin:0; display:flex; gap:8px; align-items:center; white-space:nowrap; }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
+    /* Topo alinhado e-mail/nome (sem passar por cima do título) */
     .userChip{
-      display:none; /* aparece quando logar */
+      display:none;
       align-items:center;
       gap:10px;
       background: var(--card);
@@ -96,39 +73,55 @@
       border-radius:999px;
       padding:8px 10px;
       box-shadow: 0 10px 30px rgba(0,0,0,.18);
-      max-width: 520px;
-      flex: 1 1 360px;
-      justify-content:space-between;
-    }
-    .userLeft{
-      display:flex; align-items:center; gap:10px; min-width:0;
+      max-width: 52%;
+      min-width: 220px;
     }
     .avatar{
-      width:36px; height:36px; border-radius:999px;
+      width:34px; height:34px; border-radius:999px;
       background: linear-gradient(135deg, rgba(79,124,240,.9), rgba(45,212,191,.9));
       display:grid; place-items:center;
       font-weight:900;
       flex:0 0 auto;
     }
-    .userMeta{ min-width:0; }
-    .hello{
+    .userMeta{ min-width:0; line-height:1.1; }
+    .userName{
       font-size:13px; font-weight:900;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .userEmailSmall{
+    .userEmail{
       font-size:12px; color:var(--muted2);
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      display:none; /* não mostrar email no topo (se quiser, muda pra block) */
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:16px;
+    .btn{
+      border:0;
+      border-radius:16px;
+      padding:12px 16px;
+      font-weight:800;
+      cursor:pointer;
+      background: rgba(255,255,255,.10);
+      color: var(--txt);
+      border:1px solid rgba(255,255,255,.14);
+      transition: transform .06s ease, filter .2s ease;
+      user-select:none;
     }
-    @media (min-width: 980px){
-      .grid{ grid-template-columns: 0.95fr 1.05fr; }
+    .btn:active{ transform: translateY(1px); }
+    .btnPrimary{ background: linear-gradient(135deg, rgba(79,124,240,.95), rgba(79,124,240,.65)); border-color: rgba(79,124,240,.55); }
+    .btnDanger{ background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55)); border-color: rgba(239,68,68,.55); }
+    .btnSmall{
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      font-weight:900;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      white-space:nowrap;
     }
+
+    .grid{ display:grid; grid-template-columns: 1fr; gap:16px; }
 
     .card{
       background: var(--card);
@@ -149,23 +142,9 @@
     .cardHead b{ font-size:14px; }
     .cardBody{ padding:14px 16px; }
 
-    .row{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:flex-end;
-    }
-
-    .field{
-      flex:1 1 220px;
-      min-width: 180px;
-    }
-    label{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:6px;
-    }
+    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+    .field{ flex:1 1 220px; min-width: 180px; }
+    label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
 
     input, select{
       width:100%;
@@ -194,47 +173,7 @@
       background-repeat:no-repeat;
       padding-right: 44px;
     }
-    option{
-      background-color: #0b1220;
-      color: #fff;
-    }
-
-    .btn{
-      border:0;
-      border-radius:16px;
-      padding:12px 16px;
-      font-weight:900;
-      cursor:pointer;
-      background: rgba(255,255,255,.10);
-      color: var(--txt);
-      border:1px solid rgba(255,255,255,.14);
-      transition: transform .06s ease, filter .2s ease;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btnPrimary{
-      background: linear-gradient(135deg, rgba(79,124,240,.95), rgba(79,124,240,.65));
-      border-color: rgba(79,124,240,.55);
-    }
-    .btnDanger{
-      background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55));
-      border-color: rgba(239,68,68,.55);
-    }
-    .btnGhost{
-      background: rgba(255,255,255,.06);
-    }
-    .btnSmall{
-      padding:10px 12px;
-      border-radius:14px;
-      font-size:13px;
-      font-weight:900;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
+    option{ background-color:#0b1220; color:#fff; }
 
     .tabs{
       display:flex;
@@ -260,13 +199,7 @@
       color: var(--txt);
     }
 
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top:12px;
-    }
-
+    .list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
     .item{
       display:flex;
       align-items:center;
@@ -277,24 +210,23 @@
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
     }
-    .left{
-      display:flex; align-items:center; gap:10px;
-      min-width:0;
-    }
-
-    .thumb{
-      width:44px; height:44px;
+    .left{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .badge{
+      width:42px; height:42px;
       border-radius:14px;
-      overflow:hidden;
-      background: rgba(79,124,240,.18);
-      border:1px solid rgba(79,124,240,.22);
+      display:grid; place-items:center;
+      background: rgba(79,124,240,.22);
+      border:1px solid rgba(79,124,240,.25);
       flex:0 0 auto;
-      display:flex; align-items:center; justify-content:center;
       font-weight:900;
+      overflow:hidden;
     }
-    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .thumb span{ opacity:.9; }
-
+    .thumb{
+      width:42px; height:42px;
+      border-radius:14px;
+      object-fit:cover;
+      display:block;
+    }
     .meta{ min-width:0; }
     .name{
       font-weight:900;
@@ -320,22 +252,95 @@
       background: rgba(255,255,255,.03);
     }
 
-    .view{ transition: opacity .25s ease, transform .25s ease; }
-    .hide{
-      opacity:0;
-      transform: translateY(10px);
-      pointer-events:none;
-      height:0;
+    .gallery{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+    }
+    .gItem{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .gTop{
+      aspect-ratio: 4/3;
+      width:100%;
+      background: rgba(0,0,0,.18);
+      display:grid;
+      place-items:center;
+      position:relative;
+    }
+    .gTop img, .gTop video{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .gMeta{ padding:10px; }
+    .gName{ font-weight:900; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gSub{ font-size:12px; color:var(--muted2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* Modal preview */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(2,8,18,.70);
+      backdrop-filter: blur(8px);
+      z-index:9999;
+      padding:16px;
+    }
+    .modalCard{
+      width:min(900px, 95vw);
+      max-height: 92vh;
+      overflow:auto;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .modalHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .modalBody{ padding:14px; }
+    .previewBox{
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
       overflow:hidden;
     }
+    .previewBox img, .previewBox video, .previewBox iframe{
+      width:100%;
+      height: min(70vh, 520px);
+      display:block;
+      object-fit:contain;
+      background: rgba(0,0,0,.35);
+    }
 
+    /* Auth */
+    .authWrap{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+    }
+    .hint{ font-size:12px; color:var(--muted2); margin-top:8px; }
+
+    /* Loader */
     .loaderOverlay{
       position:fixed; inset:0;
       display:none;
       align-items:center; justify-content:center;
       background: rgba(2,8,18,.60);
       backdrop-filter: blur(8px);
-      z-index:9999;
+      z-index:99999;
     }
     .spinner{
       width:56px; height:56px;
@@ -347,273 +352,203 @@
     }
     @keyframes spin{ to{ transform: rotate(360deg); } }
 
-    /* modal preview */
-    .modalOverlay{
-      position:fixed; inset:0;
-      background: rgba(2,8,18,.72);
-      backdrop-filter: blur(8px);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:10000;
-      padding: 18px;
-    }
-    .modal{
-      width: min(920px, 96vw);
-      max-height: 86vh;
-      overflow:hidden;
-      border-radius: 22px;
-      background: rgba(15,24,40,.86);
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow: var(--shadow);
-      display:flex;
-      flex-direction:column;
-    }
-    .modalHead{
-      padding: 12px 14px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .modalTitle{
-      font-weight:900;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 70%;
-    }
-    .modalBody{
-      padding: 14px;
-      overflow:auto;
-    }
-    .modalBody img, .modalBody video, .modalBody iframe{
-      width:100%;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-    }
-    .modalBody video{ max-height: 70vh; }
-    .pill{
-      font-size:12px;
-      color: var(--muted);
-      padding: 6px 10px;
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-    }
-    .muted{ color: var(--muted2); font-size: 12px; }
-
-    /* auth view */
-    .authGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    @media (min-width: 980px){
-      .authGrid{ grid-template-columns: 1fr 1fr; }
+    @media (min-width: 860px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .card.span2{ grid-column: 1 / -1; }
+      .gallery{ grid-template-columns: repeat(3, 1fr); }
+      .name{ max-width: 360px; }
+      .sub{ max-width: 360px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="loaderOverlay" id="loader">
-    <div class="spinner"></div>
-  </div>
-
-  <div class="modalOverlay" id="previewOverlay" aria-hidden="true">
-    <div class="modal">
-      <div class="modalHead">
-        <div style="min-width:0">
-          <div class="modalTitle" id="previewTitle">Preview</div>
-          <div class="muted" id="previewMeta"></div>
-        </div>
-        <div class="right">
-          <a class="btn btnSmall btnGhost" id="previewOpenTab" target="_blank" rel="noopener">Abrir em nova guia</a>
-          <button class="btn btnSmall btnDanger" id="previewClose">Fechar</button>
-        </div>
-      </div>
-      <div class="modalBody" id="previewBody"></div>
-    </div>
-  </div>
-
   <div class="wrap">
-
     <div class="topbar">
       <div class="brand">
-        <div class="appIcon">
-          <!-- Logo: pode trocar por sua imagem -->
-          <img id="logoImg" alt="Logo" src="https://raw.githubusercontent.com/simpledrive-web/meu-drive/main/logo.png"
-               onerror="this.style.display='none'; this.parentElement.textContent='MD'; this.parentElement.style.fontWeight='900';">
-        </div>
+        <div class="appIcon" id="logoIcon">MD</div>
         <div class="titleWrap">
-          <h1>Meu Drive ☁️</h1>
+          <h1>Meu Drive <span style="opacity:.8">☁️</span></h1>
           <div class="subtitle">Seus arquivos em um só lugar.</div>
         </div>
       </div>
 
       <div class="userChip" id="userChip">
-        <div class="userLeft">
-          <div class="avatar" id="avatar">MD</div>
-          <div class="userMeta">
-            <div class="hello" id="hello">👋 Olá, ...</div>
-            <div class="userEmailSmall" id="userEmailSmall"></div>
-          </div>
+        <div class="avatar" id="avatar">U</div>
+        <div class="userMeta">
+          <div class="userName" id="userName">👋 Olá</div>
+          <div class="userEmail" id="userEmail">—</div>
         </div>
-        <button class="btn btnDanger btnSmall" id="btnLogout">Sair</button>
+        <button class="btn btnSmall btnDanger" id="btnLogout">Sair</button>
       </div>
     </div>
 
-    <!-- AUTH VIEW -->
-    <div id="authView" class="view">
-      <div class="authGrid">
-
-        <div class="card">
-          <div class="cardHead"><b>Entrar</b><span class="pill">Email + senha</span></div>
-          <div class="cardBody">
-            <div class="row">
-              <div class="field">
-                <label for="loginEmail">Email</label>
-                <input id="loginEmail" type="email" placeholder="seuemail@gmail.com" autocomplete="email">
-              </div>
-              <div class="field">
-                <label for="loginPass">Senha</label>
-                <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
-              </div>
+    <!-- AUTH -->
+    <div class="grid" id="authView">
+      <div class="card">
+        <div class="cardHead">
+          <b>Entrar</b>
+          <span style="font-size:12px;color:var(--muted2)">Login</span>
+        </div>
+        <div class="cardBody">
+          <div class="row">
+            <div class="field">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" type="email" placeholder="seuemail@gmail.com" />
             </div>
-            <div class="row" style="margin-top:12px;">
-              <button class="btn btnPrimary" id="btnLogin">Entrar</button>
+            <div class="field">
+              <label for="loginPass">Senha</label>
+              <input id="loginPass" type="password" placeholder="••••••••" />
             </div>
           </div>
-        </div>
-
-        <div class="card">
-          <div class="cardHead"><b>Criar conta</b><span class="pill">Nome + Email + senha</span></div>
-          <div class="cardBody">
-            <div class="row">
-              <div class="field">
-                <label for="regName">Nome</label>
-                <input id="regName" type="text" placeholder="Ex: Isaias" autocomplete="name">
-              </div>
-              <div class="field">
-                <label for="regEmail">Email</label>
-                <input id="regEmail" type="email" placeholder="seuemail@gmail.com" autocomplete="email">
-              </div>
-              <div class="field">
-                <label for="regPass">Senha</label>
-                <input id="regPass" type="password" placeholder="Crie uma senha" autocomplete="new-password">
-              </div>
-            </div>
-            <div class="row" style="margin-top:12px;">
-              <button class="btn btnPrimary" id="btnRegister">Criar conta</button>
-            </div>
-            <div class="muted" style="margin-top:10px;">
-              O nome ficará visível no topo como: <b>👋 Olá, Seu Nome</b>.
-            </div>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btnPrimary" id="btnLogin">Entrar</button>
           </div>
         </div>
+      </div>
 
+      <div class="card">
+        <div class="cardHead">
+          <b>Criar conta</b>
+          <span style="font-size:12px;color:var(--muted2)">Nome + Email + Senha</span>
+        </div>
+        <div class="cardBody">
+          <div class="row">
+            <div class="field">
+              <label for="signupName">Nome (visível no topo)</label>
+              <input id="signupName" type="text" placeholder="Ex: Isaias" />
+              <div class="hint">O topo vai mostrar: <b>👋 Olá, Seu Nome</b></div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div class="field">
+              <label for="signupEmail">Email</label>
+              <input id="signupEmail" type="email" placeholder="seuemail@gmail.com" />
+            </div>
+            <div class="field">
+              <label for="signupPass">Senha</label>
+              <input id="signupPass" type="password" placeholder="Crie uma senha" />
+            </div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btnPrimary" id="btnSignup">Criar conta</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- APP VIEW -->
-    <div id="appView" class="view hide" aria-hidden="true">
-      <div class="grid">
+    <!-- APP -->
+    <div class="grid" id="appView" style="display:none;">
+      <!-- Upload + filtros -->
+      <div class="card">
+        <div class="cardHead">
+          <b>Upload</b>
+          <span style="font-size:12px;color:var(--muted2)">Cloudinary + Firestore</span>
+        </div>
+        <div class="cardBody">
 
-        <!-- LEFT: upload + filtros -->
-        <div class="card">
-          <div class="cardHead">
-            <b>Upload</b>
-            <span style="font-size:12px;color:var(--muted)">Cloudinary + Firestore</span>
+          <div class="row">
+            <div class="field">
+              <label for="fileInput">Arquivo</label>
+              <input id="fileInput" type="file" />
+            </div>
           </div>
 
-          <div class="cardBody">
-            <div class="row">
-              <div class="field">
-                <label for="fileInput">Arquivo</label>
-                <input id="fileInput" type="file" />
-              </div>
+          <div class="row" style="margin-top:10px">
+            <div class="field">
+              <label for="folderSelect">Pasta</label>
+              <select id="folderSelect"></select>
             </div>
-
-            <div class="row" style="margin-top:10px;">
-              <div class="field">
-                <label for="folderSelect">Pasta</label>
-                <select id="folderSelect"></select>
-              </div>
-
-              <div class="field">
-                <label for="customName">Nome do arquivo (opcional)</label>
-                <input id="customName" type="text" placeholder="Ex: Contrato aluguel 2026" />
-              </div>
+            <div class="field">
+              <label for="customName">Nome do arquivo (opcional)</label>
+              <input id="customName" type="text" placeholder="Ex: Contrato aluguel 2026" />
             </div>
+          </div>
 
-            <div class="row" style="margin-top:12px;">
-              <button class="btn btnPrimary" id="btnUpload">Enviar arquivo</button>
-              <button class="btn btnGhost" id="btnNewFolder">+ Nova pasta</button>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btnPrimary" id="btnUpload">Enviar arquivo</button>
+            <button class="btn" id="btnNewFolder">+ Nova pasta</button>
+          </div>
+
+          <hr style="margin:16px 0;border:0;border-top:1px solid rgba(255,255,255,.10)" />
+
+          <div class="row">
+            <div class="field">
+              <label for="searchInput">Buscar por nome</label>
+              <input id="searchInput" type="text" placeholder="Ex: contrato, foto, vídeo..." />
             </div>
+          </div>
 
-            <hr style="border:0;border-top:1px solid rgba(255,255,255,.10); margin:14px 0;">
-
-            <div class="row">
-              <div class="field">
-                <label for="searchInput">Buscar por nome</label>
-                <input id="searchInput" type="text" placeholder="Ex: contrato, foto, vídeo..." />
-              </div>
+          <div class="row" style="margin-top:10px">
+            <div class="field">
+              <label for="filterFolder">Filtrar por pasta</label>
+              <select id="filterFolder"></select>
             </div>
-
-            <div class="row" style="margin-top:10px;">
-              <div class="field">
-                <label for="filterFolder">Filtrar por pasta</label>
-                <select id="filterFolder"></select>
-              </div>
-
-              <div class="field">
-                <label for="filterType">Filtrar por tipo</label>
-                <select id="filterType">
-                  <option value="all">Todos</option>
-                  <option value="image">Imagens</option>
-                  <option value="video">Vídeos</option>
-                  <option value="pdf">PDF</option>
-                  <option value="other">Outros</option>
-                </select>
-              </div>
+            <div class="field">
+              <label for="filterType">Filtrar por tipo</label>
+              <select id="filterType">
+                <option value="all">Todos</option>
+                <option value="image">Imagens</option>
+                <option value="video">Vídeos</option>
+                <option value="raw">PDF/Outros</option>
+              </select>
             </div>
+          </div>
 
+        </div>
+      </div>
+
+      <!-- Arquivos -->
+      <div class="card">
+        <div class="cardHead">
+          <b>Arquivos</b>
+          <div class="tabs">
+            <button class="tab active" id="tabList">Lista</button>
+            <button class="tab" id="tabGallery">Galeria</button>
           </div>
         </div>
-
-        <!-- RIGHT: arquivos -->
-        <div class="card">
-          <div class="cardHead">
-            <b>Arquivos</b>
-            <div class="tabs">
-              <button class="tab active" id="tabList">Lista</button>
-              <button class="tab" id="tabGallery">Galeria</button>
-            </div>
-          </div>
-
-          <div class="cardBody">
-            <div id="filesList" class="list"></div>
-            <div id="filesEmpty" class="empty" style="display:none;">Nenhum arquivo ainda.</div>
-          </div>
+        <div class="cardBody">
+          <div id="listView"></div>
+          <div id="galleryView" style="display:none;"></div>
         </div>
+      </div>
+    </div>
 
+  </div>
+
+  <!-- Preview Modal -->
+  <div class="modal" id="modal">
+    <div class="modalCard">
+      <div class="modalHead">
+        <div style="min-width:0">
+          <div style="font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="modalTitle">Arquivo</div>
+          <div style="font-size:12px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="modalSub">—</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn btnSmall" id="btnModalRename">Renomear</button>
+          <button class="btn btnSmall" id="btnModalMove">Mover</button>
+          <a class="btn btnSmall" id="btnModalOpen" target="_blank" rel="noopener">Abrir</a>
+          <button class="btn btnSmall btnDanger" id="btnModalDelete">Excluir</button>
+          <button class="btn btnSmall" id="btnModalClose">Fechar</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="previewBox" id="previewBox"></div>
       </div>
     </div>
   </div>
 
-  <!-- Firebase (compat) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <div class="loaderOverlay" id="loader">
+    <div class="spinner"></div>
+  </div>
 
-  <script>
-    /*************************************************************
-     * 1) COLE SEU firebaseConfig AQUI
-     * Pegue em: Firebase Console -> Config do Projeto -> Seus apps -> Web
-     *************************************************************/
-    const firebaseConfig = {
+  <script type="module">
+    // =========================
+    // CONFIG (edite só aqui)
+    // =========================
+    const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAYAwMfCDcXALBVM1uemmJA4aWQK5MNcc0",
   authDomain: "meu-drive-beb33.firebaseapp.com",
   projectId: "meu-drive-beb33",
@@ -621,659 +556,611 @@
   messagingSenderId: "661176300748",
   appId: "1:661176300748:web:68ab970ae9e668fdb67e69"
 };
-    /*************************************************************
-     * 2) Cloudinary (seus dados)
-     *************************************************************/
-    const CLOUD_NAME = "dilyddwkg";
-    const UPLOAD_PRESET = "kv9sjt0g";
-    const CLOUD_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
-    /*************************************************************/
-    const $ = (id)=>document.getElementById(id);
-    const loader = $('loader');
-    const authView = $('authView');
-    const appView = $('appView');
-    const userChip = $('userChip');
-    const hello = $('hello');
-    const avatar = $('avatar');
-    const userEmailSmall = $('userEmailSmall');
+    const CLOUDINARY_CLOUD_NAME = "dilyddwkg";
+    const CLOUDINARY_UNSIGNED_PRESET = "kv9sjt0g"; // unsigned preset
+    // =========================
 
-    const loginEmail = $('loginEmail');
-    const loginPass = $('loginPass');
-    const btnLogin = $('btnLogin');
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      updateProfile,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore, collection, doc, getDoc, setDoc,
+      addDoc, updateDoc, deleteDoc,
+      onSnapshot, query, where, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    const regName = $('regName');
-    const regEmail = $('regEmail');
-    const regPass = $('regPass');
-    const btnRegister = $('btnRegister');
+    // --- helpers UI
+    const $ = (id) => document.getElementById(id);
+    const showLoader = (v) => { $("loader").style.display = v ? "flex" : "none"; };
+    const toast = (msg) => alert(msg);
 
-    const btnLogout = $('btnLogout');
+    // --- init
+    const app = initializeApp(FIREBASE_CONFIG);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    const fileInput = $('fileInput');
-    const folderSelect = $('folderSelect');
-    const customName = $('customName');
-    const btnUpload = $('btnUpload');
-    const btnNewFolder = $('btnNewFolder');
-
-    const searchInput = $('searchInput');
-    const filterFolder = $('filterFolder');
-    const filterType = $('filterType');
-
-    const tabList = $('tabList');
-    const tabGallery = $('tabGallery');
-    const filesList = $('filesList');
-    const filesEmpty = $('filesEmpty');
-
-    const previewOverlay = $('previewOverlay');
-    const previewTitle = $('previewTitle');
-    const previewMeta = $('previewMeta');
-    const previewBody = $('previewBody');
-    const previewClose = $('previewClose');
-    const previewOpenTab = $('previewOpenTab');
-
-    let app, auth, db;
+    // --- state
     let currentUser = null;
+    let folders = []; // {id, name}
+    let files = [];   // {id, name, url, type, folderId, folderName, createdAt}
+    let selectedFile = null;
+    let unsubFolders = null;
+    let unsubFiles = null;
 
-    // caches
-    let folders = []; // {id,name}
-    let files = [];   // file docs
-    let viewMode = "list"; // list | gallery
+    // --- DOM refs
+    const authView = $("authView");
+    const appView = $("appView");
+    const userChip = $("userChip");
 
-    function showLoader(on){ loader.style.display = on ? 'flex' : 'none'; }
-
-    function safeInitFirebase(){
+    // =========================
+    // AUTH
+    // =========================
+    $("btnLogin").addEventListener("click", async () => {
       try{
-        if(!firebaseConfig || !firebaseConfig.apiKey){
-          alert("⚠️ Falta colar o firebaseConfig. Cole o config do Firebase no topo do index.html e recarregue.");
-          return false;
-        }
-        app = firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        db = firebase.firestore();
-        return true;
+        showLoader(true);
+        const email = $("loginEmail").value.trim();
+        const pass = $("loginPass").value.trim();
+        await signInWithEmailAndPassword(auth, email, pass);
       }catch(e){
         console.error(e);
-        alert("Erro ao iniciar Firebase. Veja o console.");
-        return false;
+        toast("Erro no login. Veja o console.");
+      }finally{
+        showLoader(false);
       }
-    }
-
-    function setView(isLogged){
-      if(isLogged){
-        authView.classList.add('hide');
-        authView.setAttribute('aria-hidden','true');
-        appView.classList.remove('hide');
-        appView.setAttribute('aria-hidden','false');
-        userChip.style.display = 'flex';
-      }else{
-        authView.classList.remove('hide');
-        authView.setAttribute('aria-hidden','false');
-        appView.classList.add('hide');
-        appView.setAttribute('aria-hidden','true');
-        userChip.style.display = 'none';
-      }
-    }
-
-    function initialsFromName(name){
-      if(!name) return "MD";
-      const parts = name.trim().split(/\s+/).slice(0,2);
-      return parts.map(p=>p[0]?.toUpperCase()).join('') || "MD";
-    }
-
-    function setHello(name){
-      const clean = (name || "Usuário").trim();
-      hello.textContent = `👋 Olá, ${clean}`;
-      avatar.textContent = initialsFromName(clean);
-    }
-
-    function fmtBytes(bytes){
-      if(!bytes && bytes !== 0) return "";
-      const units = ['B','KB','MB','GB'];
-      let b = bytes, i = 0;
-      while(b >= 1024 && i < units.length-1){ b/=1024; i++; }
-      return `${b.toFixed(b>=10 || i===0 ? 0 : 1)} ${units[i]}`;
-    }
-
-    function detectKind(fileDoc){
-      // kind: image | video | pdf | other
-      const t = (fileDoc.type || "").toLowerCase();
-      if(t.startsWith("image/")) return "image";
-      if(t.startsWith("video/")) return "video";
-      if(t === "application/pdf") return "pdf";
-      // fallback by resourceType if cloudinary
-      if(fileDoc.resourceType === "image") return "image";
-      if(fileDoc.resourceType === "video") return "video";
-      return "other";
-    }
-
-    function iconFor(kind){
-      if(kind === "image") return "🖼️";
-      if(kind === "video") return "🎬";
-      if(kind === "pdf") return "📄";
-      return "📦";
-    }
-
-    function openPreview(fileDoc){
-      const kind = detectKind(fileDoc);
-      previewTitle.textContent = fileDoc.displayName || fileDoc.originalName || "Arquivo";
-      previewMeta.textContent = `${fileDoc.folderName || "Sem pasta"} • ${kind.toUpperCase()} • ${fmtBytes(fileDoc.size || 0)}`;
-      previewOpenTab.href = fileDoc.url || "#";
-
-      previewBody.innerHTML = "";
-
-      if(kind === "image"){
-        const img = document.createElement("img");
-        img.src = fileDoc.url;
-        img.alt = fileDoc.displayName || "imagem";
-        previewBody.appendChild(img);
-      }else if(kind === "video"){
-        const v = document.createElement("video");
-        v.src = fileDoc.url;
-        v.controls = true;
-        previewBody.appendChild(v);
-      }else if(kind === "pdf"){
-        // iframe funciona bem no desktop; no celular às vezes abre viewer do navegador
-        const iframe = document.createElement("iframe");
-        iframe.src = fileDoc.url;
-        iframe.style.height = "70vh";
-        iframe.loading = "lazy";
-        previewBody.appendChild(iframe);
-      }else{
-        const box = document.createElement("div");
-        box.className = "empty";
-        box.innerHTML = `Esse tipo não tem preview aqui.<br><br><a class="btn btnSmall btnPrimary" target="_blank" rel="noopener" href="${fileDoc.url}">Abrir arquivo</a>`;
-        previewBody.appendChild(box);
-      }
-
-      previewOverlay.style.display = "flex";
-      previewOverlay.setAttribute("aria-hidden","false");
-    }
-
-    function closePreview(){
-      previewOverlay.style.display = "none";
-      previewOverlay.setAttribute("aria-hidden","true");
-      previewBody.innerHTML = "";
-    }
-
-    previewClose.addEventListener("click", closePreview);
-    previewOverlay.addEventListener("click", (e)=>{
-      if(e.target === previewOverlay) closePreview();
     });
 
-    function setTabs(){
-      if(viewMode === "list"){
-        tabList.classList.add("active");
-        tabGallery.classList.remove("active");
-      }else{
-        tabGallery.classList.add("active");
-        tabList.classList.remove("active");
+    $("btnSignup").addEventListener("click", async () => {
+      try{
+        showLoader(true);
+        const name = $("signupName").value.trim();
+        const email = $("signupEmail").value.trim();
+        const pass = $("signupPass").value.trim();
+        if(!name) return toast("Digite seu nome.");
+        if(!email) return toast("Digite seu email.");
+        if(pass.length < 6) return toast("Senha precisa ter pelo menos 6 caracteres.");
+
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+
+        // Nome no Auth (pra ficar bonitinho)
+        await updateProfile(cred.user, { displayName: name });
+
+        // Perfil no Firestore (users/{uid})
+        await setDoc(doc(db, "users", cred.user.uid), {
+          uid: cred.user.uid,
+          name,
+          email,
+          createdAt: serverTimestamp(),
+        }, { merge:true });
+
+      }catch(e){
+        console.error(e);
+        toast("Erro ao criar conta. Veja o console.");
+      }finally{
+        showLoader(false);
       }
-      renderFiles();
-    }
+    });
 
-    tabList.addEventListener("click", ()=>{ viewMode="list"; setTabs(); });
-    tabGallery.addEventListener("click", ()=>{ viewMode="gallery"; setTabs(); });
+    $("btnLogout").addEventListener("click", async () => {
+      await signOut(auth);
+    });
 
-    /*************************************************************
-     * FIRESTORE HELPERS
-     *************************************************************/
-    function col(name){ return db.collection(name); }
-    function nowTS(){ return firebase.firestore.FieldValue.serverTimestamp(); }
+    onAuthStateChanged(auth, async (u) => {
+      currentUser = u || null;
 
-    async function ensureDefaultFolders(uid){
-      // cria algumas pastas padrão se ainda não existir nenhuma
-      const snap = await col("folders").where("uid","==",uid).get();
-      if(!snap.empty) return;
+      if(!currentUser){
+        // cleanup
+        if(unsubFolders) unsubFolders();
+        if(unsubFiles) unsubFiles();
+        folders = [];
+        files = [];
+        selectedFile = null;
 
-      const defaults = ["Imagens","Vídeos","PDF","Outros"];
-      const batch = db.batch();
-      defaults.forEach(n=>{
-        const ref = col("folders").doc();
-        batch.set(ref, { uid, name:n, createdAt: nowTS() });
-      });
-      await batch.commit();
-    }
-
-    async function loadFolders(){
-      folders = [];
-      const snap = await col("folders").where("uid","==",currentUser.uid).get();
-      snap.forEach(d=> folders.push({ id:d.id, ...d.data() }));
-      // ordena client-side
-      folders.sort((a,b)=> (a.name||"").localeCompare(b.name||"", "pt-BR"));
-      renderFolderSelects();
-    }
-
-    function renderFolderSelects(){
-      // upload select
-      folderSelect.innerHTML = "";
-      // filter select
-      filterFolder.innerHTML = "";
-
-      const allOpt = document.createElement("option");
-      allOpt.value = "all";
-      allOpt.textContent = "Todas";
-      filterFolder.appendChild(allOpt);
-
-      if(folders.length === 0){
-        const opt = document.createElement("option");
-        opt.value = "";
-        opt.textContent = "Sem pastas";
-        folderSelect.appendChild(opt);
+        userChip.style.display = "none";
+        appView.style.display = "none";
+        authView.style.display = "grid";
         return;
       }
 
-      folders.forEach(f=>{
-        const o1 = document.createElement("option");
-        o1.value = f.id;
-        o1.textContent = f.name;
-        folderSelect.appendChild(o1);
+      authView.style.display = "none";
+      appView.style.display = "grid";
+      userChip.style.display = "flex";
 
-        const o2 = document.createElement("option");
-        o2.value = f.id;
-        o2.textContent = f.name;
-        filterFolder.appendChild(o2);
-      });
+      await loadProfileAndHeader();
+      listenFolders();
+      listenFiles();
+    });
+
+    async function loadProfileAndHeader(){
+      try{
+        // tenta pegar do Auth
+        let displayName = currentUser.displayName || "";
+        const email = currentUser.email || "";
+
+        // tenta pegar do Firestore (se o Auth estiver vazio)
+        if(!displayName){
+          const snap = await getDoc(doc(db, "users", currentUser.uid));
+          if(snap.exists()){
+            displayName = (snap.data().name || "");
+          }
+        }
+
+        const finalName = displayName || (email ? email.split("@")[0] : "Usuário");
+        $("userName").textContent = `👋 Olá, ${capitalize(finalName)}`;
+        $("userEmail").textContent = email || "—";
+        $("avatar").textContent = (finalName || "U").trim().slice(0,1).toUpperCase();
+
+      }catch(e){
+        console.error(e);
+        toast("Erro ao carregar sua conta. Veja o console.");
+      }
     }
 
-    async function createFolder(){
-      const name = (prompt("Nome da nova pasta:") || "").trim();
+    function capitalize(s){
+      if(!s) return s;
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    // =========================
+    // FOLDERS
+    // =========================
+    $("btnNewFolder").addEventListener("click", async () => {
+      const name = prompt("Nome da nova pasta:");
       if(!name) return;
 
       try{
         showLoader(true);
-        await col("folders").add({ uid: currentUser.uid, name, createdAt: nowTS() });
-        await loadFolders();
-        alert("Pasta criada ✅");
+        await addDoc(collection(db, "folders"), {
+          uid: currentUser.uid,
+          name: name.trim(),
+          createdAt: serverTimestamp(),
+        });
       }catch(e){
         console.error(e);
-        alert("Erro ao criar pasta");
+        toast("Erro ao criar pasta");
       }finally{
         showLoader(false);
       }
+    });
+
+    function listenFolders(){
+      if(unsubFolders) unsubFolders();
+
+      const qFolders = query(
+        collection(db, "folders"),
+        where("uid", "==", currentUser.uid)
+      );
+
+      unsubFolders = onSnapshot(qFolders, (snap) => {
+        folders = snap.docs
+          .map(d => ({ id: d.id, ...(d.data()||{}) }))
+          .sort((a,b)=> (a.name||"").localeCompare(b.name||""));
+
+        renderFolderSelects();
+      }, (err)=>{
+        console.error(err);
+        // Se der permissão aqui, é rules
+      });
     }
 
-    async function loadFiles(){
-      files = [];
-      // evitar query que exige índice: pega todos do usuário e filtra no front
-      const snap = await col("files").where("uid","==",currentUser.uid).get();
-      snap.forEach(d => files.push({ id:d.id, ...d.data() }));
-      // ordena por createdAt desc client-side
-      files.sort((a,b)=>{
-        const ta = a.createdAt?.seconds || 0;
-        const tb = b.createdAt?.seconds || 0;
-        return tb - ta;
+    function renderFolderSelects(){
+      // Upload select
+      $("folderSelect").innerHTML = "";
+      // Filter select
+      $("filterFolder").innerHTML = "";
+
+      const allOpt = document.createElement("option");
+      allOpt.value = "all";
+      allOpt.textContent = "Todas";
+      $("filterFolder").appendChild(allOpt);
+
+      const defaultFolders = [
+        { id:"images", name:"Imagens" },
+        { id:"videos", name:"Vídeos" },
+        { id:"docs", name:"Documentos" },
+        { id:"others", name:"Outros" },
+      ];
+
+      const merged = [
+        ...defaultFolders,
+        ...folders.filter(f => !defaultFolders.some(d => d.name.toLowerCase() === (f.name||"").toLowerCase()))
+      ];
+
+      for(const f of merged){
+        const o1 = document.createElement("option");
+        o1.value = f.id;
+        o1.textContent = f.name;
+        $("folderSelect").appendChild(o1);
+
+        const o2 = document.createElement("option");
+        o2.value = f.id;
+        o2.textContent = f.name;
+        $("filterFolder").appendChild(o2);
+      }
+    }
+
+    // =========================
+    // FILES (Firestore)
+    // =========================
+    function listenFiles(){
+      if(unsubFiles) unsubFiles();
+
+      const qFiles = query(
+        collection(db, "files"),
+        where("uid", "==", currentUser.uid)
+      );
+
+      unsubFiles = onSnapshot(qFiles, (snap) => {
+        files = snap.docs.map(d => ({ id:d.id, ...(d.data()||{}) }));
+
+        // ordena no client (pra não pedir index composto)
+        files.sort((a,b)=>{
+          const ta = a.createdAt?.seconds || 0;
+          const tb = b.createdAt?.seconds || 0;
+          return tb - ta;
+        });
+
+        renderFiles();
+      }, (err)=>{
+        console.error(err);
       });
+    }
+
+    // =========================
+    // UPLOAD (Cloudinary unsigned)
+    // =========================
+    $("btnUpload").addEventListener("click", async () => {
+      const f = $("fileInput").files?.[0];
+      if(!f) return toast("Escolha um arquivo.");
+
+      try{
+        showLoader(true);
+
+        const folderId = $("folderSelect").value;
+        const folderName = ($("folderSelect").selectedOptions?.[0]?.textContent || "—");
+
+        const custom = $("customName").value.trim();
+        const baseName = custom || f.name;
+
+        const res = await uploadToCloudinary(f);
+        // res: { secure_url, resource_type, format, bytes, public_id, original_filename }
+
+        const type = res.resource_type || guessTypeFromFile(f);
+
+        await addDoc(collection(db, "files"), {
+          uid: currentUser.uid,
+          name: baseName,
+          originalName: f.name,
+          url: res.secure_url,
+          type, // image | video | raw
+          bytes: res.bytes || null,
+          folderId,
+          folderName,
+          createdAt: serverTimestamp(),
+        });
+
+        $("fileInput").value = "";
+        $("customName").value = "";
+
+      }catch(e){
+        console.error(e);
+        toast("Erro no upload. Veja o console.");
+      }finally{
+        showLoader(false);
+      }
+    });
+
+    function guessTypeFromFile(file){
+      const t = (file.type || "").toLowerCase();
+      if(t.startsWith("image/")) return "image";
+      if(t.startsWith("video/")) return "video";
+      return "raw";
+    }
+
+    async function uploadToCloudinary(file){
+      const url = `https://api.cloudinary.com/v1_1/${encodeURIComponent(CLOUDINARY_CLOUD_NAME)}/upload`;
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", CLOUDINARY_UNSIGNED_PRESET);
+      fd.append("resource_type", "auto");
+
+      const r = await fetch(url, { method:"POST", body: fd });
+      if(!r.ok){
+        const txt = await r.text().catch(()=> "");
+        throw new Error("Cloudinary upload failed: " + txt);
+      }
+      return await r.json();
+    }
+
+    // =========================
+    // FILTERS + RENDER
+    // =========================
+    $("searchInput").addEventListener("input", renderFiles);
+    $("filterFolder").addEventListener("change", renderFiles);
+    $("filterType").addEventListener("change", renderFiles);
+
+    $("tabList").addEventListener("click", () => switchView("list"));
+    $("tabGallery").addEventListener("click", () => switchView("gallery"));
+
+    function switchView(v){
+      const isList = v === "list";
+      $("tabList").classList.toggle("active", isList);
+      $("tabGallery").classList.toggle("active", !isList);
+      $("listView").style.display = isList ? "block" : "none";
+      $("galleryView").style.display = isList ? "none" : "block";
       renderFiles();
     }
 
-    function applyFilters(list){
-      const q = (searchInput.value || "").trim().toLowerCase();
-      const fFolder = filterFolder.value || "all";
-      const fType = filterType.value || "all";
-
-      return list.filter(item=>{
-        const name = (item.displayName || item.originalName || "").toLowerCase();
-        const okSearch = !q || name.includes(q);
-
-        const okFolder = (fFolder === "all") || (item.folderId === fFolder);
-        const kind = detectKind(item);
-        const okType = (fType === "all") || (kind === fType);
-
-        return okSearch && okFolder && okType;
-      });
-    }
-
     function renderFiles(){
-      const filtered = applyFilters(files);
+      const search = $("searchInput").value.trim().toLowerCase();
+      const ff = $("filterFolder").value;
+      const ft = $("filterType").value;
 
-      filesList.innerHTML = "";
-      filesEmpty.style.display = filtered.length ? "none" : "block";
+      let filtered = [...files];
 
-      filtered.forEach(fileDoc=>{
-        const kind = detectKind(fileDoc);
-
-        const row = document.createElement("div");
-        row.className = "item";
-
-        const left = document.createElement("div");
-        left.className = "left";
-
-        const thumb = document.createElement("div");
-        thumb.className = "thumb";
-
-        if(viewMode === "gallery" && kind === "image" && fileDoc.url){
-          const img = document.createElement("img");
-          img.src = fileDoc.url;
-          img.alt = "thumb";
-          img.onerror = ()=>{ thumb.innerHTML = `<span>${iconFor(kind)}</span>`; };
-          thumb.appendChild(img);
-        }else{
-          thumb.innerHTML = `<span>${iconFor(kind)}</span>`;
-        }
-
-        const meta = document.createElement("div");
-        meta.className = "meta";
-
-        const name = document.createElement("div");
-        name.className = "name";
-        name.textContent = fileDoc.displayName || fileDoc.originalName || "Arquivo";
-
-        const sub = document.createElement("div");
-        sub.className = "sub";
-        sub.textContent = `${fileDoc.folderName || "Sem pasta"} • ${kind.toUpperCase()} • ${fmtBytes(fileDoc.size || 0)}`;
-
-        meta.appendChild(name);
-        meta.appendChild(sub);
-
-        left.appendChild(thumb);
-        left.appendChild(meta);
-
-        // clique abre preview (sem nova janela)
-        left.style.cursor = "pointer";
-        left.addEventListener("click", ()=> openPreview(fileDoc));
-
-        const right = document.createElement("div");
-        right.className = "right";
-
-        const btnPreview = document.createElement("button");
-        btnPreview.className = "btn btnSmall btnPrimary";
-        btnPreview.textContent = "Ver";
-        btnPreview.addEventListener("click", ()=> openPreview(fileDoc));
-
-        const btnRename = document.createElement("button");
-        btnRename.className = "btn btnSmall btnGhost";
-        btnRename.textContent = "Renomear";
-        btnRename.addEventListener("click", ()=> renameFile(fileDoc));
-
-        const btnMove = document.createElement("button");
-        btnMove.className = "btn btnSmall btnGhost";
-        btnMove.textContent = "Mover";
-        btnMove.addEventListener("click", ()=> moveFile(fileDoc));
-
-        const btnDel = document.createElement("button");
-        btnDel.className = "btn btnSmall btnDanger";
-        btnDel.textContent = "Excluir";
-        btnDel.addEventListener("click", ()=> deleteFile(fileDoc));
-
-        right.appendChild(btnPreview);
-        right.appendChild(btnRename);
-        right.appendChild(btnMove);
-        right.appendChild(btnDel);
-
-        row.appendChild(left);
-        row.appendChild(right);
-
-        filesList.appendChild(row);
-      });
-    }
-
-    async function renameFile(fileDoc){
-      const current = fileDoc.displayName || fileDoc.originalName || "";
-      const newName = (prompt("Novo nome do arquivo:", current) || "").trim();
-      if(!newName || newName === current) return;
-
-      try{
-        showLoader(true);
-        await col("files").doc(fileDoc.id).update({ displayName: newName });
-        await loadFiles();
-        alert("Renomeado ✅");
-      }catch(e){
-        console.error(e);
-        alert("Erro ao renomear");
-      }finally{
-        showLoader(false);
+      if(search){
+        filtered = filtered.filter(x => (x.name||"").toLowerCase().includes(search));
       }
+      if(ff && ff !== "all"){
+        filtered = filtered.filter(x => x.folderId === ff);
+      }
+      if(ft && ft !== "all"){
+        filtered = filtered.filter(x => x.type === ft);
+      }
+
+      const isList = $("tabList").classList.contains("active");
+      if(isList) renderList(filtered);
+      else renderGallery(filtered);
     }
 
-    async function moveFile(fileDoc){
-      if(!folders.length){
-        alert("Você não tem pastas ainda.");
+    function iconForType(type){
+      if(type === "image") return "🖼️";
+      if(type === "video") return "🎬";
+      return "📄";
+    }
+
+    function prettyBytes(n){
+      if(!n && n !== 0) return "";
+      const units = ["B","KB","MB","GB"];
+      let i=0; let v=n;
+      while(v >= 1024 && i < units.length-1){ v/=1024; i++; }
+      return `${v.toFixed(i===0?0:1)} ${units[i]}`;
+    }
+
+    function renderList(arr){
+      const box = $("listView");
+      if(!arr.length){
+        box.innerHTML = `<div class="empty">Nenhum arquivo ainda.</div>`;
         return;
       }
 
-      // lista de opções
-      const map = folders.map((f,idx)=> `${idx+1}) ${f.name}`).join("\n");
-      const idxStr = prompt("Mover para qual pasta?\n\n" + map + "\n\nDigite o número:");
-      const idx = parseInt(idxStr,10);
-      if(!idx || idx < 1 || idx > folders.length) return;
+      const html = arr.map(file => {
+        const sub = `${file.folderName||"—"} • ${file.type||"—"} ${file.bytes?("• "+prettyBytes(file.bytes)):""}`;
+        const isImg = file.type === "image";
 
-      const dest = folders[idx-1];
-      if(dest.id === fileDoc.folderId) return;
+        return `
+          <div class="item">
+            <div class="left" data-open="${file.id}">
+              <div class="badge">
+                ${isImg ? `<img class="thumb" alt="" src="${escapeHtml(file.url)}" data-thumb="${file.id}">`
+                        : `<span>${iconForType(file.type)}</span>`}
+              </div>
+              <div class="meta">
+                <div class="name">${escapeHtml(file.name||"Sem nome")}</div>
+                <div class="sub">${escapeHtml(sub)}</div>
+              </div>
+            </div>
+            <div class="right">
+              <button class="btn btnSmall" data-rename="${file.id}">Renomear</button>
+              <button class="btn btnSmall" data-move="${file.id}">Mover</button>
+              <a class="btn btnSmall" href="${escapeHtml(file.url)}" target="_blank" rel="noopener">Abrir</a>
+              <button class="btn btnSmall btnDanger" data-delete="${file.id}">Excluir</button>
+            </div>
+          </div>
+        `;
+      }).join("");
 
-      try{
-        showLoader(true);
-        await col("files").doc(fileDoc.id).update({
-          folderId: dest.id,
-          folderName: dest.name
-        });
-        await loadFiles();
-        alert("Movido ✅");
-      }catch(e){
-        console.error(e);
-        alert("Erro ao mover");
-      }finally{
-        showLoader(false);
-      }
-    }
+      box.innerHTML = `<div class="list">${html}</div>`;
 
-    async function deleteFile(fileDoc){
-      const ok = confirm(`Excluir "${fileDoc.displayName || fileDoc.originalName}"?`);
-      if(!ok) return;
-
-      try{
-        showLoader(true);
-        // aqui remove só do Firestore (rápido).
-        // Remover também do Cloudinary exigiria backend (por segurança).
-        await col("files").doc(fileDoc.id).delete();
-        await loadFiles();
-        alert("Excluído ✅");
-      }catch(e){
-        console.error(e);
-        alert("Erro ao excluir");
-      }finally{
-        showLoader(false);
-      }
-    }
-
-    /*************************************************************
-     * CLOUDINARY UPLOAD
-     *************************************************************/
-    async function uploadToCloudinary(file){
-      const form = new FormData();
-      form.append("file", file);
-      form.append("upload_preset", UPLOAD_PRESET);
-
-      const res = await fetch(CLOUD_UPLOAD_URL, { method:"POST", body: form });
-      if(!res.ok){
-        const txt = await res.text().catch(()=> "");
-        throw new Error("Cloudinary upload falhou: " + txt);
-      }
-      return await res.json();
-    }
-
-    async function handleUpload(){
-      const file = fileInput.files && fileInput.files[0];
-      if(!file){ alert("Escolha um arquivo."); return; }
-
-      const folderId = folderSelect.value;
-      const folderObj = folders.find(f=>f.id === folderId);
-      const folderName = folderObj ? folderObj.name : "Sem pasta";
-
-      const displayName = (customName.value || "").trim();
-      const finalName = displayName || file.name;
-
-      try{
-        showLoader(true);
-
-        const up = await uploadToCloudinary(file);
-
-        const doc = {
-          uid: currentUser.uid,
-          folderId: folderId || null,
-          folderName,
-          url: up.secure_url,
-          publicId: up.public_id,
-          resourceType: up.resource_type,
-          type: file.type || "",
-          size: file.size || 0,
-          originalName: file.name || "",
-          displayName: finalName,
-          createdAt: nowTS()
-        };
-
-        await col("files").add(doc);
-
-        // reset
-        fileInput.value = "";
-        customName.value = "";
-
-        await loadFiles();
-        alert("Upload concluído ✅");
-      }catch(e){
-        console.error(e);
-        alert("Erro no upload. Veja o console.");
-      }finally{
-        showLoader(false);
-      }
-    }
-
-    /*************************************************************
-     * AUTH + PERFIL (Nome no topo)
-     *************************************************************/
-    async function saveUserProfile(uid, name, email){
-      await col("users").doc(uid).set({
-        name,
-        email,
-        createdAt: nowTS()
-      }, { merge:true });
-    }
-
-    async function loadUserProfile(uid){
-      const doc = await col("users").doc(uid).get();
-      if(doc.exists){
-        return doc.data();
-      }
-      return null;
-    }
-
-    async function afterLogin(user){
-      currentUser = user;
-
-      // pega nome do Firestore
-      const profile = await loadUserProfile(user.uid);
-
-      let name = profile?.name || user.displayName || "Usuário";
-      setHello(name);
-
-      // email pequeno oculto por padrão (se quiser mostrar, mude CSS display)
-      userEmailSmall.textContent = user.email || "";
-      setView(true);
-
-      // garantir pastas padrão (uma vez)
-      await ensureDefaultFolders(user.uid);
-
-      // carregar dados
-      await loadFolders();
-      await loadFiles();
-
-      // garantir selects
-      filterType.value = "all";
-      filterFolder.value = "all";
-      viewMode = "list";
-      setTabs();
-    }
-
-    btnLogin.addEventListener("click", async ()=>{
-      try{
-        showLoader(true);
-        const email = (loginEmail.value||"").trim();
-        const pass = (loginPass.value||"").trim();
-        if(!email || !pass){ alert("Preencha email e senha."); return; }
-
-        await auth.signInWithEmailAndPassword(email, pass);
-      }catch(e){
-        console.error(e);
-        alert("Erro no login: " + (e.message || "verifique os dados"));
-      }finally{
-        showLoader(false);
-      }
-    });
-
-    btnRegister.addEventListener("click", async ()=>{
-      try{
-        showLoader(true);
-        const name = (regName.value||"").trim();
-        const email = (regEmail.value||"").trim();
-        const pass = (regPass.value||"").trim();
-
-        if(!name || !email || !pass){
-          alert("Preencha Nome, Email e Senha.");
-          return;
-        }
-
-        const cred = await auth.createUserWithEmailAndPassword(email, pass);
-
-        // opcional: também salva no Auth displayName
-        await cred.user.updateProfile({ displayName: name });
-
-        // salva no Firestore
-        await saveUserProfile(cred.user.uid, name, email);
-
-        alert("Conta criada ✅ Agora é só usar!");
-        // limpa campos
-        regName.value = ""; regEmail.value=""; regPass.value="";
-      }catch(e){
-        console.error(e);
-        alert("Erro ao criar conta: " + (e.message || ""));
-      }finally{
-        showLoader(false);
-      }
-    });
-
-    btnLogout.addEventListener("click", async ()=>{
-      try{
-        await auth.signOut();
-      }catch(e){
-        console.error(e);
-      }
-    });
-
-    /*************************************************************
-     * EVENTOS UI
-     *************************************************************/
-    btnNewFolder.addEventListener("click", createFolder);
-    btnUpload.addEventListener("click", handleUpload);
-    [searchInput, filterFolder, filterType].forEach(el=>{
-      el.addEventListener("input", renderFiles);
-      el.addEventListener("change", renderFiles);
-    });
-
-    /*************************************************************
-     * START
-     *************************************************************/
-    (function start(){
-      if(!safeInitFirebase()) return;
-
-      auth.onAuthStateChanged(async (user)=>{
-        try{
-          if(user){
-            showLoader(true);
-            await afterLogin(user);
-          }else{
-            currentUser = null;
-            setView(false);
-          }
-        }catch(e){
-          console.error(e);
-          alert("Erro ao carregar sua conta. Veja o console.");
-          setView(false);
-        }finally{
-          showLoader(false);
-        }
+      // FIX do erro "style of null": thumb pode falhar -> troca por ícone sem mexer em style de null
+      box.querySelectorAll("img.thumb").forEach(img=>{
+        img.addEventListener("error", ()=>{
+          const badge = img.closest(".badge");
+          if(!badge) return; // <- NUNCA mexe em null
+          badge.innerHTML = `<span>${iconForType("image")}</span>`;
+        }, { once:true });
       });
-    })();
+
+      // ações
+      box.querySelectorAll("[data-open]").forEach(el=>{
+        el.addEventListener("click", ()=> openModal(el.getAttribute("data-open")));
+      });
+      box.querySelectorAll("[data-rename]").forEach(btn=>{
+        btn.addEventListener("click", (e)=>{ e.stopPropagation(); renameFile(btn.dataset.rename); });
+      });
+      box.querySelectorAll("[data-move]").forEach(btn=>{
+        btn.addEventListener("click", (e)=>{ e.stopPropagation(); moveFile(btn.dataset.move); });
+      });
+      box.querySelectorAll("[data-delete]").forEach(btn=>{
+        btn.addEventListener("click", (e)=>{ e.stopPropagation(); deleteFile(btn.dataset.delete); });
+      });
+    }
+
+    function renderGallery(arr){
+      const box = $("galleryView");
+      if(!arr.length){
+        box.innerHTML = `<div class="empty">Nenhum arquivo ainda.</div>`;
+        return;
+      }
+
+      const html = arr.map(file => {
+        const sub = `${file.folderName||"—"} • ${file.type||"—"}`;
+        const isImg = file.type === "image";
+        const isVideo = file.type === "video";
+
+        return `
+          <div class="gItem" data-open="${file.id}">
+            <div class="gTop">
+              ${
+                isImg ? `<img alt="" src="${escapeHtml(file.url)}" data-gthumb="${file.id}">`
+                : isVideo ? `<video src="${escapeHtml(file.url)}" muted playsinline></video>`
+                : `<div style="font-size:40px">${iconForType(file.type)}</div>`
+              }
+            </div>
+            <div class="gMeta">
+              <div class="gName">${escapeHtml(file.name||"Sem nome")}</div>
+              <div class="gSub">${escapeHtml(sub)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      box.innerHTML = `<div class="gallery">${html}</div>`;
+
+      // thumb error safe
+      box.querySelectorAll("img[data-gthumb]").forEach(img=>{
+        img.addEventListener("error", ()=>{
+          const top = img.parentElement;
+          if(!top) return;
+          top.innerHTML = `<div style="font-size:40px">${iconForType("image")}</div>`;
+        }, { once:true });
+      });
+
+      box.querySelectorAll("[data-open]").forEach(el=>{
+        el.addEventListener("click", ()=> openModal(el.getAttribute("data-open")));
+      });
+    }
+
+    function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // =========================
+    // Actions: rename/move/delete
+    // =========================
+    async function renameFile(id){
+      const f = files.find(x=>x.id===id);
+      if(!f) return;
+      const newName = prompt("Novo nome:", f.name || "");
+      if(!newName) return;
+
+      try{
+        showLoader(true);
+        await updateDoc(doc(db,"files",id), { name: newName.trim() });
+      }catch(e){
+        console.error(e);
+        toast("Erro ao renomear. Veja o console.");
+      }finally{
+        showLoader(false);
+      }
+    }
+
+    async function moveFile(id){
+      const f = files.find(x=>x.id===id);
+      if(!f) return;
+
+      const options = [...$("folderSelect").options].map(o=>({id:o.value, name:o.textContent}));
+      const list = options.map((o,i)=> `${i+1}) ${o.name}`).join("\n");
+      const pick = prompt("Mover para qual pasta?\n\n" + list + "\n\nDigite o número:");
+      const idx = Number(pick) - 1;
+      if(Number.isNaN(idx) || idx < 0 || idx >= options.length) return;
+
+      try{
+        showLoader(true);
+        await updateDoc(doc(db,"files",id), {
+          folderId: options[idx].id,
+          folderName: options[idx].name
+        });
+      }catch(e){
+        console.error(e);
+        toast("Erro ao mover. Veja o console.");
+      }finally{
+        showLoader(false);
+      }
+    }
+
+    async function deleteFile(id){
+      const f = files.find(x=>x.id===id);
+      if(!f) return;
+      if(!confirm(`Excluir "${f.name}"?`)) return;
+
+      try{
+        showLoader(true);
+        await deleteDoc(doc(db,"files",id));
+      }catch(e){
+        console.error(e);
+        toast("Erro ao excluir. Veja o console.");
+      }finally{
+        showLoader(false);
+      }
+    }
+
+    // =========================
+    // MODAL PREVIEW (sem abrir outra janela)
+    // =========================
+    const modal = $("modal");
+    $("btnModalClose").addEventListener("click", closeModal);
+    modal.addEventListener("click", (e)=> { if(e.target === modal) closeModal(); });
+
+    $("btnModalRename").addEventListener("click", ()=> selectedFile && renameFile(selectedFile.id));
+    $("btnModalMove").addEventListener("click", ()=> selectedFile && moveFile(selectedFile.id));
+    $("btnModalDelete").addEventListener("click", ()=> { if(selectedFile) { closeModal(); deleteFile(selectedFile.id); } });
+
+    function openModal(id){
+      const f = files.find(x=>x.id===id);
+      if(!f) return;
+
+      selectedFile = f;
+      $("modalTitle").textContent = f.name || "Arquivo";
+      $("modalSub").textContent = `${f.folderName||"—"} • ${f.type||"—"} ${f.bytes?("• "+prettyBytes(f.bytes)):""}`;
+      $("btnModalOpen").href = f.url;
+
+      const box = $("previewBox");
+      box.innerHTML = "";
+
+      if(f.type === "image"){
+        const img = document.createElement("img");
+        img.src = f.url;
+        img.alt = f.name || "";
+        img.addEventListener("error", ()=>{
+          box.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted2)">Não foi possível carregar a imagem.</div>`;
+        }, { once:true });
+        box.appendChild(img);
+      }else if(f.type === "video"){
+        const v = document.createElement("video");
+        v.src = f.url;
+        v.controls = true;
+        v.playsInline = true;
+        box.appendChild(v);
+      }else{
+        // PDF tenta iframe, senão mostra link
+        const iframe = document.createElement("iframe");
+        iframe.src = f.url;
+        iframe.referrerPolicy = "no-referrer";
+        iframe.addEventListener("error", ()=>{
+          box.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted2)">Preview indisponível. Use "Abrir".</div>`;
+        }, { once:true });
+        box.appendChild(iframe);
+      }
+
+      modal.style.display = "flex";
+    }
+
+    function closeModal(){
+      modal.style.display = "none";
+      $("previewBox").innerHTML = "";
+      selectedFile = null;
+    }
   </script>
 </body>
 </html>
-
-
